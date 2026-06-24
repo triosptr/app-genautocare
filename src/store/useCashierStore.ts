@@ -17,12 +17,14 @@ import type {
   AppRole,
   Customer,
   DailyProductCheck,
+  DeviceMode,
   Employee,
   InventoryItem,
   OpsCost,
   PaymentMethod,
   PendingQC,
   QCDetail,
+  QCDetailDraft,
   QCRecord,
   QueueStatus,
   Service,
@@ -58,6 +60,7 @@ interface CashierStore {
   mode: AppMode;
   ready: boolean;
   currentRole: AppRole | null;
+  deviceMode: DeviceMode;
   services: Service[];
   employees: Employee[];
   customers: Customer[];
@@ -71,12 +74,14 @@ interface CashierStore {
   settings: SettingsState;
   initialize: () => void;
   setRole: (role: AppRole) => void;
+  setDeviceMode: (mode: DeviceMode) => void;
   clearRole: () => void;
   saveCustomer: (input: SaveCustomerInput) => string;
   createTransaction: (input: CreateTransactionInput) => string;
   updateQueueStatus: (txId: string, status: QueueStatus) => void;
+  markBeforePhoto: (txId: string) => void;
   runQuickQC: (txId: string) => void;
-  saveQC: (txId: string, details: QCDetail) => void;
+  saveQC: (txId: string, details: QCDetail | QCDetailDraft, afterPhoto?: string | null) => void;
   clockToggle: (employeeId: string) => void;
   saveService: (service: Service) => void;
   updateSettings: (input: SettingsState) => void;
@@ -85,6 +90,7 @@ interface CashierStore {
 
 const roleKey = 'gen-autocare-role';
 const settingsKey = 'gen-autocare-settings-v2';
+const deviceModeKey = 'gen-autocare-device-mode';
 
 function readRole() {
   const raw = localStorage.getItem(roleKey);
@@ -104,6 +110,14 @@ function readSettings() {
   }
 }
 
+function readDeviceMode() {
+  const raw = localStorage.getItem(deviceModeKey);
+  if (raw === 'ipad' || raw === 'mobile' || raw === 'desktop') {
+    return raw;
+  }
+  return 'desktop' as DeviceMode;
+}
+
 function buildInvoiceNumber() {
   return `INV-${new Date().toISOString().slice(2, 10).replace(/-/g, '')}-${Date.now().toString().slice(-3)}`;
 }
@@ -117,10 +131,23 @@ function scoreFromDetails(details: QCDetail) {
   return Math.round(values.reduce((sum, value) => sum + value, 0) / values.length);
 }
 
+function normalizeQCDetails(details: QCDetail | QCDetailDraft) {
+  return {
+    body: details.body ?? 100,
+    velg: details.velg ?? 100,
+    spakbor: details.spakbor ?? 100,
+    jok: details.jok ?? 100,
+    spionLampu: details.spionLampu ?? 100,
+    areaMesin: details.areaMesin ?? 100,
+    kekeringan: details.kekeringan ?? 100,
+  } satisfies QCDetail;
+}
+
 export const useCashierStore = create<CashierStore>((set, get) => ({
   mode: 'demo',
   ready: false,
   currentRole: null,
+  deviceMode: 'desktop',
   services: [],
   employees: [],
   customers: [],
@@ -136,6 +163,7 @@ export const useCashierStore = create<CashierStore>((set, get) => ({
     set({
       ready: true,
       currentRole: readRole(),
+      deviceMode: readDeviceMode(),
       services: demoServices,
       employees: demoEmployees,
       customers: demoCustomers,
@@ -152,6 +180,10 @@ export const useCashierStore = create<CashierStore>((set, get) => ({
   setRole: (role) => {
     localStorage.setItem(roleKey, role);
     set({ currentRole: role });
+  },
+  setDeviceMode: (mode) => {
+    localStorage.setItem(deviceModeKey, mode);
+    set({ deviceMode: mode });
   },
   clearRole: () => {
     localStorage.removeItem(roleKey);
@@ -302,6 +334,13 @@ export const useCashierStore = create<CashierStore>((set, get) => ({
       };
     });
   },
+  markBeforePhoto: (txId) => {
+    set((state) => ({
+      transactions: state.transactions.map((entry) =>
+        entry.id === txId ? { ...entry, beforePhoto: entry.beforePhoto ?? 'before-photo-ready' } : entry,
+      ),
+    }));
+  },
   runQuickQC: (txId) => {
     get().saveQC(txId, {
       body: 100,
@@ -313,12 +352,14 @@ export const useCashierStore = create<CashierStore>((set, get) => ({
       kekeringan: 100,
     });
   },
-  saveQC: (txId, details) => {
+  saveQC: (txId, details, afterPhoto) => {
     set((state) => {
       const target = state.transactions.find((entry) => entry.id === txId);
       if (!target) {
         return state;
       }
+
+      const normalizedDetails = normalizeQCDetails(details);
 
       const qcRecord: QCRecord = {
         id: crypto.randomUUID(),
@@ -327,17 +368,19 @@ export const useCashierStore = create<CashierStore>((set, get) => ({
         merk: target.merk,
         washer: target.washer,
         washerId: target.washerId,
-        score: scoreFromDetails(details),
+        score: scoreFromDetails(normalizedDetails),
         time: new Date().toISOString(),
-        details,
-        afterPhoto: target.afterPhoto ?? 'after-photo-ready',
+        details: normalizedDetails,
+        afterPhoto: afterPhoto ?? target.afterPhoto ?? 'after-photo-ready',
       };
 
       return {
         qcRecords: [qcRecord, ...state.qcRecords],
         pendingQC: state.pendingQC.filter((entry) => entry.txId !== txId),
         transactions: state.transactions.map((entry) =>
-          entry.id === txId ? { ...entry, afterPhoto: entry.afterPhoto ?? 'after-photo-ready' } : entry,
+          entry.id === txId
+            ? { ...entry, afterPhoto: afterPhoto ?? entry.afterPhoto ?? 'after-photo-ready' }
+            : entry,
         ),
         employees: state.employees.map((entry) =>
           entry.id === target.washerId ? { ...entry, activeMotorCount: Math.max(0, entry.activeMotorCount - 1) } : entry,

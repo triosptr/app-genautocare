@@ -5,7 +5,7 @@ import { useCashierStore } from '@/store/useCashierStore';
 import { formatCurrency, formatDateTime } from '@/utils/format';
 
 export default function DashboardPage() {
-  const { transactions, customers, employees } = useCashierStore();
+  const { transactions, customers, employees, deviceMode } = useCashierStore();
   const todayRevenue = transactions.reduce((sum, tx) => sum + tx.total, 0);
   const yesterdayRevenue = Math.round(todayRevenue * 0.88);
   const delta = yesterdayRevenue ? ((todayRevenue - yesterdayRevenue) / yesterdayRevenue) * 100 : 0;
@@ -35,7 +35,7 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <section className="grid gap-4 xl:grid-cols-4">
+      <section className={`grid gap-4 ${deviceMode === 'mobile' ? 'grid-cols-1' : deviceMode === 'ipad' ? 'md:grid-cols-2' : 'xl:grid-cols-4'}`}>
         <StatCard
           label="Pendapatan Hari Ini"
           value={formatCurrency(todayRevenue)}
@@ -46,7 +46,7 @@ export default function DashboardPage() {
         <StatCard label="Pelanggan" value={String(activeCustomers)} hint="Pelanggan yang tersimpan di aplikasi kasir." />
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+      <section className={`grid gap-6 ${deviceMode === 'mobile' ? 'grid-cols-1' : deviceMode === 'ipad' ? 'lg:grid-cols-1' : 'xl:grid-cols-[1.2fr_0.8fr]'}`}>
         <Panel title="Transaksi Terbaru" subtitle="Ringkas dan cepat dipantau dari meja kasir.">
           <div className="space-y-3">
             {transactions.slice(0, 5).map((tx) => {
@@ -107,7 +107,7 @@ export default function DashboardPage() {
         </Panel>
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-2">
+      <section className={`grid gap-6 ${deviceMode === 'mobile' ? 'grid-cols-1' : 'xl:grid-cols-2'}`}>
         <Panel title="Teknisi Aktif" subtitle="Petugas cuci yang paling sering dipilih hari ini.">
           <div className="space-y-3">
             {topTechnicians.map(([name, count], index) => (

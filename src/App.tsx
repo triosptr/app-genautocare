@@ -23,7 +23,7 @@ function LoadingScreen() {
 }
 
 export default function App() {
-  const { initialize, clearRole, mode, currentRole, ready } = useCashierStore();
+  const { initialize, clearRole, mode, currentRole, ready, deviceMode, setDeviceMode } = useCashierStore();
 
   useEffect(() => {
     initialize();
@@ -39,7 +39,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <AppShell mode={mode} role={currentRole} onSignOut={clearRole}>
+      <AppShell mode={mode} role={currentRole} deviceMode={deviceMode} onChangeDeviceMode={setDeviceMode} onSignOut={clearRole}>
         <div className="mt-6">
           <Routes>
             <Route path="/" element={<DashboardPage />} />

@@ -16,7 +16,7 @@ const tierStyles: Record<ServiceTier, string> = {
 };
 
 export default function CashierDetailPage() {
-  const { customers, services, employees, settings, createTransaction } = useCashierStore();
+  const { customers, services, employees, settings, createTransaction, deviceMode } = useCashierStore();
   const [search, setSearch] = useState('');
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>('');
   const [customerName, setCustomerName] = useState('');
@@ -111,7 +111,7 @@ export default function CashierDetailPage() {
 
   return (
     <div className="space-y-6">
-      <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+      <section className={`grid gap-6 ${deviceMode === 'mobile' ? 'grid-cols-1' : 'xl:grid-cols-[1.1fr_0.9fr]'}`}>
         <Panel title="1. Data Pelanggan" subtitle="Cari pelanggan lama atau isi data pelanggan baru.">
           <div className="space-y-4">
             <input
@@ -209,9 +209,9 @@ export default function CashierDetailPage() {
         </Panel>
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+      <section className={`grid gap-6 ${deviceMode === 'mobile' ? 'grid-cols-1' : 'xl:grid-cols-[1.1fr_0.9fr]'}`}>
         <Panel title="2. Pilih Layanan" subtitle="Tampilan layanan dibuat lebih rapi dan mudah dibaca.">
-          <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-4">
+          <div className={`grid gap-4 ${deviceMode === 'mobile' ? 'grid-cols-1' : deviceMode === 'ipad' ? 'md:grid-cols-2' : 'md:grid-cols-2 2xl:grid-cols-4'}`}>
             {services.map((service) => (
               <button
                 key={service.id}

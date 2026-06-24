@@ -1,5 +1,6 @@
 export type AppMode = 'demo' | 'hybrid';
 export type AppRole = 'owner' | 'manager_ops' | 'kasir';
+export type DeviceMode = 'desktop' | 'ipad' | 'mobile';
 export type EmployeeRole = 'cuci' | 'kasir' | 'manager';
 export type PaymentMethod = 'cash' | 'qris' | 'transfer';
 export type QueueStatus = 'Masuk' | 'Dicuci' | 'Selesai';
@@ -103,6 +104,16 @@ export interface QCRecord {
   time: string;
   details: QCDetail;
   afterPhoto: string | null;
+}
+
+export interface QCDetailDraft {
+  body?: QCRating;
+  velg?: QCRating;
+  spakbor?: QCRating;
+  jok?: QCRating;
+  spionLampu?: QCRating;
+  areaMesin?: QCRating;
+  kekeringan?: QCRating;
 }
 
 export interface PendingQC {

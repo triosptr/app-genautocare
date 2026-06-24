@@ -4,7 +4,7 @@ import { useCashierStore } from '@/store/useCashierStore';
 import { formatCurrency, formatDateTime } from '@/utils/format';
 
 export default function CustomersPage() {
-  const { customers, transactions, qcRecords, saveCustomer } = useCashierStore();
+  const { customers, transactions, qcRecords, saveCustomer, deviceMode } = useCashierStore();
   const [query, setQuery] = useState('');
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>(customers[0]?.id ?? '');
   const [name, setName] = useState('');
@@ -35,7 +35,7 @@ export default function CustomersPage() {
   }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+    <div className={`grid gap-6 ${deviceMode === 'mobile' ? 'grid-cols-1' : 'xl:grid-cols-[0.95fr_1.05fr]'}`}>
       <Panel title="Pelanggan" subtitle="Cari pelanggan dengan cepat dari meja kasir.">
         <input
           value={query}

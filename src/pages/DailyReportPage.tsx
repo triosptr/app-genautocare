@@ -4,7 +4,7 @@ import { useCashierStore } from '@/store/useCashierStore';
 import { formatCurrency } from '@/utils/format';
 
 export default function DailyReportPage() {
-  const { transactions, settings } = useCashierStore();
+  const { transactions, settings, deviceMode } = useCashierStore();
   const totalRevenue = transactions.reduce((sum, tx) => sum + tx.total, 0);
   const paymentGroups = ['cash', 'qris', 'transfer'].map((method) => ({
     method,
@@ -18,9 +18,9 @@ export default function DailyReportPage() {
   ].join('\n');
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+    <div className={`grid gap-6 ${deviceMode === 'mobile' ? 'grid-cols-1' : 'xl:grid-cols-[0.95fr_1.05fr]'}`}>
       <Panel title="Laporan Harian" subtitle="Ringkasan singkat transaksi kasir hari ini.">
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className={`grid gap-4 ${deviceMode === 'mobile' ? 'grid-cols-1' : 'md:grid-cols-3'}`}>
           <div className="brand-soft-card rounded-3xl p-4">
             <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Pendapatan</p>
             <p className="mt-3 font-display text-[28px] text-[#1535D4]">{formatCurrency(totalRevenue)}</p>

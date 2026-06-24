@@ -1,14 +1,15 @@
 import { MonitorUp, Search, ShoppingCart } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { QCModal } from '@/components/qc/QCModal';
 import { Panel } from '@/components/ui/Panel';
 import { useCashierStore } from '@/store/useCashierStore';
-import type { PaymentMethod } from '@/types/app';
+import type { PaymentMethod, Transaction } from '@/types/app';
 import { formatCurrency } from '@/utils/format';
 
 const paymentMethods: PaymentMethod[] = ['cash', 'qris', 'transfer'];
 
 export default function PosPage() {
-  const { customers, services, employees, settings, createTransaction, transactions, updateQueueStatus, runQuickQC } =
+  const { customers, services, employees, settings, createTransaction, transactions, updateQueueStatus, saveQC, markBeforePhoto, deviceMode } =
     useCashierStore();
   const [query, setQuery] = useState('');
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
@@ -20,6 +21,7 @@ export default function PosPage() {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('qris');
   const [usePoints, setUsePoints] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [qcTarget, setQCTarget] = useState<Transaction | null>(null);
 
   const filteredItems = useMemo(
     () => services.filter((item) => [item.name, item.tier].join(' ').toLowerCase().includes(query.toLowerCase())),
@@ -78,7 +80,7 @@ export default function PosPage() {
         </div>
       </Panel>
 
-      <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+      <div className={`grid gap-6 ${deviceMode === 'mobile' ? 'grid-cols-1' : 'xl:grid-cols-[1.15fr_0.85fr]'}`}>
         <Panel title="Pilih Data" subtitle="Cari pelanggan, layanan, dan teknisi." className="min-h-[720px]">
           <label className="brand-soft-card mb-4 flex items-center gap-3 rounded-2xl px-4 py-3">
             <Search className="h-4 w-4 text-slate-400" />
@@ -111,7 +113,7 @@ export default function PosPage() {
             <input value={merk} onChange={(event) => setMerk(event.target.value)} placeholder="Merk motor" className="brand-input rounded-2xl px-4 py-3" />
           </div>
 
-          <div className="mt-5 grid gap-3 md:grid-cols-2">
+          <div className={`mt-5 grid gap-3 ${deviceMode === 'mobile' ? 'grid-cols-1' : 'md:grid-cols-2'}`}>
             {filteredItems.map((item) => (
               <button
                 key={item.id}
@@ -215,11 +217,11 @@ export default function PosPage() {
         </Panel>
       </div>
 
-      <Panel title="Status Ringkas" subtitle="Pantau antrian dan pembayaran tanpa pindah halaman.">
-        <div className="grid gap-4 xl:grid-cols-3">
+      <Panel title="Status Ringkas" subtitle="Pantau antrian, pembayaran, dan QC tanpa pindah halaman.">
+        <div className={`grid gap-4 ${deviceMode === 'mobile' ? 'grid-cols-1' : 'xl:grid-cols-3'}`}>
           <div className="rounded-3xl border border-slate-200 bg-white p-5">
             <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Live Queue</p>
-            <div className="mt-4 grid gap-3 md:grid-cols-3">
+            <div className={`mt-4 grid gap-3 ${deviceMode === 'mobile' ? 'grid-cols-1' : 'md:grid-cols-3'}`}>
               <div className="rounded-2xl bg-[#eef4ff] p-4">
                 <p className="text-sm text-slate-600">Masuk</p>
                 <p className="mt-2 font-display text-3xl text-[#1535D4]">{queueStats.masuk}</p>
@@ -260,7 +262,7 @@ export default function PosPage() {
           </div>
         </div>
 
-        <div className="mt-6 grid gap-4 xl:grid-cols-3">
+        <div className={`mt-6 grid gap-4 ${deviceMode === 'mobile' ? 'grid-cols-1' : 'xl:grid-cols-3'}`}>
           {(['Masuk', 'Dicuci', 'Selesai'] as const).map((status) => (
             <div key={status} className="brand-soft-card rounded-3xl p-4">
               <p className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-900">{status}</p>
@@ -272,16 +274,33 @@ export default function PosPage() {
                     <div key={tx.id} className="rounded-2xl border border-slate-200 bg-[#f8fafc] p-3">
                       <p className="font-medium text-slate-900">{tx.plate}</p>
                       <p className="mt-1 text-sm text-slate-500">{tx.cust}</p>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {tx.beforePhoto && (
+                          <span className="rounded-full border border-[#1535D4]/10 bg-[#eef4ff] px-2 py-1 text-[10px] uppercase tracking-[0.14em] text-[#1535D4]">
+                            Foto Sebelum
+                          </span>
+                        )}
+                        {tx.afterPhoto && (
+                          <span className="rounded-full border border-[#C8F400]/20 bg-[#f5ffcf] px-2 py-1 text-[10px] uppercase tracking-[0.14em] text-[#516000]">
+                            Foto Sesudah
+                          </span>
+                        )}
+                      </div>
                       <div className="mt-3 flex gap-2">
                         {status === 'Masuk' && (
-                          <button type="button" onClick={() => updateQueueStatus(tx.id, 'Dicuci')} className="brand-secondary-btn rounded-xl px-3 py-2 text-xs">
-                            Mulai Cuci
-                          </button>
+                          <>
+                            <button type="button" onClick={() => markBeforePhoto(tx.id)} className="brand-secondary-btn rounded-xl px-3 py-2 text-xs">
+                              {tx.beforePhoto ? 'Ulang Foto' : 'Foto Sebelum'}
+                            </button>
+                            <button type="button" onClick={() => updateQueueStatus(tx.id, 'Dicuci')} className="brand-primary-btn rounded-xl px-3 py-2 text-xs">
+                              Mulai Cuci
+                            </button>
+                          </>
                         )}
                         {status === 'Dicuci' && (
                           <>
-                            <button type="button" onClick={() => runQuickQC(tx.id)} className="brand-secondary-btn rounded-xl px-3 py-2 text-xs">
-                              Quick QC
+                            <button type="button" onClick={() => setQCTarget(tx)} className="brand-secondary-btn rounded-xl px-3 py-2 text-xs">
+                              QC Popup
                             </button>
                             <button type="button" onClick={() => updateQueueStatus(tx.id, 'Selesai')} className="brand-primary-btn rounded-xl px-3 py-2 text-xs">
                               Selesai
@@ -289,7 +308,7 @@ export default function PosPage() {
                           </>
                         )}
                         {status === 'Selesai' && (
-                          <button type="button" onClick={() => runQuickQC(tx.id)} className="brand-secondary-btn rounded-xl px-3 py-2 text-xs">
+                          <button type="button" onClick={() => setQCTarget(tx)} className="brand-secondary-btn rounded-xl px-3 py-2 text-xs">
                             QC →
                           </button>
                         )}
@@ -301,6 +320,19 @@ export default function PosPage() {
           ))}
         </div>
       </Panel>
+
+      <QCModal
+        open={Boolean(qcTarget)}
+        transaction={qcTarget}
+        onClose={() => setQCTarget(null)}
+        onSubmit={(details, afterPhoto) => {
+          if (!qcTarget) {
+            return;
+          }
+          saveQC(qcTarget.id, details, afterPhoto);
+          setQCTarget(null);
+        }}
+      />
     </div>
   );
 }
