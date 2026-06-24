@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Panel } from '@/components/ui/Panel';
-import { createWhatsAppLink } from '@/lib/whatsapp';
+import { InvoiceModal } from '@/components/invoice/InvoiceModal';
 import { useCashierStore } from '@/store/useCashierStore';
 import type { PaymentMethod, ServiceTier } from '@/types/app';
 import { formatCurrency } from '@/utils/format';
@@ -27,6 +27,7 @@ export default function CashierDetailPage() {
   const [discount, setDiscount] = useState(0);
   const [payment, setPayment] = useState<PaymentMethod>('cash');
   const [lastTxId, setLastTxId] = useState<string | null>(null);
+  const [showInvoice, setShowInvoice] = useState(false);
 
   const activeEmployees = employees.filter((employee) => employee.present);
   const matchedCustomers = useMemo(
@@ -66,11 +67,7 @@ export default function CashierDetailPage() {
 
   function processTransaction() {
     if (!customerName || !plate || !merk || !washerId || selectedServices.length === 0) {
-      return;
-    }
-
-    const confirmed = window.confirm('Apakah data sudah benar?');
-    if (!confirmed) {
+      alert('Mohon lengkapi data pelanggan, layanan, dan teknisi terlebih dahulu.');
       return;
     }
 
@@ -87,6 +84,7 @@ export default function CashierDetailPage() {
     });
 
     setLastTxId(txId);
+    setShowInvoice(true);
     
     // reset form
     setCustomerName('');
@@ -99,22 +97,6 @@ export default function CashierDetailPage() {
     setSelectedCustomerId('');
   }
 
-  const invoiceMessage = currentTx
-    ? [
-        settings.businessName,
-        `No Invoice: ${currentTx.invoiceNo}`,
-        `Tanggal: ${new Date(currentTx.time).toLocaleDateString('id-ID')}`,
-        `Motor: ${currentTx.merk} - ${currentTx.plate}`,
-        `Layanan: ${currentTx.services.join(', ')}`,
-        `Subtotal: ${formatCurrency(currentTx.subtotal)}`,
-        `Diskon: ${formatCurrency(currentTx.disc)}`,
-        `Total: ${formatCurrency(currentTx.total)}`,
-        `Metode Bayar: ${currentTx.pay.toUpperCase()}`,
-        `Teknisi: ${currentTx.washer}`,
-        settings.receiptFooter,
-      ].join('\n')
-    : '';
-
   return (
     <div className="space-y-6">
       <section className={`grid gap-6 ${deviceMode === 'mobile' ? 'grid-cols-1' : 'xl:grid-cols-[1.1fr_0.9fr]'}`}>
@@ -126,22 +108,24 @@ export default function CashierDetailPage() {
               placeholder="Cari by nama, plat, atau nomor HP"
               className="brand-input w-full rounded-2xl px-4 py-3"
             />
-            <div className="grid gap-3 md:grid-cols-2">
-              {matchedCustomers.slice(0, 4).map((customer) => (
-                <button
-                  key={customer.id}
-                  type="button"
-                  onClick={() => selectCustomer(customer.id)}
-                  className="brand-outline-card rounded-[16px] p-4 text-left"
-                >
-                  <p className="font-medium text-slate-900">{customer.name}</p>
-                  <p className="mt-1 text-sm text-slate-500">{customer.phone}</p>
-                  <p className="mt-2 text-[11px] uppercase tracking-[0.16em] text-[#1535D4]">
-                    {customer.vehicles.length} kendaraan
-                  </p>
-                </button>
-              ))}
-            </div>
+            {search && matchedCustomers.length > 0 && (
+              <div className="grid gap-3 md:grid-cols-2">
+                {matchedCustomers.slice(0, 4).map((customer) => (
+                  <button
+                    key={customer.id}
+                    type="button"
+                    onClick={() => selectCustomer(customer.id)}
+                    className="brand-outline-card rounded-[16px] p-4 text-left"
+                  >
+                    <p className="font-medium text-slate-900">{customer.name}</p>
+                    <p className="mt-1 text-sm text-slate-500">{customer.phone}</p>
+                    <p className="mt-2 text-[11px] uppercase tracking-[0.16em] text-[#1535D4]">
+                      {customer.vehicles.length} kendaraan
+                    </p>
+                  </button>
+                ))}
+              </div>
+            )}
 
             <div className="grid gap-4 md:grid-cols-2">
               <input value={customerName} onChange={(event) => setCustomerName(event.target.value)} placeholder="Nama pelanggan" className="brand-input rounded-2xl px-4 py-3" />
@@ -199,16 +183,6 @@ export default function CashierDetailPage() {
             <button type="button" onClick={processTransaction} className="brand-primary-btn w-full rounded-2xl px-4 py-3 font-semibold">
               Proses & Buat Invoice
             </button>
-            {currentTx && (
-              <a
-                href={createWhatsAppLink(currentTx.cust === 'Walk In' ? '081234567890' : (phone || '081234567890'), invoiceMessage)}
-                target="_blank"
-                rel="noreferrer"
-                className="brand-secondary-btn block rounded-2xl px-4 py-3 text-center text-sm font-medium"
-              >
-                Kirim Invoice ke WhatsApp
-              </a>
-            )}
           </div>
         </Panel>
       </section>
@@ -255,6 +229,15 @@ export default function CashierDetailPage() {
           </div>
         </Panel>
       </section>
+
+      {showInvoice && currentTx && (
+        <InvoiceModal
+          transaction={currentTx}
+          businessName={settings.businessName}
+          receiptFooter={settings.receiptFooter}
+          onClose={() => setShowInvoice(false)}
+        />
+      )}
     </div>
   );
 }

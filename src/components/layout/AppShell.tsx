@@ -50,7 +50,7 @@ export function AppShell({ mode, role, deviceMode, onChangeDeviceMode, onSignOut
       ? 'max-w-[430px] grid-cols-1 shadow-[0_0_0_12px_#111318] rounded-[40px] overflow-hidden my-4 mx-auto min-h-[852px]'
       : deviceMode === 'ipad'
         ? 'max-w-[1024px] lg:grid-cols-[220px_minmax(0,1fr)] shadow-[0_0_0_12px_#111318] rounded-[40px] overflow-hidden my-6 mx-auto min-h-[768px]'
-        : 'w-full lg:grid-cols-[250px_minmax(0,1fr)]';
+        : 'w-full lg:grid-cols-[250px_minmax(0,1fr)] min-h-screen';
   const asideClass = deviceMode === 'mobile' ? 'p-4' : 'p-5';
   const navClass = deviceMode === 'mobile' ? 'grid grid-cols-2 gap-2' : 'space-y-2';
   const previewLabel = deviceMode === 'mobile' ? 'Mobile' : deviceMode === 'ipad' ? 'iPad' : 'Desktop';
@@ -58,8 +58,8 @@ export function AppShell({ mode, role, deviceMode, onChangeDeviceMode, onSignOut
 
   return (
     <div className={cn("min-h-screen bg-[#eef0f5] text-slate-900 flex flex-col", deviceMode === 'desktop' ? 'p-0' : 'p-4 md:p-6 lg:p-8')}>
-      <div className={cn('w-full grid bg-[#f7f8fb]', shellLayoutClass, deviceMode === 'desktop' && 'min-h-screen')}>
-        <aside className={cn('bg-[#1535D4] text-white', asideClass, deviceMode !== 'mobile' && deviceMode !== 'desktop' && 'rounded-br-[24px] rounded-tr-[24px]')}>
+      <div className={cn('w-full grid bg-[#f7f8fb]', shellLayoutClass)}>
+        <aside className={cn('bg-[#1535D4] text-white', asideClass, deviceMode === 'ipad' && 'rounded-br-[24px] rounded-tr-[24px]')}>
           <div className="rounded-[18px] bg-[#1535D4] px-4 py-4">
             <BrandLogo compact variant="on-dark" />
           </div>

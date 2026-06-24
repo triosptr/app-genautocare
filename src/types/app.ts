@@ -40,6 +40,7 @@ export interface Transaction {
   plate: string;
   merk: string;
   cust: string;
+  customerPhone: string;
   customerId: string;
   washerId: string;
   washer: string;

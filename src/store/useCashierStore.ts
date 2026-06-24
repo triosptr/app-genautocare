@@ -178,6 +178,7 @@ export const useCashierStore = create<CashierStore>((set, get) => ({
       plate: input.plate,
       merk: input.merk,
       cust: customerName,
+      customerPhone: input.phone,
       customerId,
       washerId: input.washerId,
       washer: washer?.name ?? 'Belum dipilih',
