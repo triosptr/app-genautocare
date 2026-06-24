@@ -152,13 +152,6 @@ export function AppShell({ mode, role, deviceMode, onChangeDeviceMode, onSignOut
                 <div className="mt-2 h-2 w-24 rounded-full bg-[#c8cfdd]" />
               </div>
               <div className="flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => navigate('/pos')}
-                  className="brand-primary-btn rounded-[12px] px-4 py-3 text-sm font-semibold"
-                >
-                  Buka POS
-                </button>
                 <div className="brand-primary-btn rounded-[12px] px-4 py-3 text-sm font-semibold text-[#111318]">{previewLabel}</div>
                 <div className="brand-blue-btn rounded-[12px] px-4 py-3 text-sm font-semibold">Live</div>
               </div>

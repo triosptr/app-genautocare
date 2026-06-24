@@ -1,6 +1,7 @@
-import type { DashboardMetric } from '@/types/app';
-
-interface StatCardProps extends DashboardMetric {
+interface StatCardProps {
+  label: string;
+  value: string;
+  hint: string;
   accent?: 'blue' | 'neutral' | 'dark';
 }
 

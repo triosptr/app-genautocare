@@ -15,14 +15,13 @@ export default function LoginPage() {
             Sistem kasir cuci motor yang lebih ringan
           </h1>
           <p className="mt-5 max-w-xl text-[15px] text-white/80">
-            Aplikasi sekarang diringkas untuk kebutuhan kasir: input transaksi, mode POS cepat, antrian, pelanggan,
-            dan laporan harian.
+            Aplikasi sekarang diringkas total: hanya untuk pendataan pelanggan, input nama teknisi, pembuatan invoice, dan dashboard penghasilan.
           </p>
 
           <div className="mt-8 grid gap-4 md:grid-cols-2">
             <div className="rounded-[18px] border border-white/10 bg-white/10 p-5">
               <p className="text-sm font-semibold text-white">Lebih ringkas</p>
-              <p className="mt-2 text-sm text-white/74">Menu difokuskan ke alur transaksi yang dipakai kasir setiap hari.</p>
+              <p className="mt-2 text-sm text-white/74">Menu difokuskan murni untuk pendataan dan invoice.</p>
             </div>
             <div className="rounded-[18px] border border-white/10 bg-white/10 p-5">
               <p className="text-sm font-semibold text-white">Blueprint baru</p>
@@ -45,8 +44,8 @@ export default function LoginPage() {
                 </div>
                 <div>
                   <p className="font-display text-2xl uppercase tracking-[0.06em] text-slate-900">Kasir</p>
-                  <p className="mt-1 text-sm text-[#1535D4]">Dashboard, transaksi, POS, antrian, pelanggan, laporan</p>
-                  <p className="mt-3 text-sm text-slate-600">Masuk langsung ke versi operasional kasir yang sudah disederhanakan.</p>
+                  <p className="mt-1 text-sm text-[#1535D4]">Dashboard, Transaksi, Pelanggan</p>
+                  <p className="mt-3 text-sm text-slate-600">Masuk langsung ke versi operasional kasir yang sudah dirombak total.</p>
                 </div>
               </div>
               <ArrowRight className="mt-1 h-5 w-5 text-[#1535D4]" />

@@ -1,15 +1,14 @@
-import { ArrowDownRight, ArrowUpRight, CalendarCheck2, ReceiptText, Warehouse } from 'lucide-react';
+import { ArrowDownRight, ArrowUpRight, ReceiptText, Users } from 'lucide-react';
 import { Panel } from '@/components/ui/Panel';
 import { StatCard } from '@/components/ui/StatCard';
 import { useCashierStore } from '@/store/useCashierStore';
 import { formatCurrency, formatDateTime } from '@/utils/format';
 
 export default function DashboardPage() {
-  const { transactions, customers, employees, deviceMode } = useCashierStore();
+  const { transactions, customers, deviceMode } = useCashierStore();
   const todayRevenue = transactions.reduce((sum, tx) => sum + tx.total, 0);
   const yesterdayRevenue = Math.round(todayRevenue * 0.88);
   const delta = yesterdayRevenue ? ((todayRevenue - yesterdayRevenue) / yesterdayRevenue) * 100 : 0;
-  const queueActive = transactions.filter((tx) => tx.status !== 'Selesai').length;
   const activeCustomers = customers.length;
   const qrisCount = transactions.filter((tx) => tx.pay === 'qris').length;
 
@@ -22,20 +21,9 @@ export default function DashboardPage() {
     .sort((a, b) => b[1] - a[1])
     .slice(0, 3);
 
-  const topServices = Object.entries(
-    transactions.reduce<Record<string, number>>((acc, tx) => {
-      tx.services.forEach((service) => {
-        acc[service] = (acc[service] ?? 0) + 1;
-      });
-      return acc;
-    }, {}),
-  )
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 4);
-
   return (
     <div className="space-y-6">
-      <section className={`grid gap-4 ${deviceMode === 'mobile' ? 'grid-cols-1' : deviceMode === 'ipad' ? 'md:grid-cols-2' : 'xl:grid-cols-4'}`}>
+      <section className={`grid gap-4 ${deviceMode === 'mobile' ? 'grid-cols-1' : deviceMode === 'ipad' ? 'md:grid-cols-2' : 'xl:grid-cols-3'}`}>
         <StatCard
           label="Pendapatan Hari Ini"
           value={formatCurrency(todayRevenue)}
@@ -43,7 +31,6 @@ export default function DashboardPage() {
           accent="blue"
         />
         <StatCard label="Transaksi" value={String(transactions.length)} hint="Jumlah transaksi pada tanggal aktif." accent="neutral" />
-        <StatCard label="Antrian Aktif" value={String(queueActive)} hint="Motor pada status Masuk dan Dicuci." accent="neutral" />
         <StatCard label="Pelanggan" value={String(activeCustomers)} hint="Pelanggan yang tersimpan di aplikasi kasir." accent="dark" />
       </section>
 
@@ -65,7 +52,7 @@ export default function DashboardPage() {
                     <div className="text-right">
                       <p className="font-display text-lg text-[#1535D4]">{formatCurrency(tx.total)}</p>
                       <p className="text-[11px] uppercase tracking-[0.16em] text-[#79809a]">
-                        {tx.pay} · {tx.status}
+                        {tx.pay}
                       </p>
                     </div>
                   </div>
@@ -86,31 +73,17 @@ export default function DashboardPage() {
               </div>
             </div>
             <div className="rounded-[16px] border border-[#d8dce7] bg-white p-5">
-              <Warehouse className="h-5 w-5 text-[#6b7f00]" />
+              <Users className="h-5 w-5 text-[#6b7f00]" />
               <p className="mt-4 text-sm uppercase tracking-[0.16em] text-[#79809a]">Transaksi QRIS</p>
               <p className="mt-2 text-2xl font-display text-slate-900">{qrisCount} transaksi</p>
-            </div>
-            <div className="rounded-[16px] border border-[#373A4A] bg-[#373A4A] p-5 text-white">
-              <CalendarCheck2 className="h-5 w-5 text-[#1535D4]" />
-              <p className="mt-4 text-sm uppercase tracking-[0.16em] text-white/60">Teknisi hadir</p>
-              <div className="mt-3 space-y-2">
-                {employees
-                  .filter((employee) => employee.role === 'cuci')
-                  .map((employee) => (
-                  <div key={employee.id} className="flex items-center justify-between text-sm">
-                    <span className="text-white/84">{employee.name}</span>
-                    <span className="text-white">{employee.present ? `Masuk ${employee.in}` : 'Belum hadir'}</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </Panel>
       </section>
 
-      <section className={`grid gap-6 ${deviceMode === 'mobile' ? 'grid-cols-1' : 'xl:grid-cols-2'}`}>
-        <Panel title="Teknisi Aktif" subtitle="Petugas cuci yang paling sering dipilih hari ini.">
-          <div className="space-y-3">
+      <section className="grid gap-6">
+        <Panel title="Teknisi Aktif" subtitle="Petugas yang paling sering dipilih hari ini.">
+          <div className="grid gap-4 md:grid-cols-3">
             {topTechnicians.map(([name, count], index) => (
               <div key={name} className="brand-outline-card flex items-center justify-between rounded-[16px] p-4">
                 <div>
@@ -118,17 +91,6 @@ export default function DashboardPage() {
                   <p className="mt-2 font-medium text-slate-900">{name}</p>
                 </div>
                 <p className="font-display text-[28px] text-[#1535D4]">{count}</p>
-              </div>
-            ))}
-          </div>
-        </Panel>
-
-        <Panel title="Layanan Terlaris" subtitle="Pilihan layanan yang paling sering masuk ke transaksi.">
-          <div className="space-y-3">
-            {topServices.map(([name, count]) => (
-              <div key={name} className="brand-outline-card flex items-center justify-between rounded-[16px] p-4">
-                <span className="text-slate-700">{name}</span>
-                <span className="font-display text-2xl text-[#1535D4]">{count}</span>
               </div>
             ))}
           </div>

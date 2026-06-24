@@ -4,7 +4,7 @@ import { useCashierStore } from '@/store/useCashierStore';
 import { formatCurrency, formatDateTime } from '@/utils/format';
 
 export default function CustomersPage() {
-  const { customers, transactions, qcRecords, saveCustomer, deviceMode } = useCashierStore();
+  const { customers, transactions, saveCustomer, deviceMode } = useCashierStore();
   const [query, setQuery] = useState('');
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>(customers[0]?.id ?? '');
   const [name, setName] = useState('');
@@ -19,7 +19,6 @@ export default function CustomersPage() {
 
   const selectedCustomer = customers.find((customer) => customer.id === selectedCustomerId) ?? filteredCustomers[0] ?? null;
   const customerTransactions = transactions.filter((tx) => tx.customerId === selectedCustomer?.id);
-  const customerQC = qcRecords.filter((qc) => selectedCustomer?.vehicles.some((vehicle) => vehicle.plate === qc.plate));
 
   function handleSave() {
     if (!name || !phone || !plate || !merk) {
@@ -58,9 +57,6 @@ export default function CustomersPage() {
                   <p className="font-medium text-slate-900">{customer.name}</p>
                   <p className="mt-1 text-sm text-slate-500">{customer.phone}</p>
                 </div>
-                <span className="rounded-full border border-[#1535D4]/12 px-2 py-1 text-[11px] uppercase tracking-[0.16em] text-[#1535D4]">
-                  {customer.points} poin
-                </span>
               </div>
               <div className="mt-4 flex items-center justify-between text-sm text-slate-600">
                 <span>{customer.visits} kunjungan</span>
@@ -81,7 +77,7 @@ export default function CustomersPage() {
               <div className="brand-soft-card rounded-3xl p-4">
                 <p className="font-display text-[28px] text-slate-900">{selectedCustomer.name}</p>
                 <p className="mt-2 text-sm text-slate-600">{selectedCustomer.phone}</p>
-                <div className="mt-4 grid gap-3 md:grid-cols-3">
+                <div className="mt-4 grid gap-3 md:grid-cols-2">
                   <div className="rounded-2xl bg-[#eef4ff] p-4">
                     <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Kunjungan</p>
                     <p className="mt-2 font-display text-2xl text-[#1535D4]">{selectedCustomer.visits}</p>
@@ -89,10 +85,6 @@ export default function CustomersPage() {
                   <div className="rounded-2xl bg-[#f8fafc] p-4">
                     <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Total belanja</p>
                     <p className="mt-2 font-display text-2xl text-slate-900">{formatCurrency(selectedCustomer.spend)}</p>
-                  </div>
-                  <div className="rounded-2xl bg-[#f5ffcf] p-4">
-                    <p className="text-[11px] uppercase tracking-[0.16em] text-[#6b7f00]">Poin</p>
-                    <p className="mt-2 font-display text-2xl text-slate-900">{selectedCustomer.points}</p>
                   </div>
                 </div>
               </div>
@@ -104,16 +96,6 @@ export default function CustomersPage() {
                     <div key={vehicle.plate} className="rounded-2xl border border-slate-200 bg-[#f8fafc] p-4">
                       <p className="font-medium text-slate-900">{vehicle.plate}</p>
                       <p className="mt-1 text-sm text-slate-600">{vehicle.merk}</p>
-                      <div className="mt-3 space-y-2">
-                        {customerQC
-                          .filter((qc) => qc.plate === vehicle.plate)
-                          .map((qc) => (
-                            <div key={qc.id} className="flex items-center justify-between text-sm text-slate-600">
-                              <span>{formatDateTime(qc.time)} · {qc.washer}</span>
-                              <span className="text-[#1535D4]">Skor {qc.score}</span>
-                            </div>
-                          ))}
-                      </div>
                     </div>
                   ))}
                 </div>

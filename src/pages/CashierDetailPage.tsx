@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Panel } from '@/components/ui/Panel';
 import { createWhatsAppLink } from '@/lib/whatsapp';
 import { useCashierStore } from '@/store/useCashierStore';
@@ -27,10 +26,9 @@ export default function CashierDetailPage() {
   const [washerId, setWasherId] = useState('');
   const [discount, setDiscount] = useState(0);
   const [payment, setPayment] = useState<PaymentMethod>('cash');
-  const [usePoints, setUsePoints] = useState(false);
   const [lastTxId, setLastTxId] = useState<string | null>(null);
 
-  const activeEmployees = employees.filter((employee) => employee.role === 'cuci' && employee.present);
+  const activeEmployees = employees.filter((employee) => employee.present);
   const matchedCustomers = useMemo(
     () =>
       customers.filter((customer) =>
@@ -42,10 +40,9 @@ export default function CashierDetailPage() {
     [customers, search],
   );
 
-  const selectedCustomer = customers.find((customer) => customer.id === selectedCustomerId) ?? null;
   const pickedServices = services.filter((service) => selectedServices.includes(service.id));
   const subtotal = pickedServices.reduce((sum, service) => sum + service.price, 0);
-  const total = Math.max(0, subtotal - discount - (usePoints && (selectedCustomer?.points ?? 0) >= settings.pointRedeemThreshold ? pickedServices[0]?.price ?? 0 : 0));
+  const total = Math.max(0, subtotal - discount);
   const currentTx = lastTxId ? useCashierStore.getState().transactions.find((tx) => tx.id === lastTxId) : null;
 
   function selectCustomer(customerId: string) {
@@ -87,15 +84,24 @@ export default function CashierDetailPage() {
       washerId,
       paymentMethod: payment,
       discount,
-      usePoints,
     });
 
     setLastTxId(txId);
+    
+    // reset form
+    setCustomerName('');
+    setPhone('');
+    setPlate('');
+    setMerk('');
+    setSelectedServices([]);
+    setWasherId('');
+    setDiscount(0);
+    setSelectedCustomerId('');
   }
 
   const invoiceMessage = currentTx
     ? [
-        'GEN AUTO CARE',
+        settings.businessName,
         `No Invoice: ${currentTx.invoiceNo}`,
         `Tanggal: ${new Date(currentTx.time).toLocaleDateString('id-ID')}`,
         `Motor: ${currentTx.merk} - ${currentTx.plate}`,
@@ -105,7 +111,7 @@ export default function CashierDetailPage() {
         `Total: ${formatCurrency(currentTx.total)}`,
         `Metode Bayar: ${currentTx.pay.toUpperCase()}`,
         `Teknisi: ${currentTx.washer}`,
-        'Terima kasih telah menggunakan GEN AUTO CARE.',
+        settings.receiptFooter,
       ].join('\n')
     : '';
 
@@ -131,7 +137,7 @@ export default function CashierDetailPage() {
                   <p className="font-medium text-slate-900">{customer.name}</p>
                   <p className="mt-1 text-sm text-slate-500">{customer.phone}</p>
                   <p className="mt-2 text-[11px] uppercase tracking-[0.16em] text-[#1535D4]">
-                    {customer.vehicles.length} kendaraan · {customer.points} poin
+                    {customer.vehicles.length} kendaraan
                   </p>
                 </button>
               ))}
@@ -156,15 +162,13 @@ export default function CashierDetailPage() {
               <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Diskon</p>
               <input
                 type="number"
-                value={discount}
+                value={discount || ''}
                 onChange={(event) => setDiscount(Number(event.target.value))}
+                placeholder="0"
                 className="brand-input mt-3 w-full rounded-2xl px-4 py-3"
               />
             </div>
-            <label className="brand-outline-card flex items-center gap-3 rounded-[16px] px-4 py-3 text-sm text-slate-700">
-              <input type="checkbox" checked={usePoints} onChange={(event) => setUsePoints(event.target.checked)} />
-              Gunakan poin pelanggan jika mencapai {settings.pointRedeemThreshold} poin
-            </label>
+            
             <div className="grid gap-3 md:grid-cols-3">
               {paymentMethods.map((method) => (
                 <button
@@ -172,7 +176,7 @@ export default function CashierDetailPage() {
                   type="button"
                   onClick={() => setPayment(method)}
                   className={`rounded-[12px] border px-4 py-3 text-sm font-semibold transition ${
-                    payment === method ? 'border-[#1535D4] bg-white text-[#1535D4] shadow-[inset_0_0_0_1px_#1535D4]' : 'border-slate-300 bg-[#f7f8fb] text-slate-700'
+                    payment === method ? 'border-[#1535D4] bg-white text-[#1535D4] shadow-[inset_0_0_0_1px_#1535D4]' : 'border-slate-300 bg-[#f8f9fc] text-slate-700'
                   }`}
                 >
                   {method.toUpperCase()}
@@ -193,11 +197,11 @@ export default function CashierDetailPage() {
               </div>
             </div>
             <button type="button" onClick={processTransaction} className="brand-primary-btn w-full rounded-2xl px-4 py-3 font-semibold">
-              Proses Transaksi
+              Proses & Buat Invoice
             </button>
             {currentTx && (
               <a
-                href={createWhatsAppLink(phone || '081234567890', invoiceMessage)}
+                href={createWhatsAppLink(currentTx.cust === 'Walk In' ? '081234567890' : (phone || '081234567890'), invoiceMessage)}
                 target="_blank"
                 rel="noreferrer"
                 className="brand-secondary-btn block rounded-2xl px-4 py-3 text-center text-sm font-medium"
@@ -210,14 +214,14 @@ export default function CashierDetailPage() {
       </section>
 
       <section className={`grid gap-6 ${deviceMode === 'mobile' ? 'grid-cols-1' : 'xl:grid-cols-[1.1fr_0.9fr]'}`}>
-        <Panel title="2. Pilih Layanan" subtitle="Tampilan layanan dibuat lebih rapi dan mudah dibaca.">
+        <Panel title="2. Pilih Layanan" subtitle="Layanan yang akan masuk ke invoice.">
           <div className={`grid gap-4 ${deviceMode === 'mobile' ? 'grid-cols-1' : deviceMode === 'ipad' ? 'md:grid-cols-2' : 'md:grid-cols-2 2xl:grid-cols-4'}`}>
             {services.map((service) => (
               <button
                 key={service.id}
                 type="button"
                 onClick={() => toggleService(service.id)}
-                className={`flex min-h-[220px] flex-col justify-between rounded-[16px] border p-4 text-left transition-all duration-200 hover:-translate-y-1 hover:shadow-lg ${tierStyles[service.tier]} ${
+                className={`flex min-h-[160px] flex-col justify-between rounded-[16px] border p-4 text-left transition-all duration-200 hover:-translate-y-1 hover:shadow-lg ${tierStyles[service.tier]} ${
                   selectedServices.includes(service.id) ? 'ring-2 ring-[#C8F400] ring-offset-2 ring-offset-[#eef0f5]' : ''
                 }`}
               >
@@ -227,16 +231,13 @@ export default function CashierDetailPage() {
                 </div>
                 <div className="mt-5 space-y-2">
                   <p className="font-display text-[22px] leading-none font-bold md:text-[24px]">{formatCurrency(service.price)}</p>
-                  <p className="text-[10px] uppercase tracking-[0.12em] opacity-90">
-                    Komisi {service.kType === 'flat' ? formatCurrency(service.kVal) : `${service.kVal}%`}
-                  </p>
                 </div>
               </button>
             ))}
           </div>
         </Panel>
 
-        <Panel title="3. Pilih Teknisi" subtitle="Hanya teknisi hadir yang bisa dipilih.">
+        <Panel title="3. Pilih Teknisi" subtitle="Pilih nama teknisi yang menangani.">
           <div className="space-y-3">
             {activeEmployees.map((employee) => (
               <button
@@ -247,22 +248,13 @@ export default function CashierDetailPage() {
                   washerId === employee.id ? 'border-[#1535D4] bg-white shadow-[inset_0_0_0_1px_#1535D4]' : ''
                 }`}
               >
-                <div>
-                  <p className="font-medium text-slate-900">{employee.name}</p>
-                  <p className="mt-1 text-sm text-slate-500">{employee.activeMotorCount} motor aktif</p>
-                </div>
-                <span className="text-[11px] uppercase tracking-[0.16em] text-[#1535D4]">Hadir</span>
+                <p className="font-medium text-slate-900">{employee.name}</p>
+                <span className="text-[11px] uppercase tracking-[0.16em] text-[#1535D4]">Pilih</span>
               </button>
             ))}
           </div>
         </Panel>
       </section>
-
-      <Panel title="Akses Cepat" subtitle="Buka POS bila ingin transaksi cepat di satu layar.">
-        <Link to="/pos" className="brand-primary-btn inline-flex rounded-2xl px-5 py-3 text-sm font-semibold">
-          Buka POS
-        </Link>
-      </Panel>
     </div>
   );
 }

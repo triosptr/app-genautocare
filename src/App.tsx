@@ -5,10 +5,7 @@ import { AppShell } from '@/components/layout/AppShell';
 import CashierDetailPage from '@/pages/CashierDetailPage';
 import CustomersPage from '@/pages/CustomersPage';
 import DashboardPage from '@/pages/DashboardPage';
-import DailyReportPage from '@/pages/DailyReportPage';
 import LoginPage from '@/pages/LoginPage';
-import PosPage from '@/pages/PosPage';
-import QueuePage from '@/pages/QueuePage';
 import { useCashierStore } from '@/store/useCashierStore';
 
 function LoadingScreen() {
@@ -44,10 +41,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<DashboardPage />} />
             <Route path="/cashier" element={<CashierDetailPage />} />
-            <Route path="/pos" element={<PosPage />} />
-            <Route path="/queue" element={<QueuePage />} />
             <Route path="/customers" element={<CustomersPage />} />
-            <Route path="/reports/daily" element={<DailyReportPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
