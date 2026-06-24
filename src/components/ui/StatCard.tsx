@@ -16,7 +16,7 @@ export function StatCard({ label, value, hint, accent = 'neutral' }: StatCardPro
   const hintClass = accent === 'neutral' ? 'text-slate-500' : 'text-white/72';
 
   return (
-    <article className={`rounded-[16px] border p-5 shadow-[0_12px_30px_rgba(0,0,0,0.04)] ${cardClass}`}>
+    <article className={`rounded-[16px] border p-5 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.04),_0_1px_3px_rgba(0,0,0,0.02)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_8px_24px_-4px_rgba(0,0,0,0.06)] ${cardClass}`}>
       <p className={`text-[11px] uppercase tracking-[0.18em] ${labelClass}`}>{label}</p>
       <p className={`mt-4 font-display text-[32px] leading-none ${valueClass}`}>{value}</p>
       <p className={`mt-4 text-[13px] ${hintClass}`}>{hint}</p>

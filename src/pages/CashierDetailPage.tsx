@@ -126,7 +126,7 @@ export default function CashierDetailPage() {
                   key={customer.id}
                   type="button"
                   onClick={() => selectCustomer(customer.id)}
-                  className="brand-outline-card rounded-[16px] p-4 text-left transition hover:border-[#1535D4]/24 hover:bg-white"
+                  className="brand-outline-card rounded-[16px] p-4 text-left"
                 >
                   <p className="font-medium text-slate-900">{customer.name}</p>
                   <p className="mt-1 text-sm text-slate-500">{customer.phone}</p>
@@ -217,7 +217,7 @@ export default function CashierDetailPage() {
                 key={service.id}
                 type="button"
                 onClick={() => toggleService(service.id)}
-                className={`flex min-h-[220px] flex-col justify-between rounded-[16px] border p-4 text-left transition ${tierStyles[service.tier]} ${
+                className={`flex min-h-[220px] flex-col justify-between rounded-[16px] border p-4 text-left transition-all duration-200 hover:-translate-y-1 hover:shadow-lg ${tierStyles[service.tier]} ${
                   selectedServices.includes(service.id) ? 'ring-2 ring-[#C8F400] ring-offset-2 ring-offset-[#eef0f5]' : ''
                 }`}
               >

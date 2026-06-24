@@ -146,10 +146,9 @@ export function AppShell({ mode, role, deviceMode, onChangeDeviceMode, onSignOut
         </aside>
 
         <div className="space-y-3">
-          <header className="rounded-[24px] bg-[#f7f8fb] p-4 shadow-[0_12px_32px_rgba(0,0,0,0.05)]">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-              <div>
-                <div className="h-3 w-36 rounded-full bg-[#212533]" />
+          <header className="brand-panel flex flex-col gap-4 rounded-[24px] p-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <div className="h-3 w-36 rounded-full bg-[#212533]" />
                 <div className="mt-2 h-2 w-24 rounded-full bg-[#c8cfdd]" />
               </div>
               <div className="flex flex-wrap items-center gap-3">
@@ -163,7 +162,6 @@ export function AppShell({ mode, role, deviceMode, onChangeDeviceMode, onSignOut
                 <div className="brand-primary-btn rounded-[12px] px-4 py-3 text-sm font-semibold text-[#111318]">{previewLabel}</div>
                 <div className="brand-blue-btn rounded-[12px] px-4 py-3 text-sm font-semibold">Live</div>
               </div>
-            </div>
           </header>
 
           <div className="px-1 text-center text-[10px] uppercase tracking-[0.24em] text-white/24">
