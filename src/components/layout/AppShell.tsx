@@ -47,19 +47,19 @@ export function AppShell({ mode, role, deviceMode, onChangeDeviceMode, onSignOut
   const pageName = links.find((link) => link.to === location.pathname)?.label ?? 'Dashboard';
   const shellLayoutClass =
     deviceMode === 'mobile'
-      ? 'max-w-[430px] grid-cols-1'
+      ? 'max-w-[430px] grid-cols-1 shadow-[0_0_0_12px_#111318] rounded-[40px] overflow-hidden my-4 mx-auto min-h-[852px]'
       : deviceMode === 'ipad'
-        ? 'max-w-[1024px] lg:grid-cols-[220px_minmax(0,1fr)]'
-        : 'max-w-[1480px] lg:grid-cols-[250px_minmax(0,1fr)]';
+        ? 'max-w-[1024px] lg:grid-cols-[220px_minmax(0,1fr)] shadow-[0_0_0_12px_#111318] rounded-[40px] overflow-hidden my-6 mx-auto min-h-[768px]'
+        : 'w-full lg:grid-cols-[250px_minmax(0,1fr)]';
   const asideClass = deviceMode === 'mobile' ? 'p-4' : 'p-5';
   const navClass = deviceMode === 'mobile' ? 'grid grid-cols-2 gap-2' : 'space-y-2';
   const previewLabel = deviceMode === 'mobile' ? 'Mobile' : deviceMode === 'ipad' ? 'iPad' : 'Desktop';
   const nowLabel = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(21,53,212,0.16),_transparent_18%),linear-gradient(180deg,_#05070d_0%,_#0b1020_100%)] text-slate-900">
-      <div className={cn('mx-auto grid min-h-screen gap-3 rounded-[32px] border border-white/8 bg-[linear-gradient(135deg,_rgba(12,16,28,0.96)_0%,_rgba(15,20,34,0.98)_100%)] p-3 shadow-[0_24px_80px_-40px_rgba(0,0,0,0.85)]', shellLayoutClass)}>
-        <aside className={cn('rounded-[24px] bg-[#1535D4] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]', asideClass)}>
+    <div className={cn("min-h-screen bg-[#eef0f5] text-slate-900 flex flex-col", deviceMode === 'desktop' ? 'p-0' : 'p-4 md:p-6 lg:p-8')}>
+      <div className={cn('w-full grid bg-[#f7f8fb]', shellLayoutClass, deviceMode === 'desktop' && 'min-h-screen')}>
+        <aside className={cn('bg-[#1535D4] text-white', asideClass, deviceMode !== 'mobile' && deviceMode !== 'desktop' && 'rounded-br-[24px] rounded-tr-[24px]')}>
           <div className="rounded-[18px] bg-[#1535D4] px-4 py-4">
             <BrandLogo compact variant="on-dark" />
           </div>
@@ -145,34 +145,34 @@ export function AppShell({ mode, role, deviceMode, onChangeDeviceMode, onSignOut
           )}
         </aside>
 
-        <div className="space-y-3">
+        <div className={cn("space-y-6", deviceMode === 'desktop' ? 'p-8 max-w-7xl mx-auto w-full' : 'py-6 pr-6')}>
           <header className="brand-panel flex flex-col gap-4 rounded-[24px] p-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <div className="h-3 w-36 rounded-full bg-[#212533]" />
-                <div className="mt-2 h-2 w-24 rounded-full bg-[#c8cfdd]" />
-              </div>
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="brand-primary-btn rounded-[12px] px-4 py-3 text-sm font-semibold text-[#111318]">{previewLabel}</div>
-                <div className="brand-blue-btn rounded-[12px] px-4 py-3 text-sm font-semibold">Live</div>
-              </div>
+              <div className="h-3 w-36 rounded-full bg-slate-200" />
+              <div className="mt-2 h-2 w-24 rounded-full bg-slate-100" />
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="brand-primary-btn rounded-[12px] px-4 py-3 text-sm font-semibold text-[#111318]">{previewLabel}</div>
+              <div className="brand-blue-btn rounded-[12px] px-4 py-3 text-sm font-semibold">Live</div>
+            </div>
           </header>
 
           <div className="px-1 text-center text-[10px] uppercase tracking-[0.24em] text-white/24">
             Header · judul + jam + tombol aksi
           </div>
 
-          <main className="brand-canvas rounded-[24px] p-4 md:p-7">
-            <div className="mb-5 flex flex-col gap-3 border-b border-slate-300/70 pb-4 lg:flex-row lg:items-end lg:justify-between">
+          <main className="brand-panel rounded-[24px] p-4 md:p-7">
+            <div className="mb-5 flex flex-col gap-3 border-b border-slate-200 pb-4 lg:flex-row lg:items-end lg:justify-between">
               <div>
-                <p className="brand-eyebrow text-[#79809a]">GEN Auto Care</p>
-                <h1 className="mt-2 brand-title text-[26px] text-[#111318]">{pageName}</h1>
+                <p className="brand-eyebrow text-slate-500">GEN Auto Care</p>
+                <h1 className="mt-2 brand-title text-[26px] text-slate-900">{pageName}</h1>
               </div>
-              <div className="flex flex-wrap items-center gap-3 text-sm text-[#60677a]">
-                <div className="inline-flex items-center gap-2 rounded-[12px] border border-slate-300 bg-white px-4 py-2">
+              <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
+                <div className="inline-flex items-center gap-2 rounded-[12px] border border-slate-200 bg-white px-4 py-2">
                   <Clock3 className="h-4 w-4 text-[#1535D4]" />
                   <span>{nowLabel}</span>
                 </div>
-                <div className="inline-flex items-center gap-2 rounded-[12px] border border-slate-300 bg-white px-4 py-2">
+                <div className="inline-flex items-center gap-2 rounded-[12px] border border-slate-200 bg-white px-4 py-2">
                   <Bell className="h-4 w-4 text-[#1535D4]" />
                   <span>{previewLabel}</span>
                 </div>
