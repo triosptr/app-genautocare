@@ -1,74 +1,197 @@
-export type AppMode = 'demo' | 'live';
-export type CatalogItemType = 'product' | 'service';
-export type PaymentMethod = 'cash' | 'card' | 'transfer' | 'qris';
-export type OrderStatus = 'completed' | 'refunded' | 'void';
+export type AppMode = 'demo' | 'hybrid';
+export type AppRole = 'owner' | 'manager_ops' | 'kasir';
+export type EmployeeRole = 'cuci' | 'kasir' | 'manager';
+export type PaymentMethod = 'cash' | 'qris' | 'transfer';
+export type QueueStatus = 'Masuk' | 'Dicuci' | 'Selesai';
+export type CommissionType = 'flat' | 'persen';
+export type ServiceTier = 'BASIC' | 'STANDARD' | 'PREMIUM' | 'ELITE';
+export type StockMoveType = 'in' | 'out';
+export type CostType = 'bulanan' | 'harian';
+export type ChecklistState = 'Siap' | 'Perlu Restok';
+export type QCRating = 40 | 70 | 100;
 
-export interface CatalogItem {
+export interface RoleCard {
+  id: AppRole;
+  label: string;
+  short: string;
+  description: string;
+}
+
+export interface Service {
   id: string;
   name: string;
-  item_type: CatalogItemType;
-  sku: string | null;
-  category: string;
   price: number;
-  cost: number | null;
-  stock_qty: number | null;
-  is_active: boolean;
-  created_at: string;
+  tier: ServiceTier;
+  kType: CommissionType;
+  kVal: number;
+  modalItems: string[];
+  active: boolean;
+}
+
+export interface Employee {
+  id: string;
+  name: string;
+  role: EmployeeRole;
+  present: boolean;
+  in: string | null;
+  out: string | null;
+  photo: string | null;
+  active: boolean;
+  activeMotorCount: number;
+}
+
+export interface Vehicle {
+  plate: string;
+  merk: string;
 }
 
 export interface Customer {
   id: string;
   name: string;
-  phone: string | null;
-  vehicle_plate: string | null;
-  vehicle_model: string | null;
-  notes: string | null;
-  created_at: string;
+  phone: string;
+  plate: string;
+  visits: number;
+  spend: number;
+  points: number;
+  vehicles: Vehicle[];
 }
 
-export interface Order {
+export interface Transaction {
   id: string;
-  order_number: string;
-  customer_id: string | null;
+  invoiceNo: string;
+  time: string;
+  txDate: string;
+  plate: string;
+  merk: string;
+  cust: string;
+  customerId: string;
+  washerId: string;
+  washer: string;
+  services: string[];
+  serviceIds: string[];
   subtotal: number;
-  discount: number;
-  tax: number;
   total: number;
-  payment_method: PaymentMethod;
-  status: OrderStatus;
-  cashier_user_id: string;
-  notes: string | null;
-  created_at: string;
+  komisi: number;
+  pay: PaymentMethod;
+  status: QueueStatus;
+  disc: number;
+  pointsUsed: boolean;
+  pointsEarned: number;
+  finishedAt: string | null;
+  beforePhoto: string | null;
+  afterPhoto: string | null;
 }
 
-export interface OrderItem {
+export interface QCDetail {
+  body: QCRating;
+  velg: QCRating;
+  spakbor: QCRating;
+  jok: QCRating;
+  spionLampu: QCRating;
+  areaMesin: QCRating;
+  kekeringan: QCRating;
+}
+
+export interface QCRecord {
   id: string;
-  order_id: string;
-  catalog_item_id: string | null;
-  item_name: string;
-  item_type: CatalogItemType;
-  quantity: number;
-  unit_price: number;
-  line_total: number;
+  txId: string;
+  plate: string;
+  merk: string;
+  washer: string;
+  washerId: string;
+  score: number;
+  time: string;
+  details: QCDetail;
+  afterPhoto: string | null;
 }
 
-export interface CartItem {
+export interface PendingQC {
+  id: string;
+  txId: string;
+  plate: string;
+  merk: string;
+  washer: string;
+  washerId: string;
+  time: string;
+  cust: string;
+}
+
+export interface InventoryItem {
   id: string;
   name: string;
-  itemType: CatalogItemType;
-  quantity: number;
-  price: number;
-  lineTotal: number;
+  unit: string;
+  stock: number;
+  min: number;
+  costPrice: number;
+  litersPerUnit: number;
+  motorsPerLiter: number;
+  autoDeduct: boolean;
+}
+
+export interface StockMove {
+  id: string;
+  itemId: string;
+  type: StockMoveType;
+  qty: number;
+  note: string;
+  by: string;
+  time: string;
+  status: 'pending' | 'approved';
+  verified: boolean;
+}
+
+export interface OpsCost {
+  id: string;
+  name: string;
+  amount: number;
+  type: CostType;
+  date: string;
+}
+
+export interface DailyProductCheck {
+  id: string;
+  label: string;
+  state: ChecklistState;
+}
+
+export interface TxPhotos {
+  txId: string;
+  before: string | null;
+  after: string | null;
 }
 
 export interface DashboardMetric {
   label: string;
   value: string;
   hint: string;
+  tone?: 'blue' | 'lime' | 'muted';
 }
 
-export interface SettingsState {
+export interface QueueColumnStat {
+  key: QueueStatus;
+  label: string;
+  count: number;
+}
+
+export interface ServiceCartItem {
+  id: string;
+  name: string;
+  tier: ServiceTier;
+  price: number;
+  commission: number;
+}
+
+export interface PaymentInfo {
+  bankName: string;
+  bankNo: string;
+  bankBank: string;
+  qrImage: string;
+}
+
+export interface SettingsState extends PaymentInfo {
   businessName: string;
-  taxRate: number;
   receiptFooter: string;
+  pointRewardPerTx: number;
+  pointRedeemThreshold: number;
+  services: Service[];
 }

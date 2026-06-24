@@ -1,76 +1,88 @@
 ## 1. Product Overview
-GEN AUTOCARE Cashier is a desktop-first point-of-sale web app for an auto care business that combines fast checkout, service catalog management, customer history, and daily revenue visibility in one place.
-- It helps cashiers and owners reduce manual bookkeeping, speed up service transactions, and keep product and customer records consistent.
-- Its value is a lightweight operational system that can be deployed quickly with Vercel and scaled through Supabase without a custom backend in the first release.
+GEN AUTO CARE is a cashier and motorcycle wash operations system that combines transaction handling, live service queue, quality check, inventory, attendance, customer loyalty, and financial recap in a single application.
+- The product is designed for three operational roles: Owner, Manager Ops, and Cashier, with a fast demo login based on role cards rather than passwords.
+- The current web implementation should collaborate with the existing React, Vercel, and Supabase foundation, while the long-term production target can also support Google Apps Script plus Spreadsheet as a backend integration path.
 
 ## 2. Core Features
 
 ### 2.1 User Roles
-| Role | Registration Method | Core Permissions |
-|------|---------------------|------------------|
-| Owner/Admin | Supabase Auth email sign-in | Manage catalog, review reports, manage settings, view all transactions |
-| Cashier | Supabase Auth email sign-in | Create orders, manage customers during checkout, view active transaction history |
+| Role | Login Method | Core Permissions |
+|------|--------------|------------------|
+| Owner | Demo role card | Full access to dashboard, cashier detail, queue, inventory edit, QC, attendance, customers, reports, operational costs, recap, settings, and POS access from header |
+| Manager Ops | Demo role card | Access to dashboard, cashier detail, queue, inventory edit, QC, attendance, customers, reports, operational costs, recap, and POS access from header |
+| Cashier | Demo role card | Access to dashboard, POS mode, cashier detail, queue, attendance, customers, daily reports, and inventory in view-only mode |
 
 ### 2.2 Feature Module
-1. **Dashboard**: daily summary cards, recent transactions, top-selling items, quick actions
-2. **POS Page**: item search, cart builder, customer assignment, payment method selection, order completion
-3. **Catalog Page**: product and service list, pricing, category filters, active/inactive status
-4. **Customers Page**: customer list, quick add form, contact and vehicle notes, visit history summary
-5. **Transactions Page**: order history, status filters, payment filters, printable detail view
-6. **Reports Page**: daily sales totals, payment breakdown, best-performing services/products
-7. **Settings Page**: business profile, tax defaults, receipt preferences, environment readiness status
+1. **Dashboard**: income today versus yesterday, active queue, top technician, attendance summary, stock summary, recent transactions
+2. **Kasir Detail**: multi-step customer and vehicle entry, service tier selection, technician selection, payment method, discount, points, invoice, WhatsApp action
+3. **Mode POS**: fullscreen cashier view with direct processing, right-side summary panel, bottom live status bar, and embedded queue monitoring
+4. **Antrian**: daily kanban with `Masuk`, `Dicuci`, and `Selesai`, including before photo, technician assignment, and QC handoff
+5. **Gudang**: stock table, effective stock, automatic usage formula, stock sync, movement verification, and asset total
+6. **Quality Check**: 7-point wash checklist, after photo, pending QC list, daily product readiness checklist, and technician quality recap
+7. **Absensi**: daily staff table with clock in and clock out
+8. **Pelanggan**: customer table, points, vehicle ownership, visit history, and per-vehicle QC history
+9. **Laporan Harian**: date filter, payment breakdown, daily totals, and ready-to-send reporting summary
+10. **Biaya Operasional**: daily and monthly cost capture with date-range viewing
+11. **Rekap & Bagi Hasil**: gross versus net financial recap, inventory material cost effect, and technician commission summary
+12. **Pengaturan**: service prices, commission model, material usage per service, technician data, transfer account, QRIS image, and access info
 
 ### 2.3 Page Details
 | Page Name | Module Name | Feature Description |
 |-----------|-------------|---------------------|
-| Dashboard | KPI summary | Show revenue today, transaction count, average basket value, and pending actions |
-| Dashboard | Activity feed | Display latest completed transactions and quick navigation links |
-| POS Page | Search and select | Search products and services by name, category, or SKU |
-| POS Page | Cart management | Add items, adjust quantity, apply discount, and recalculate totals instantly |
-| POS Page | Customer panel | Attach existing customer or create a new one during checkout |
-| POS Page | Checkout | Save transaction with payment method, notes, and final totals |
-| Catalog Page | Product/service table | Create, edit, archive, and filter items with price and stock/service metadata |
-| Customers Page | Customer records | Store name, phone, optional vehicle information, and notes |
-| Customers Page | Visit history | Show previous orders linked to the customer for context |
-| Transactions Page | History table | Filter by date, payment type, and status; review order details |
-| Transactions Page | Receipt view | Present a clean printable summary for each transaction |
-| Reports Page | Revenue analytics | Aggregate sales totals by day, payment method, and item type |
-| Settings Page | Business settings | Save shop identity, tax rate, and cashier workflow defaults |
+| Login | Role cards | Choose Owner, Manager Ops, or Cashier instantly in demo mode |
+| Dashboard | KPI and overview | Show income delta, queue counts, attendance, stock summary, and recent activity |
+| Kasir Detail | Customer and vehicle step | Search old customers or create new customer and vehicle data |
+| Kasir Detail | Service and technician step | Display service tiles by BASIC, STANDARD, PREMIUM, and ELITE tier and assign active technician |
+| Kasir Detail | Payment and invoice | Handle discount, points, payment type, invoice preview, and WhatsApp handoff |
+| Mode POS | Fullscreen processing | Fast cashier workflow without confirmation dialog |
+| Mode POS | Bottom status bar | Open queue and payment breakdown panels directly from operational counters |
+| Antrian | Daily kanban | Manage service status, before photo, and transition between queue stages |
+| Gudang | Inventory table | Track physical stock, effective stock, formula-based deduction, and stock movements |
+| Quality Check | QC checklist | Evaluate 7 wash points, add after photo, and produce a QC score |
+| Absensi | Staff table | Record presence, time in, and time out |
+| Pelanggan | Customer detail | View points, vehicles, visits, and QC history per vehicle |
+| Laporan Harian | Reporting summary | Aggregate transaction count, income, and payment-method totals by date |
+| Biaya Operasional | Cost tracking | Record daily and monthly operational expenses |
+| Rekap & Bagi Hasil | Finance recap | Show gross, net, modal usage, and technician commission recap |
+| Pengaturan | Service and payment config | Configure prices, commissions, technicians, transfer account, and QRIS asset |
 
 ## 3. Core Process
-The primary workflow starts when a cashier signs in, opens the POS page, searches or selects products and services, optionally links a customer, reviews totals, chooses a payment method, and completes the transaction. Managers use the dashboard, transactions, and reports pages to monitor performance and audit daily activity. Catalog and customer maintenance happen continuously in the background as part of normal operations.
+The operational flow starts when a cashier enters customer and motorcycle data, chooses a service and technician, completes payment with discount and optional points, generates an invoice, and sends the order to the service queue. The queue then progresses from `Masuk` to `Dicuci`, then `Selesai`, before passing into a QC process that captures a 7-point assessment and the final after-wash quality result for customer history and technician recap.
 
 ```mermaid
 flowchart TD
-  A["Staff signs in"] --> B["Open POS page"]
-  B --> C["Search or select items"]
-  C --> D["Review cart totals"]
-  D --> E["Attach or create customer"]
-  E --> F["Choose payment method"]
-  F --> G["Complete transaction"]
-  G --> H["Save order and line items to Supabase"]
-  H --> I["Update dashboard and transaction history"]
-  I --> J["Owner reviews daily reports"]
+  A["Pilih role"] --> B["Isi data pelanggan dan motor"]
+  B --> C["Pilih layanan dan teknisi"]
+  C --> D["Bayar, diskon, dan poin"]
+  D --> E["Invoice dan WhatsApp"]
+  E --> F["Masuk antrian status Masuk"]
+  F --> G["Foto sebelum dan mulai cuci"]
+  G --> H["Status Dicuci"]
+  H --> I["Status Selesai"]
+  I --> J["Pending QC"]
+  J --> K["Checklist QC 7 titik dan foto sesudah"]
+  K --> L["Riwayat motor dan rekap teknisi diperbarui"]
 ```
 
 ## 4. User Interface Design
 ### 4.1 Design Style
-- Primary colors: charcoal black, graphite gray, high-visibility cyan, and safety lime accents
-- Button style: rounded rectangular controls with strong contrast, dense utility styling, and clear hover states
-- Font and sizes: bold industrial display font for headings, clean readable sans-serif for data-heavy content, compact text scale for dense cashier workflows
-- Layout style: desktop-first split panels, sticky action areas, tabular data views, and card-based summaries
-- Icon style suggestions: use `lucide-react` icons with clean stroke-based automotive dashboard feel
+- Primary palette: royal blue `#1535d4`, electric lime `#C8F400`, dark surfaces `#111318` and `#1a1c25`, with light application backgrounds `#eef0f5` and `#f7f8fb`
+- Typography: `Saira` for display, headings, numeric emphasis, and the italic logo feel, with `Plus Jakarta Sans` for application text
+- Layout style: responsive desktop to iPad workflow, with fullscreen POS treatment, operational side panels, and dense card and table combinations
+- UI hierarchy: service tiers must be visually obvious, invoice and total sections must be bold, and role-based navigation should hide unauthorized modules
+- Icon style suggestions: use `lucide-react` with clean operational strokes
 
 ### 4.2 Page Design Overview
 | Page Name | Module Name | UI Elements |
 |-----------|-------------|-------------|
-| Dashboard | KPI summary | Dark cards, numeric emphasis, micro trend indicators, subtle glow accents |
-| POS Page | Cart and checkout | Two-column workspace, sticky totals panel, quick-add chips, compact form controls |
-| Catalog Page | Data management | Dense filter bar, table/grid toggle, modal forms, category badges |
-| Customers Page | Customer records | Search-first layout, clean profile panels, concise vehicle metadata blocks |
-| Transactions Page | History and receipt | Wide data table, filter toolbar, drawer/modal for receipt details |
-| Reports Page | Sales analytics | Summary cards, charts, grouped tables, date-range controls |
-| Settings Page | Business config | Sectioned forms, configuration cards, readiness checklist |
+| Login | Role cards | Large selectable role cards with brand logo and short permission summary |
+| Dashboard | KPI grid | Comparison cards, queue indicators, stock snapshot, and attendance panel |
+| Kasir Detail | Multi-step flow | Customer search, service tier tiles, technician selection, totals, and WhatsApp action |
+| Mode POS | Fullscreen shell | Left service selection, right summary panel, bottom status bar, and quick action controls |
+| Antrian | Kanban board | Three columns with before-photo and progress actions |
+| Gudang | Data table | Inventory stats, table rows, stock actions, and verification states |
+| Quality Check | Checklist form | Score cards, radio-style checklist, photos, and pending QC cards |
+| Pelanggan | Customer detail modal | Vehicles, visits, points, and QC history summary |
 
 ### 4.3 Responsiveness
-The application is desktop-first for cashier counters and back-office use, then adapts to tablet screens with stacked panels and preserved touch targets. Mobile support is secondary and focused on read-only management views rather than full cashier productivity.
+The application remains desktop-first but must behave well on tablets, especially for the fullscreen POS mode. Mobile layouts should prioritize readability and operational summaries even if not every workflow is optimized for one-handed use.

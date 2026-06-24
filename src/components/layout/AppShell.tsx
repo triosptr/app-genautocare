@@ -1,30 +1,54 @@
-import { Bell, ChartNoAxesCombined, LayoutGrid, LogOut, Package, ReceiptText, Settings, ShoppingCart, Users } from 'lucide-react';
+import {
+  Bell,
+  CalendarCheck,
+  ChartNoAxesCombined,
+  ClipboardCheck,
+  Coins,
+  LayoutGrid,
+  LogOut,
+  Package,
+  ReceiptText,
+  Settings,
+  ShoppingCart,
+  Users,
+  Warehouse,
+} from 'lucide-react';
 import type { ReactNode } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { BrandLogo } from '@/components/branding/BrandLogo';
+import { getRoleLabel, navItems } from '@/lib/access';
 import { cn } from '@/lib/utils';
-import type { AppMode } from '@/types/app';
+import type { AppMode, AppRole } from '@/types/app';
 
-const links = [
-  { to: '/', label: 'Dashboard', icon: LayoutGrid },
-  { to: '/pos', label: 'POS', icon: ShoppingCart },
-  { to: '/catalog', label: 'Catalog', icon: Package },
-  { to: '/customers', label: 'Customers', icon: Users },
-  { to: '/transactions', label: 'Transactions', icon: ReceiptText },
-  { to: '/reports', label: 'Reports', icon: ChartNoAxesCombined },
-  { to: '/settings', label: 'Settings', icon: Settings },
-];
+const iconMap = {
+  '/': LayoutGrid,
+  '/cashier': ReceiptText,
+  '/pos': ShoppingCart,
+  '/queue': ChartNoAxesCombined,
+  '/inventory': Warehouse,
+  '/quality': ClipboardCheck,
+  '/attendance': CalendarCheck,
+  '/customers': Users,
+  '/reports/daily': ReceiptText,
+  '/costs': Coins,
+  '/recap': ChartNoAxesCombined,
+  '/settings': Settings,
+  '/catalog': Package,
+};
 
 interface AppShellProps {
   mode: AppMode;
-  userEmail?: string;
+  role: AppRole;
   onSignOut?: () => void;
   children: ReactNode;
 }
 
-export function AppShell({ mode, userEmail, onSignOut, children }: AppShellProps) {
+export function AppShell({ mode, role, onSignOut, children }: AppShellProps) {
+  const navigate = useNavigate();
   const location = useLocation();
+  const links = navItems.filter((item) => item.roles.includes(role));
   const pageName = links.find((link) => link.to === location.pathname)?.label ?? 'Dashboard';
+  const canOpenPosFromHeader = role === 'owner' || role === 'manager_ops';
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(200,244,0,0.14),_transparent_22%),linear-gradient(180deg,_#1535D4_0%,_#2035A6_42%,_#373A4A_100%)] text-slate-100">
@@ -35,17 +59,17 @@ export function AppShell({ mode, userEmail, onSignOut, children }: AppShellProps
           </div>
 
           <div className="mt-6 rounded-3xl border border-[#C8F400]/20 bg-[#C8F400]/10 p-4">
-            <p className="text-xs uppercase tracking-[0.25em] text-[#C8F400]">{mode === 'live' ? 'Supabase live' : 'Demo mode'}</p>
+            <p className="text-xs uppercase tracking-[0.25em] text-[#C8F400]">{mode === 'hybrid' ? 'Hybrid mode' : 'Demo mode'}</p>
             <p className="mt-2 text-sm text-slate-200">
-              {mode === 'live'
-                ? 'Authenticated users operate on real Supabase data.'
-                : 'Local demo data is active until Supabase env values are added.'}
+              {mode === 'hybrid'
+                ? 'Fondasi React dan deploy tetap aktif sambil mengikuti spesifikasi operasional baru.'
+                : 'Login role demo aktif sesuai kebutuhan aplikasi operasional.'}
             </p>
           </div>
 
           <nav className="mt-6 space-y-2">
             {links.map((link) => {
-              const Icon = link.icon;
+              const Icon = iconMap[link.to as keyof typeof iconMap] ?? LayoutGrid;
               return (
                 <NavLink
                   key={link.to}
@@ -67,11 +91,11 @@ export function AppShell({ mode, userEmail, onSignOut, children }: AppShellProps
           </nav>
 
           <div className="mt-6 rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
-            <p className="font-medium text-white">{userEmail ?? 'Demo operator'}</p>
-            <p className="mt-1 text-slate-400">Use Settings to prepare Vercel and GitHub deployment.</p>
+            <p className="font-medium text-white">{getRoleLabel(role)}</p>
+            <p className="mt-1 text-slate-400">Navigasi otomatis menyesuaikan hak akses role aktif.</p>
           </div>
 
-          {onSignOut && mode === 'live' && (
+          {onSignOut && (
             <button
               type="button"
               onClick={onSignOut}
@@ -90,9 +114,20 @@ export function AppShell({ mode, userEmail, onSignOut, children }: AppShellProps
                 <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Operational view</p>
                 <h1 className="mt-2 font-display text-4xl uppercase tracking-[0.16em] text-white">{pageName}</h1>
               </div>
-              <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">
-                <Bell className="h-4 w-4 text-[#C8F400]" />
-                <span>Counter-ready interface for fast service turnover.</span>
+              <div className="flex flex-wrap items-center gap-3">
+                {canOpenPosFromHeader && (
+                  <button
+                    type="button"
+                    onClick={() => navigate('/pos')}
+                    className="brand-primary-btn rounded-2xl px-4 py-3 text-sm font-semibold"
+                  >
+                    Buka Mode POS
+                  </button>
+                )}
+                <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">
+                  <Bell className="h-4 w-4 text-[#C8F400]" />
+                  <span>Counter-ready interface for fast service turnover.</span>
+                </div>
               </div>
             </div>
           </header>

@@ -1,16 +1,21 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { BrandLogo } from '@/components/branding/BrandLogo';
 import { AppShell } from '@/components/layout/AppShell';
-import { supabase } from '@/lib/supabase';
-import CatalogPage from '@/pages/CatalogPage';
+import { canAccess } from '@/lib/access';
+import AttendancePage from '@/pages/AttendancePage';
+import CashierDetailPage from '@/pages/CashierDetailPage';
 import CustomersPage from '@/pages/CustomersPage';
 import DashboardPage from '@/pages/DashboardPage';
+import DailyReportPage from '@/pages/DailyReportPage';
+import InventoryPage from '@/pages/InventoryPage';
 import LoginPage from '@/pages/LoginPage';
+import OpsCostsPage from '@/pages/OpsCostsPage';
 import PosPage from '@/pages/PosPage';
-import ReportsPage from '@/pages/ReportsPage';
+import QualityPage from '@/pages/QualityPage';
+import QueuePage from '@/pages/QueuePage';
+import RecapPage from '@/pages/RecapPage';
 import SettingsPage from '@/pages/SettingsPage';
-import TransactionsPage from '@/pages/TransactionsPage';
 import { useCashierStore } from '@/store/useCashierStore';
 
 function LoadingScreen() {
@@ -25,50 +30,38 @@ function LoadingScreen() {
 }
 
 export default function App() {
-  const { initialize, setSession, signOut, mode, session, ready, dataError, loading } = useCashierStore();
+  const { initialize, clearRole, mode, currentRole, ready } = useCashierStore();
 
   useEffect(() => {
-    void initialize();
+    initialize();
   }, [initialize]);
-
-  useEffect(() => {
-    if (!supabase) {
-      return undefined;
-    }
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      void setSession(nextSession);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [setSession]);
 
   if (!ready) {
     return <LoadingScreen />;
   }
 
-  if (mode === 'live' && !session) {
+  if (!currentRole) {
     return <LoginPage />;
   }
 
   return (
     <BrowserRouter>
-      <AppShell mode={mode} userEmail={session?.user.email} onSignOut={() => void signOut()}>
-        <div className="space-y-4">
-          {dataError && <div className="rounded-2xl border border-red-400/25 bg-red-500/10 px-4 py-3 text-sm text-red-200">{dataError}</div>}
-          {loading && <div className="rounded-2xl border border-[#C8F400]/20 bg-[#C8F400]/10 px-4 py-3 text-sm text-[#F9F9FF]">Syncing the latest Supabase data...</div>}
-        </div>
+      <AppShell mode={mode} role={currentRole} onSignOut={clearRole}>
         <div className="mt-6">
           <Routes>
             <Route path="/" element={<DashboardPage />} />
-            <Route path="/pos" element={<PosPage />} />
-            <Route path="/catalog" element={<CatalogPage />} />
+            <Route path="/cashier" element={<CashierDetailPage />} />
+            <Route path="/pos" element={canAccess(currentRole, '/pos') || currentRole === 'owner' || currentRole === 'manager_ops' ? <PosPage /> : <Navigate to="/" replace />} />
+            <Route path="/queue" element={<QueuePage />} />
+            <Route path="/inventory" element={<InventoryPage />} />
+            <Route path="/quality" element={canAccess(currentRole, '/quality') ? <QualityPage /> : <Navigate to="/" replace />} />
+            <Route path="/attendance" element={<AttendancePage />} />
             <Route path="/customers" element={<CustomersPage />} />
-            <Route path="/transactions" element={<TransactionsPage />} />
-            <Route path="/reports" element={<ReportsPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/reports/daily" element={<DailyReportPage />} />
+            <Route path="/costs" element={canAccess(currentRole, '/costs') ? <OpsCostsPage /> : <Navigate to="/" replace />} />
+            <Route path="/recap" element={canAccess(currentRole, '/recap') ? <RecapPage /> : <Navigate to="/" replace />} />
+            <Route path="/settings" element={canAccess(currentRole, '/settings') ? <SettingsPage /> : <Navigate to="/" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
       </AppShell>

@@ -1,9 +1,11 @@
 ## 1. Architecture Design
 ```mermaid
 flowchart LR
-  A["React Frontend on Vercel"] --> B["Supabase Auth"]
-  A --> C["Supabase Postgres"]
-  A --> D["Supabase Realtime or PostgREST"]
+  A["React Frontend on Vercel"] --> B["Zustand App State"]
+  B --> C["Demo Role Access"]
+  B --> D["Operational Modules"]
+  D --> E["Supabase Data Layer for current web version"]
+  F["Future GAS + Spreadsheet backend"] --> D
   E["GitHub Repository"] --> F["Vercel Deployment Pipeline"]
   F --> A
 ```
@@ -12,231 +14,161 @@ flowchart LR
 - Frontend: React@18 + TypeScript + Vite + Tailwind CSS
 - Routing: `react-router-dom`
 - State Management: `zustand`
-- Data Layer: `@supabase/supabase-js`
-- Charts and UI utilities: lightweight charting and utility libraries only when needed during implementation
+- Data Layer: collaboration between the current in-app operational state and the existing Supabase-ready foundation
+- Charts and UI utilities: lightweight custom UI blocks and simple charts without mandatory extra services
 - Deployment: Vercel static deployment connected to GitHub
-- Database and Auth: Supabase project already connected to the workspace
+- Current integration: Supabase project already connected to the workspace
+- Future production path: Google Apps Script plus Spreadsheet can mirror the same entity model
 
 ## 3. Route Definitions
 | Route | Purpose |
 |-------|---------|
-| / | Dashboard landing page with quick operational summary |
-| /pos | Main cashier workspace for cart building and checkout |
-| /catalog | Manage products and services |
-| /customers | Search and manage customer profiles |
-| /transactions | Review order history and receipt details |
-| /reports | View sales and payment analytics |
-| /settings | Manage business preferences and deployment readiness |
+| / | Dashboard with operational overview and role-aware widgets |
+| /cashier | Kasir Detail multi-step cashier flow |
+| /pos | Fullscreen POS mode for cashiers and quick access by owner or manager |
+| /queue | Daily service queue in kanban format |
+| /inventory | Gudang, stock movement, and verification view |
+| /quality | Quality check and pending QC workflow |
+| /attendance | Staff attendance and daily presence |
+| /customers | Customer, vehicle, points, and history management |
+| /reports/daily | Daily reporting and payment breakdown |
+| /costs | Daily and monthly operational cost tracking |
+| /recap | Gross, net, technician commission, and business recap |
+| /settings | Owner-only configuration for services, payments, and technicians |
 
 ## 4. Client Data Contracts
 ```ts
-export type CatalogItemType = "product" | "service";
-export type PaymentMethod = "cash" | "card" | "transfer" | "qris";
-export type OrderStatus = "completed" | "refunded" | "void";
+export type AppRole = "owner" | "manager_ops" | "kasir";
+export type PaymentMethod = "cash" | "qris" | "transfer";
+export type QueueStatus = "Masuk" | "Dicuci" | "Selesai";
+export type CommissionType = "flat" | "persen";
 
-export interface CatalogItem {
+export interface Service {
   id: string;
   name: string;
-  type: CatalogItemType;
-  sku: string | null;
-  category: string;
+  tier: "BASIC" | "STANDARD" | "PREMIUM" | "ELITE";
   price: number;
-  cost: number | null;
-  stockQty: number | null;
-  isActive: boolean;
-  createdAt: string;
+  kType: CommissionType;
+  kVal: number;
+  modalItems: string[];
 }
 
 export interface Customer {
   id: string;
   name: string;
-  phone: string | null;
-  vehiclePlate: string | null;
-  vehicleModel: string | null;
-  notes: string | null;
-  createdAt: string;
+  phone: string;
+  visits: number;
+  spend: number;
+  points: number;
+  vehicles: Vehicle[];
 }
 
-export interface Order {
+export interface Vehicle {
+  plate: string;
+  merk: string;
+}
+
+export interface Transaction {
   id: string;
-  orderNumber: string;
-  customerId: string | null;
-  subtotal: number;
-  discount: number;
-  tax: number;
+  txDate: string;
+  plate: string;
+  merk: string;
+  cust: string;
+  washerId: string;
+  washer: string;
+  services: string[];
   total: number;
-  paymentMethod: PaymentMethod;
-  status: OrderStatus;
-  cashierUserId: string;
-  notes: string | null;
-  createdAt: string;
+  komisi: number;
+  pay: PaymentMethod;
+  status: QueueStatus;
+  disc: number;
+  finishedAt: string | null;
 }
 
-export interface OrderItem {
+export interface QCRecord {
   id: string;
-  orderId: string;
-  catalogItemId: string | null;
-  itemName: string;
-  itemType: CatalogItemType;
-  quantity: number;
-  unitPrice: number;
-  lineTotal: number;
+  txId: string;
+  plate: string;
+  merk: string;
+  washer: string;
+  score: number;
+  time: string;
 }
 ```
 
 ## 5. Frontend Module Design
-The first implementation should use a frontend-only architecture that talks directly to Supabase through the public URL and anon key, with row-level security protecting data access. Shared data fetching utilities should live in `src/utils`, route pages in `src/pages`, and reusable UI blocks in `src/components`. Global cashier workflow state such as the active cart, filters, and current transaction draft should live in a Zustand store.
+The current implementation should extend the existing React application rather than rebuild it from scratch. Shared UI belongs in `src/components`, route pages in `src/pages`, utility formatters in `src/utils`, and the core operational state in a centralized Zustand store. Role-based navigation, queue transitions, QC scoring, attendance, stock usage, customer points, and financial recaps should all derive from the same unified front-end state layer so the app behaves consistently in demo mode and remains mappable to future production persistence.
 
 ## 6. Data Model
 ### 6.1 Data Model Definition
 ```mermaid
 erDiagram
-  catalog_items ||--o{ order_items : "referenced by"
-  customers ||--o{ orders : "linked to"
-  orders ||--o{ order_items : "contains"
+  customers ||--o{ transactions : "owns"
+  transactions ||--o{ qcrecords : "reviewed by"
+  employees ||--o{ transactions : "washes"
+  inventory ||--o{ stockmoves : "moves"
 
-  catalog_items {
-    uuid id
-    text name
-    text item_type
-    text sku
-    text category
-    numeric price
-    numeric cost
-    integer stock_qty
-    boolean is_active
-    timestamptz created_at
+  services {
+    string id
+    string name
+    string tier
+    number price
+    string kType
+    number kVal
+  }
+
+  employees {
+    string id
+    string name
+    string role
+    boolean present
+    string in
+    string out
   }
 
   customers {
-    uuid id
-    text name
-    text phone
-    text vehicle_plate
-    text vehicle_model
-    text notes
-    timestamptz created_at
+    string id
+    string name
+    string phone
+    number points
+    number visits
+    number spend
   }
 
-  orders {
-    uuid id
-    text order_number
-    uuid customer_id
-    numeric subtotal
-    numeric discount
-    numeric tax
-    numeric total
-    text payment_method
-    text status
-    text cashier_user_id
-    text notes
-    timestamptz created_at
+  transactions {
+    string id
+    string txDate
+    string plate
+    string merk
+    string cust
+    string washer
+    string pay
+    string status
+    number total
   }
 
-  order_items {
-    uuid id
-    uuid order_id
-    uuid catalog_item_id
-    text item_name
-    text item_type
-    numeric quantity
-    numeric unit_price
-    numeric line_total
+  inventory {
+    string id
+    string name
+    number stock
+    number costPrice
+    number litersPerUnit
+    number motorsPerLiter
   }
 ```
 
 ### 6.2 Data Definition Language
 ```sql
-create table if not exists public.catalog_items (
-  id uuid primary key default gen_random_uuid(),
-  name text not null,
-  item_type text not null check (item_type in ('product', 'service')),
-  sku text,
-  category text not null default 'general',
-  price numeric(12,2) not null default 0,
-  cost numeric(12,2),
-  stock_qty integer,
-  is_active boolean not null default true,
-  created_at timestamptz not null default now()
-);
-
-create table if not exists public.customers (
-  id uuid primary key default gen_random_uuid(),
-  name text not null,
-  phone text,
-  vehicle_plate text,
-  vehicle_model text,
-  notes text,
-  created_at timestamptz not null default now()
-);
-
-create table if not exists public.orders (
-  id uuid primary key default gen_random_uuid(),
-  order_number text not null unique,
-  customer_id uuid,
-  subtotal numeric(12,2) not null default 0,
-  discount numeric(12,2) not null default 0,
-  tax numeric(12,2) not null default 0,
-  total numeric(12,2) not null default 0,
-  payment_method text not null check (payment_method in ('cash', 'card', 'transfer', 'qris')),
-  status text not null default 'completed' check (status in ('completed', 'refunded', 'void')),
-  cashier_user_id text not null,
-  notes text,
-  created_at timestamptz not null default now()
-);
-
-create table if not exists public.order_items (
-  id uuid primary key default gen_random_uuid(),
-  order_id uuid not null,
-  catalog_item_id uuid,
-  item_name text not null,
-  item_type text not null check (item_type in ('product', 'service')),
-  quantity numeric(12,2) not null default 1,
-  unit_price numeric(12,2) not null default 0,
-  line_total numeric(12,2) not null default 0
-);
-
-alter table public.catalog_items enable row level security;
-alter table public.customers enable row level security;
-alter table public.orders enable row level security;
-alter table public.order_items enable row level security;
-
-grant select, insert, update, delete on public.catalog_items to authenticated;
-grant select, insert, update, delete on public.customers to authenticated;
-grant select, insert, update, delete on public.orders to authenticated;
-grant select, insert, update, delete on public.order_items to authenticated;
-
-create policy "authenticated catalog access"
-on public.catalog_items
-for all
-to authenticated
-using (true)
-with check (true);
-
-create policy "authenticated customer access"
-on public.customers
-for all
-to authenticated
-using (true)
-with check (true);
-
-create policy "authenticated order access"
-on public.orders
-for all
-to authenticated
-using (true)
-with check (true);
-
-create policy "authenticated order item access"
-on public.order_items
-for all
-to authenticated
-using (true)
-with check (true);
+-- Current web build may continue using the existing Supabase tables for
+-- customers, orders, and order_items, while the expanded production model
+-- should add services, employees, qc_records, inventory, stock_moves,
+-- operational_costs, tx_photos, and app_settings with a one-sheet-per-entity
+-- mapping when moved to Google Apps Script plus Spreadsheet.
 ```
 
 ## 7. Environment and Deployment Notes
 - Frontend environment variables: `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`
 - Sensitive key for server-side use only: `SUPABASE_SERVICE_ROLE_KEY`
 - GitHub should be the source repository for the Vercel project so each push can trigger preview and production deployments
-- `vercel.json` should be added during implementation only if route rewrites or deployment-specific behavior become necessary
+- `vercel.json` should remain available for SPA rewrites in the Vercel deployment
+- The production data model must stay compatible with both the current web state and a future Google Apps Script plus Spreadsheet persistence layer
