@@ -11,12 +11,12 @@ interface PanelProps {
 
 export function Panel({ title, subtitle, actions, className, children }: PanelProps) {
   return (
-    <section className={cn('brand-panel rounded-[28px] p-5', className)}>
+    <section className={cn('brand-panel rounded-[18px] p-4 md:p-5', className)}>
       {(title || actions) && (
-        <header className="mb-4 flex items-start justify-between gap-4">
+        <header className="mb-4 flex items-start justify-between gap-4 border-b border-slate-200/80 pb-4">
           <div>
-            {title && <h2 className="font-display text-base uppercase tracking-[0.12em] text-slate-900">{title}</h2>}
-            {subtitle && <p className="mt-1 text-sm text-slate-500">{subtitle}</p>}
+            {title && <h2 className="font-display text-[20px] font-extrabold tracking-[-0.01em] text-slate-900">{title}</h2>}
+            {subtitle && <p className="mt-1 text-[13px] text-slate-500">{subtitle}</p>}
           </div>
           {actions}
         </header>

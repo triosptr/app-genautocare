@@ -1,5 +1,6 @@
 import {
   Bell,
+  Clock3,
   MonitorSmartphone,
   TabletSmartphone,
   LayoutGrid,
@@ -52,26 +53,28 @@ export function AppShell({ mode, role, deviceMode, onChangeDeviceMode, onSignOut
         : 'max-w-[1480px] lg:grid-cols-[250px_minmax(0,1fr)]';
   const asideClass = deviceMode === 'mobile' ? 'p-4' : 'p-5';
   const navClass = deviceMode === 'mobile' ? 'grid grid-cols-2 gap-2' : 'space-y-2';
+  const previewLabel = deviceMode === 'mobile' ? 'Mobile' : deviceMode === 'ipad' ? 'iPad' : 'Desktop';
+  const nowLabel = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(21,53,212,0.08),_transparent_20%),radial-gradient(circle_at_bottom_right,_rgba(200,244,0,0.18),_transparent_24%),linear-gradient(180deg,_#eff5ff_0%,_#f7ffdd_100%)] text-slate-900">
-      <div className={cn('mx-auto grid min-h-screen gap-5 px-4 py-4 lg:px-6', shellLayoutClass)}>
-        <aside className={cn('rounded-[28px] border border-[#1535D4]/10 bg-white shadow-[0_18px_42px_-30px_rgba(21,53,212,0.2)]', asideClass)}>
-          <div className="rounded-3xl border border-[#1535D4]/10 bg-[linear-gradient(135deg,_#1535D4_0%,_#2448ef_100%)] px-4 py-4">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(21,53,212,0.16),_transparent_18%),linear-gradient(180deg,_#05070d_0%,_#0b1020_100%)] text-slate-900">
+      <div className={cn('mx-auto grid min-h-screen gap-3 rounded-[32px] border border-white/8 bg-[linear-gradient(135deg,_rgba(12,16,28,0.96)_0%,_rgba(15,20,34,0.98)_100%)] p-3 shadow-[0_24px_80px_-40px_rgba(0,0,0,0.85)]', shellLayoutClass)}>
+        <aside className={cn('rounded-[24px] bg-[#1535D4] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]', asideClass)}>
+          <div className="rounded-[18px] bg-[#1535D4] px-4 py-4">
             <BrandLogo compact variant="on-dark" />
           </div>
 
-          <div className="mt-6 rounded-3xl border border-[#C8F400]/22 bg-[#f5ffcf] p-4">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-[#1535D4]">{mode === 'hybrid' ? 'Hybrid mode' : 'Demo kasir'}</p>
-            <p className="mt-2 text-sm text-slate-600">
+          <div className="mt-5 rounded-[18px] border border-white/10 bg-white/8 p-4">
+            <p className="brand-eyebrow text-[#C8F400]">{mode === 'hybrid' ? 'Hybrid mode' : 'Demo kasir'}</p>
+            <p className="mt-2 text-sm text-white/78">
               {mode === 'hybrid'
                 ? 'Versi ringan untuk operasional kasir tetap aktif di project yang sama.'
                 : 'Tampilan difokuskan untuk kasir dengan modul yang lebih ringkas.'}
             </p>
           </div>
 
-          <div className="mt-6 rounded-3xl border border-[#1535D4]/10 bg-[#eef4ff] p-3">
-            <p className="px-2 text-[11px] uppercase tracking-[0.16em] text-slate-500">Mode tampilan</p>
+          <div className="mt-5 rounded-[18px] border border-white/10 bg-white/8 p-3">
+            <p className="px-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/55">Mode tampilan</p>
             <div className="mt-3 grid grid-cols-3 gap-2">
               {deviceButtons.map((item) => {
                 const Icon = item.icon;
@@ -81,10 +84,10 @@ export function AppShell({ mode, role, deviceMode, onChangeDeviceMode, onSignOut
                     type="button"
                     onClick={() => onChangeDeviceMode(item.mode)}
                     className={cn(
-                      'rounded-2xl border px-3 py-3 text-xs font-medium transition',
+                      'rounded-[12px] border px-3 py-3 text-[11px] font-semibold transition',
                       deviceMode === item.mode
-                        ? 'border-[#1535D4] bg-[#1535D4] text-white'
-                        : 'border-[#1535D4]/10 bg-white text-slate-600',
+                        ? 'border-[#C8F400] bg-[#C8F400] text-[#111318]'
+                        : 'border-white/10 bg-white/6 text-white/72',
                     )}
                   >
                     <span className="flex items-center justify-center gap-1.5">
@@ -97,7 +100,7 @@ export function AppShell({ mode, role, deviceMode, onChangeDeviceMode, onSignOut
             </div>
           </div>
 
-          <nav className={cn('mt-6', navClass)}>
+          <nav className={cn('mt-5', navClass)}>
             {links.map((link) => {
               const Icon = iconMap[link.to as keyof typeof iconMap] ?? LayoutGrid;
               return (
@@ -106,10 +109,10 @@ export function AppShell({ mode, role, deviceMode, onChangeDeviceMode, onSignOut
                   to={link.to}
                   className={({ isActive }) =>
                     cn(
-                      'flex items-center gap-3 rounded-2xl px-4 py-3 text-sm transition hover:bg-[#f5f8ff]',
+                      'flex items-center gap-3 rounded-[14px] px-4 py-3 text-sm font-medium transition hover:bg-white/8',
                       isActive
-                        ? 'border border-[#1535D4]/12 bg-[#1535D4] text-white shadow-[0_14px_30px_-22px_rgba(21,53,212,0.55)]'
-                        : 'border border-transparent text-slate-600',
+                        ? 'bg-[#C8F400] text-[#111318]'
+                        : 'border border-transparent text-white/86',
                     )
                   }
                 >
@@ -120,16 +123,21 @@ export function AppShell({ mode, role, deviceMode, onChangeDeviceMode, onSignOut
             })}
           </nav>
 
-          <div className="mt-6 rounded-3xl border border-slate-200 bg-[#f8fafc] p-4 text-sm text-slate-600">
-            <p className="font-medium text-slate-900">{getRoleLabel(role)}</p>
-            <p className="mt-1 text-slate-500">Modul difokuskan untuk transaksi kasir harian.</p>
+          <div className="mt-6 border-t border-white/12 pt-4">
+            <div className="flex items-center gap-3 rounded-[16px] bg-white/8 p-3 text-sm text-white/82">
+              <div className="h-10 w-10 rounded-[12px] bg-white/10" />
+              <div>
+                <p className="font-semibold text-white">{getRoleLabel(role)}</p>
+                <p className="text-xs text-white/58">Modul kasir harian aktif</p>
+              </div>
+            </div>
           </div>
 
           {onSignOut && (
             <button
               type="button"
               onClick={onSignOut}
-              className="brand-secondary-btn mt-4 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm"
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-[14px] border border-white/10 bg-white/8 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/12"
             >
               <LogOut className="h-4 w-4" />
               Sign out
@@ -137,30 +145,50 @@ export function AppShell({ mode, role, deviceMode, onChangeDeviceMode, onSignOut
           )}
         </aside>
 
-        <div className="space-y-6">
-          <header className="brand-panel rounded-[28px] p-5">
+        <div className="space-y-3">
+          <header className="rounded-[24px] bg-[#f7f8fb] p-4 shadow-[0_12px_32px_rgba(0,0,0,0.05)]">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500">Kasir App</p>
-                <h1 className="mt-2 font-display text-[30px] uppercase tracking-[0.1em] text-slate-900">{pageName}</h1>
+                <div className="h-3 w-36 rounded-full bg-[#212533]" />
+                <div className="mt-2 h-2 w-24 rounded-full bg-[#c8cfdd]" />
               </div>
               <div className="flex flex-wrap items-center gap-3">
                 <button
                   type="button"
                   onClick={() => navigate('/pos')}
-                  className="brand-primary-btn rounded-2xl px-4 py-3 text-sm font-semibold"
+                  className="brand-primary-btn rounded-[12px] px-4 py-3 text-sm font-semibold"
                 >
                   Buka POS
                 </button>
-                <div className="flex items-center gap-3 rounded-2xl border border-[#C8F400]/22 bg-[#f5ffcf] px-4 py-3 text-sm text-slate-700">
-                  <Bell className="h-4 w-4 text-[#1535D4]" />
-                  <span>{deviceMode === 'mobile' ? 'Preview mobile aktif.' : deviceMode === 'ipad' ? 'Preview iPad aktif.' : 'Gunakan kombinasi biru dan lime brand.'}</span>
-                </div>
+                <div className="brand-primary-btn rounded-[12px] px-4 py-3 text-sm font-semibold text-[#111318]">{previewLabel}</div>
+                <div className="brand-blue-btn rounded-[12px] px-4 py-3 text-sm font-semibold">Live</div>
               </div>
             </div>
           </header>
 
-          <main>{children}</main>
+          <div className="px-1 text-center text-[10px] uppercase tracking-[0.24em] text-white/24">
+            Header · judul + jam + tombol aksi
+          </div>
+
+          <main className="brand-canvas rounded-[24px] p-4 md:p-7">
+            <div className="mb-5 flex flex-col gap-3 border-b border-slate-300/70 pb-4 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <p className="brand-eyebrow text-[#79809a]">GEN Auto Care</p>
+                <h1 className="mt-2 brand-title text-[26px] text-[#111318]">{pageName}</h1>
+              </div>
+              <div className="flex flex-wrap items-center gap-3 text-sm text-[#60677a]">
+                <div className="inline-flex items-center gap-2 rounded-[12px] border border-slate-300 bg-white px-4 py-2">
+                  <Clock3 className="h-4 w-4 text-[#1535D4]" />
+                  <span>{nowLabel}</span>
+                </div>
+                <div className="inline-flex items-center gap-2 rounded-[12px] border border-slate-300 bg-white px-4 py-2">
+                  <Bell className="h-4 w-4 text-[#1535D4]" />
+                  <span>{previewLabel}</span>
+                </div>
+              </div>
+            </div>
+            {children}
+          </main>
         </div>
       </div>
     </div>

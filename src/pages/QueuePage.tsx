@@ -19,14 +19,29 @@ export default function QueuePage() {
       <Panel title="Antrian Harian" subtitle="Pantau status motor yang sedang diproses.">
         <div className={`grid gap-4 ${deviceMode === 'mobile' ? 'grid-cols-1' : 'xl:grid-cols-3'}`}>
           {columns.map((column) => (
-            <div key={column.key} className="brand-soft-card rounded-3xl p-4">
-              <p className="font-display text-xl uppercase tracking-[0.08em] text-slate-900">{column.title}</p>
-              <p className="mt-1 text-sm text-slate-500">{column.description}</p>
+            <div key={column.key} className="brand-panel rounded-[18px] p-4">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <p className="font-display text-xl uppercase tracking-[0.04em] text-slate-900">{column.title}</p>
+                  <p className="mt-1 text-sm text-slate-500">{column.description}</p>
+                </div>
+                <span
+                  className={`brand-badge ${
+                    column.key === 'Masuk'
+                      ? 'bg-[#fff2dc] text-[#e8a93b]'
+                      : column.key === 'Dicuci'
+                        ? 'bg-[#e9edff] text-[#1535D4]'
+                        : 'bg-[#e8f5e9] text-[#2f9e44]'
+                  }`}
+                >
+                  {transactions.filter((tx) => tx.status === column.key).length}
+                </span>
+              </div>
               <div className="mt-4 space-y-3">
                 {transactions
                   .filter((tx) => tx.status === column.key)
                   .map((tx) => (
-                    <div key={tx.id} className="rounded-2xl border border-slate-200 bg-[#f8fafc] p-4">
+                    <div key={tx.id} className="brand-outline-card rounded-[16px] p-4">
                       <p className="font-medium text-slate-900">{tx.plate}</p>
                       <p className="mt-1 text-sm text-slate-500">{tx.merk} · {tx.cust}</p>
                       <p className="mt-1 text-[11px] uppercase tracking-[0.16em] text-[#1535D4]">{tx.washer}</p>

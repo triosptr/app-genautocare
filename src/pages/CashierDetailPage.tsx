@@ -9,10 +9,10 @@ import { formatCurrency } from '@/utils/format';
 const paymentMethods: PaymentMethod[] = ['cash', 'qris', 'transfer'];
 
 const tierStyles: Record<ServiceTier, string> = {
-  BASIC: 'bg-[#f8fafc] text-[#334155] border-slate-200',
-  STANDARD: 'bg-[#eef4ff] text-[#1535D4] border-[#cdd9ff]',
-  PREMIUM: 'bg-[#fff5df] text-[#8a5a00] border-[#f0d39c]',
-  ELITE: 'bg-[#f5ffcf] text-[#516000] border-[#d9e895]',
+  BASIC: 'bg-[#f3f4f8] text-[#5e6578] border-[#d8dce7]',
+  STANDARD: 'bg-[#1535D4] text-white border-[#1535D4]',
+  PREMIUM: 'bg-[#f0b13f] text-[#111318] border-[#f0b13f]',
+  ELITE: 'bg-[#373A4A] text-[#C8F400] border-[#373A4A]',
 };
 
 export default function CashierDetailPage() {
@@ -126,7 +126,7 @@ export default function CashierDetailPage() {
                   key={customer.id}
                   type="button"
                   onClick={() => selectCustomer(customer.id)}
-                  className="brand-soft-card rounded-2xl p-4 text-left transition hover:border-[#1535D4]/16 hover:bg-[#f8fbff]"
+                  className="brand-outline-card rounded-[16px] p-4 text-left transition hover:border-[#1535D4]/24 hover:bg-white"
                 >
                   <p className="font-medium text-slate-900">{customer.name}</p>
                   <p className="mt-1 text-sm text-slate-500">{customer.phone}</p>
@@ -148,11 +148,11 @@ export default function CashierDetailPage() {
 
         <Panel title="Ringkasan" subtitle="Total, diskon, metode bayar, dan kirim invoice.">
           <div className="space-y-4">
-            <div className="brand-soft-card rounded-2xl p-4">
+            <div className="brand-outline-card rounded-[16px] p-4">
               <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Subtotal</p>
               <p className="mt-2 font-display text-[28px] text-[#1535D4]">{formatCurrency(subtotal)}</p>
             </div>
-            <div className="brand-soft-card rounded-2xl p-4">
+            <div className="brand-outline-card rounded-[16px] p-4">
               <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Diskon</p>
               <input
                 type="number"
@@ -161,7 +161,7 @@ export default function CashierDetailPage() {
                 className="brand-input mt-3 w-full rounded-2xl px-4 py-3"
               />
             </div>
-            <label className="brand-soft-card flex items-center gap-3 rounded-2xl px-4 py-3 text-sm text-slate-700">
+            <label className="brand-outline-card flex items-center gap-3 rounded-[16px] px-4 py-3 text-sm text-slate-700">
               <input type="checkbox" checked={usePoints} onChange={(event) => setUsePoints(event.target.checked)} />
               Gunakan poin pelanggan jika mencapai {settings.pointRedeemThreshold} poin
             </label>
@@ -171,8 +171,8 @@ export default function CashierDetailPage() {
                   key={method}
                   type="button"
                   onClick={() => setPayment(method)}
-                  className={`rounded-2xl border px-4 py-3 text-sm font-medium transition ${
-                    payment === method ? 'border-[#1535D4] bg-[#1535D4] text-white' : 'border-slate-200 bg-white text-slate-700'
+                  className={`rounded-[12px] border px-4 py-3 text-sm font-semibold transition ${
+                    payment === method ? 'border-[#1535D4] bg-white text-[#1535D4] shadow-[inset_0_0_0_1px_#1535D4]' : 'border-slate-300 bg-[#f7f8fb] text-slate-700'
                   }`}
                 >
                   {method.toUpperCase()}
@@ -180,16 +180,16 @@ export default function CashierDetailPage() {
               ))}
             </div>
             {payment === 'transfer' && (
-              <div className="brand-soft-card rounded-2xl p-4 text-sm text-slate-700">
+              <div className="brand-outline-card rounded-[16px] p-4 text-sm text-slate-700">
                 <p>{settings.bankBank}</p>
                 <p className="mt-1">{settings.bankName}</p>
                 <p className="mt-1 font-display text-2xl text-slate-900">{settings.bankNo}</p>
               </div>
             )}
-            <div className="rounded-3xl border border-[#1535D4]/10 bg-[#eef4ff] p-5">
+            <div className="rounded-[16px] border border-[#1535D4] bg-[#1535D4] p-5">
               <div className="flex items-center justify-between">
-                <span className="text-sm uppercase tracking-[0.16em] text-[#1535D4]">Total</span>
-                <span className="font-display text-[30px] text-slate-900">{formatCurrency(total)}</span>
+                <span className="text-sm uppercase tracking-[0.16em] text-white/70">Total</span>
+                <span className="font-display text-[30px] text-white">{formatCurrency(total)}</span>
               </div>
             </div>
             <button type="button" onClick={processTransaction} className="brand-primary-btn w-full rounded-2xl px-4 py-3 font-semibold">
@@ -217,8 +217,8 @@ export default function CashierDetailPage() {
                 key={service.id}
                 type="button"
                 onClick={() => toggleService(service.id)}
-                className={`flex min-h-[220px] flex-col justify-between rounded-3xl border p-4 text-left transition ${tierStyles[service.tier]} ${
-                  selectedServices.includes(service.id) ? 'ring-2 ring-[#1535D4]' : ''
+                className={`flex min-h-[220px] flex-col justify-between rounded-[16px] border p-4 text-left transition ${tierStyles[service.tier]} ${
+                  selectedServices.includes(service.id) ? 'ring-2 ring-[#C8F400] ring-offset-2 ring-offset-[#eef0f5]' : ''
                 }`}
               >
                 <div>
@@ -243,8 +243,8 @@ export default function CashierDetailPage() {
                 key={employee.id}
                 type="button"
                 onClick={() => setWasherId(employee.id)}
-                className={`brand-soft-card flex w-full items-center justify-between rounded-2xl p-4 text-left transition ${
-                  washerId === employee.id ? 'border-[#1535D4]/16 bg-[#f8fbff]' : ''
+                className={`brand-outline-card flex w-full items-center justify-between rounded-[16px] p-4 text-left transition ${
+                  washerId === employee.id ? 'border-[#1535D4] bg-white shadow-[inset_0_0_0_1px_#1535D4]' : ''
                 }`}
               >
                 <div>
