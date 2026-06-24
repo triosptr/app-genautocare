@@ -34,7 +34,7 @@ export default function ReportsPage() {
               </div>
               <div className="h-3 rounded-full bg-white/5">
                 <div
-                  className="h-3 rounded-full bg-gradient-to-r from-cyan-300 to-lime-300"
+                  className="h-3 rounded-full bg-gradient-to-r from-[#1535D4] to-[#C8F400]"
                   style={{ width: `${(group.total / maxPayment) * 100}%` }}
                 />
               </div>
@@ -42,8 +42,8 @@ export default function ReportsPage() {
           ))}
         </div>
 
-        <div className="mt-6 rounded-3xl border border-lime-300/15 bg-lime-300/10 p-5">
-          <p className="text-xs uppercase tracking-[0.25em] text-lime-100">Total revenue</p>
+        <div className="mt-6 rounded-3xl border border-[#C8F400]/18 bg-[#C8F400]/10 p-5">
+          <p className="text-xs uppercase tracking-[0.25em] text-[#C8F400]">Total revenue</p>
           <p className="mt-3 font-display text-4xl text-white">{formatCurrency(totalRevenue)}</p>
         </div>
       </Panel>
@@ -51,13 +51,13 @@ export default function ReportsPage() {
       <Panel title="Top Performing Services" subtitle="Revenue contribution by item across all completed tickets.">
         <div className="space-y-3">
           {topItems.map(([name, total], index) => (
-            <div key={name} className="rounded-3xl border border-white/10 bg-white/5 p-4">
+            <div key={name} className="brand-soft-card rounded-3xl p-4">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-xs uppercase tracking-[0.25em] text-slate-500">Rank {index + 1}</p>
                   <p className="mt-2 font-medium text-white">{name}</p>
                 </div>
-                <p className="font-display text-2xl text-cyan-200">{formatCurrency(total)}</p>
+                <p className="font-display text-2xl text-[#C8F400]">{formatCurrency(total)}</p>
               </div>
             </div>
           ))}

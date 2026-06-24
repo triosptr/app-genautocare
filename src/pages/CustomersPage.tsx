@@ -57,7 +57,7 @@ export default function CustomersPage() {
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search by name, phone, or plate"
-          className="mb-4 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
+          className="brand-input mb-4 w-full rounded-2xl px-4 py-3"
         />
         <div className="space-y-3">
           {filteredCustomers.map((customer) => {
@@ -67,7 +67,7 @@ export default function CustomersPage() {
                 key={customer.id}
                 type="button"
                 onClick={() => editCustomer(customer)}
-                className="w-full rounded-3xl border border-white/10 bg-white/5 p-4 text-left transition hover:border-cyan-400/30 hover:bg-cyan-400/10"
+                className="brand-soft-card w-full rounded-3xl p-4 text-left transition hover:border-[#C8F400]/30 hover:bg-[#1535D4]/18"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
@@ -94,7 +94,7 @@ export default function CustomersPage() {
               value={form.name}
               onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
               required
-              className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
+              className="brand-input w-full rounded-2xl px-4 py-3"
             />
           </label>
 
@@ -103,7 +103,7 @@ export default function CustomersPage() {
             <input
               value={form.phone}
               onChange={(event) => setForm((current) => ({ ...current, phone: event.target.value }))}
-              className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
+              className="brand-input w-full rounded-2xl px-4 py-3"
             />
           </label>
 
@@ -112,7 +112,7 @@ export default function CustomersPage() {
             <input
               value={form.vehicle_plate}
               onChange={(event) => setForm((current) => ({ ...current, vehicle_plate: event.target.value }))}
-              className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
+              className="brand-input w-full rounded-2xl px-4 py-3"
             />
           </label>
 
@@ -121,7 +121,7 @@ export default function CustomersPage() {
             <input
               value={form.vehicle_model}
               onChange={(event) => setForm((current) => ({ ...current, vehicle_model: event.target.value }))}
-              className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
+              className="brand-input w-full rounded-2xl px-4 py-3"
             />
           </label>
 
@@ -131,15 +131,15 @@ export default function CustomersPage() {
               value={form.notes}
               onChange={(event) => setForm((current) => ({ ...current, notes: event.target.value }))}
               rows={4}
-              className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
+              className="brand-input w-full rounded-2xl px-4 py-3"
             />
           </label>
 
           <div className="flex gap-3 md:col-span-2">
-            <button type="submit" className="rounded-2xl bg-cyan-300 px-4 py-3 font-medium text-slate-950 transition hover:bg-cyan-200">
+            <button type="submit" className="brand-primary-btn rounded-2xl px-4 py-3 font-medium">
               {form.id ? 'Update customer' : 'Create customer'}
             </button>
-            <button type="button" onClick={() => setForm(emptyForm)} className="rounded-2xl border border-white/10 px-4 py-3 text-slate-300 transition hover:bg-white/5">
+            <button type="button" onClick={() => setForm(emptyForm)} className="brand-secondary-btn rounded-2xl px-4 py-3 text-slate-300">
               Reset form
             </button>
           </div>

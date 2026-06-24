@@ -1,5 +1,6 @@
 import { KeyRound, ShieldCheck } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
+import { BrandLogo } from '@/components/branding/BrandLogo';
 import { useCashierStore } from '@/store/useCashierStore';
 
 export default function LoginPage() {
@@ -13,10 +14,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="grid min-h-screen place-items-center bg-[radial-gradient(circle_at_top,_rgba(183,255,60,0.18),_transparent_26%),radial-gradient(circle_at_bottom_right,_rgba(45,226,230,0.16),_transparent_30%),linear-gradient(180deg,_#080b11_0%,_#04060a_100%)] px-4 py-10 text-slate-100">
-      <div className="grid w-full max-w-5xl overflow-hidden rounded-[36px] border border-white/10 bg-slate-950/80 shadow-[0_40px_140px_-48px_rgba(45,226,230,0.55)] backdrop-blur-xl lg:grid-cols-[1.1fr_0.9fr]">
+    <div className="grid min-h-screen place-items-center bg-[radial-gradient(circle_at_top_left,_rgba(200,244,0,0.18),_transparent_24%),radial-gradient(circle_at_bottom_right,_rgba(249,249,255,0.12),_transparent_30%),linear-gradient(180deg,_#1535D4_0%,_#2035A6_44%,_#373A4A_100%)] px-4 py-10 text-slate-100">
+      <div className="grid w-full max-w-5xl overflow-hidden rounded-[36px] border border-white/10 bg-[linear-gradient(180deg,rgba(21,53,212,0.2)_0%,rgba(55,58,74,0.82)_100%)] shadow-[0_40px_140px_-48px_rgba(21,53,212,0.7)] backdrop-blur-xl lg:grid-cols-[1.1fr_0.9fr]">
         <section className="border-b border-white/10 p-8 lg:border-b-0 lg:border-r lg:p-12">
-          <p className="text-xs uppercase tracking-[0.28em] text-cyan-300">Live operation</p>
+          <BrandLogo variant="on-dark" className="mb-6" />
+          <p className="text-xs uppercase tracking-[0.28em] text-[#C8F400]">Live operation</p>
           <h1 className="mt-4 font-display text-5xl uppercase tracking-[0.14em] text-white">
             Secure access for the cashier floor
           </h1>
@@ -26,13 +28,13 @@ export default function LoginPage() {
           </p>
 
           <div className="mt-8 grid gap-4 md:grid-cols-2">
-            <div className="rounded-3xl border border-cyan-400/15 bg-cyan-400/10 p-5">
-              <ShieldCheck className="h-5 w-5 text-cyan-300" />
+            <div className="rounded-3xl border border-[#1535D4]/45 bg-[#1535D4]/45 p-5">
+              <ShieldCheck className="h-5 w-5 text-[#F9F9FF]" />
               <p className="mt-4 font-medium text-white">Authenticated-only access</p>
               <p className="mt-2 text-sm text-slate-300">The live workspace respects Supabase-authenticated policies.</p>
             </div>
-            <div className="rounded-3xl border border-lime-300/15 bg-lime-300/10 p-5">
-              <KeyRound className="h-5 w-5 text-lime-200" />
+            <div className="rounded-3xl border border-[#C8F400]/20 bg-[#C8F400]/12 p-5">
+              <KeyRound className="h-5 w-5 text-[#C8F400]" />
               <p className="mt-4 font-medium text-white">Ready for Vercel</p>
               <p className="mt-2 text-sm text-slate-300">Use the same env values locally and in the Vercel dashboard.</p>
             </div>
@@ -49,7 +51,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 required
-                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-cyan-300/40"
+                className="brand-input w-full rounded-2xl px-4 py-3"
                 placeholder="owner@genautocare.com"
               />
             </label>
@@ -61,7 +63,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 required
-                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-cyan-300/40"
+                className="brand-input w-full rounded-2xl px-4 py-3"
                 placeholder="Your secure password"
               />
             </label>
@@ -71,7 +73,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={authLoading}
-              className="w-full rounded-2xl bg-cyan-300 px-4 py-3 font-medium text-slate-950 transition hover:bg-cyan-200 disabled:cursor-not-allowed disabled:opacity-70"
+              className="brand-primary-btn w-full rounded-2xl px-4 py-3 font-medium disabled:cursor-not-allowed disabled:opacity-70"
             >
               {authLoading ? 'Signing in...' : 'Enter cashier workspace'}
             </button>

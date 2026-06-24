@@ -63,7 +63,7 @@ export default function CatalogPage() {
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search item name"
-          className="mb-4 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
+          className="brand-input mb-4 w-full rounded-2xl px-4 py-3"
         />
 
         <div className="overflow-hidden rounded-3xl border border-white/10">
@@ -79,13 +79,13 @@ export default function CatalogPage() {
             </thead>
             <tbody className="divide-y divide-white/5">
               {filteredItems.map((item) => (
-                <tr key={item.id} className="cursor-pointer bg-slate-950/40 transition hover:bg-white/5" onClick={() => editItem(item)}>
+                <tr key={item.id} className="cursor-pointer bg-[#2e3140]/55 transition hover:bg-[#1535D4]/18" onClick={() => editItem(item)}>
                   <td className="px-4 py-3 text-white">{item.name}</td>
                   <td className="px-4 py-3 text-slate-300">{item.item_type}</td>
                   <td className="px-4 py-3 text-slate-200">{formatCurrency(item.price)}</td>
                   <td className="px-4 py-3 text-slate-300">{item.stock_qty ?? '-'}</td>
                   <td className="px-4 py-3">
-                    <span className={`rounded-full px-2 py-1 text-xs uppercase tracking-[0.2em] ${item.is_active ? 'bg-lime-300/15 text-lime-200' : 'bg-white/10 text-slate-400'}`}>
+                    <span className={`rounded-full px-2 py-1 text-xs uppercase tracking-[0.2em] ${item.is_active ? 'bg-[#C8F400]/15 text-[#C8F400]' : 'bg-white/10 text-slate-400'}`}>
                       {item.is_active ? 'Active' : 'Inactive'}
                     </span>
                   </td>
@@ -104,7 +104,7 @@ export default function CatalogPage() {
               value={form.name}
               onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
               required
-              className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
+              className="brand-input w-full rounded-2xl px-4 py-3"
             />
           </label>
 
@@ -113,7 +113,7 @@ export default function CatalogPage() {
             <select
               value={form.item_type}
               onChange={(event) => setForm((current) => ({ ...current, item_type: event.target.value as CatalogItemType }))}
-              className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
+              className="brand-input w-full rounded-2xl px-4 py-3"
             >
               <option value="service">Service</option>
               <option value="product">Product</option>
@@ -125,7 +125,7 @@ export default function CatalogPage() {
             <input
               value={form.category}
               onChange={(event) => setForm((current) => ({ ...current, category: event.target.value }))}
-              className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
+              className="brand-input w-full rounded-2xl px-4 py-3"
             />
           </label>
 
@@ -134,7 +134,7 @@ export default function CatalogPage() {
             <input
               value={form.sku}
               onChange={(event) => setForm((current) => ({ ...current, sku: event.target.value }))}
-              className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
+              className="brand-input w-full rounded-2xl px-4 py-3"
             />
           </label>
 
@@ -144,7 +144,7 @@ export default function CatalogPage() {
               type="number"
               value={form.price}
               onChange={(event) => setForm((current) => ({ ...current, price: Number(event.target.value) }))}
-              className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
+              className="brand-input w-full rounded-2xl px-4 py-3"
             />
           </label>
 
@@ -155,7 +155,7 @@ export default function CatalogPage() {
               value={form.cost}
               onChange={(event) => setForm((current) => ({ ...current, cost: Number(event.target.value) }))}
               disabled={form.item_type !== 'product'}
-              className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none disabled:opacity-50"
+              className="brand-input w-full rounded-2xl px-4 py-3 disabled:opacity-50"
             />
           </label>
 
@@ -166,11 +166,11 @@ export default function CatalogPage() {
               value={form.stock_qty}
               onChange={(event) => setForm((current) => ({ ...current, stock_qty: Number(event.target.value) }))}
               disabled={form.item_type !== 'product'}
-              className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none disabled:opacity-50"
+              className="brand-input w-full rounded-2xl px-4 py-3 disabled:opacity-50"
             />
           </label>
 
-          <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">
+          <label className="brand-soft-card flex items-center gap-3 rounded-2xl px-4 py-3 text-sm text-slate-300">
             <input
               type="checkbox"
               checked={form.is_active}
@@ -180,10 +180,10 @@ export default function CatalogPage() {
           </label>
 
           <div className="flex gap-3 md:col-span-2">
-            <button type="submit" className="rounded-2xl bg-cyan-300 px-4 py-3 font-medium text-slate-950 transition hover:bg-cyan-200">
+            <button type="submit" className="brand-primary-btn rounded-2xl px-4 py-3 font-medium">
               {form.id ? 'Update item' : 'Create item'}
             </button>
-            <button type="button" onClick={() => setForm(emptyForm)} className="rounded-2xl border border-white/10 px-4 py-3 text-slate-300 transition hover:bg-white/5">
+            <button type="button" onClick={() => setForm(emptyForm)} className="brand-secondary-btn rounded-2xl px-4 py-3 text-slate-300">
               Reset form
             </button>
           </div>

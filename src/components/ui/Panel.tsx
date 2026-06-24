@@ -13,7 +13,7 @@ export function Panel({ title, subtitle, actions, className, children }: PanelPr
   return (
     <section
       className={cn(
-        'rounded-3xl border border-white/10 bg-slate-950/70 p-5 shadow-[0_24px_80px_-32px_rgba(45,226,230,0.45)] backdrop-blur-xl',
+        'brand-panel rounded-3xl p-5',
         className,
       )}
     >
@@ -21,7 +21,7 @@ export function Panel({ title, subtitle, actions, className, children }: PanelPr
         <header className="mb-4 flex items-start justify-between gap-4">
           <div>
             {title && <h2 className="font-display text-lg uppercase tracking-[0.18em] text-white">{title}</h2>}
-            {subtitle && <p className="mt-1 text-sm text-slate-400">{subtitle}</p>}
+            {subtitle && <p className="mt-1 text-sm text-slate-300">{subtitle}</p>}
           </div>
           {actions}
         </header>

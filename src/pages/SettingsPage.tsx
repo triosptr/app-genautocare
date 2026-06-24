@@ -22,7 +22,7 @@ export default function SettingsPage() {
             <input
               value={form.businessName}
               onChange={(event) => setForm((current) => ({ ...current, businessName: event.target.value }))}
-              className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
+              className="brand-input w-full rounded-2xl px-4 py-3"
             />
           </label>
 
@@ -32,7 +32,7 @@ export default function SettingsPage() {
               type="number"
               value={form.taxRate}
               onChange={(event) => setForm((current) => ({ ...current, taxRate: Number(event.target.value) }))}
-              className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
+              className="brand-input w-full rounded-2xl px-4 py-3"
             />
           </label>
 
@@ -42,11 +42,11 @@ export default function SettingsPage() {
               value={form.receiptFooter}
               onChange={(event) => setForm((current) => ({ ...current, receiptFooter: event.target.value }))}
               rows={4}
-              className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
+              className="brand-input w-full rounded-2xl px-4 py-3"
             />
           </label>
 
-          <button type="submit" className="rounded-2xl bg-cyan-300 px-4 py-3 font-medium text-slate-950 transition hover:bg-cyan-200">
+          <button type="submit" className="brand-primary-btn rounded-2xl px-4 py-3 font-medium">
             Save settings
           </button>
         </form>
@@ -55,8 +55,8 @@ export default function SettingsPage() {
       <div className="space-y-6">
         <Panel title="Integration Status" subtitle="Track the services required for production deployment.">
           <div className="space-y-4">
-            <div className="flex items-start gap-4 rounded-3xl border border-white/10 bg-white/5 p-4">
-              <Shield className="mt-1 h-5 w-5 text-cyan-300" />
+            <div className="brand-soft-card flex items-start gap-4 rounded-3xl p-4">
+              <Shield className="mt-1 h-5 w-5 text-[#C8F400]" />
               <div>
                 <p className="font-medium text-white">Supabase</p>
                 <p className="mt-1 text-sm text-slate-400">
@@ -64,15 +64,15 @@ export default function SettingsPage() {
                 </p>
               </div>
             </div>
-            <div className="flex items-start gap-4 rounded-3xl border border-white/10 bg-white/5 p-4">
-              <Github className="mt-1 h-5 w-5 text-lime-200" />
+            <div className="brand-soft-card flex items-start gap-4 rounded-3xl p-4">
+              <Github className="mt-1 h-5 w-5 text-[#C8F400]" />
               <div>
                 <p className="font-medium text-white">GitHub</p>
                 <p className="mt-1 text-sm text-slate-400">Push this local project to a GitHub repository, then connect that repository in Vercel.</p>
               </div>
             </div>
-            <div className="flex items-start gap-4 rounded-3xl border border-white/10 bg-white/5 p-4">
-              <Cloud className="mt-1 h-5 w-5 text-cyan-300" />
+            <div className="brand-soft-card flex items-start gap-4 rounded-3xl p-4">
+              <Cloud className="mt-1 h-5 w-5 text-[#C8F400]" />
               <div>
                 <p className="font-medium text-white">Vercel</p>
                 <p className="mt-1 text-sm text-slate-400">Use the repository import flow and define the same `VITE_` env values in Vercel Project Settings.</p>
@@ -89,8 +89,8 @@ export default function SettingsPage() {
               'Push the project to GitHub and connect the repository to Vercel.',
               'Add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in Vercel.',
             ].map((item) => (
-              <div key={item} className="flex items-center gap-3 rounded-2xl border border-lime-300/15 bg-lime-300/10 px-4 py-3 text-sm text-slate-200">
-                <CheckCircle2 className="h-4 w-4 text-lime-200" />
+              <div key={item} className="flex items-center gap-3 rounded-2xl border border-[#C8F400]/20 bg-[#C8F400]/10 px-4 py-3 text-sm text-slate-100">
+                <CheckCircle2 className="h-4 w-4 text-[#C8F400]" />
                 <span>{item}</span>
               </div>
             ))}

@@ -20,7 +20,7 @@ export default function TransactionsPage() {
         <select
           value={paymentFilter}
           onChange={(event) => setPaymentFilter(event.target.value)}
-          className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none"
+          className="brand-input rounded-2xl px-4 py-3 text-sm"
         >
           <option value="all">All payments</option>
           <option value="cash">Cash</option>
@@ -35,14 +35,14 @@ export default function TransactionsPage() {
           const customer = customers.find((entry) => entry.id === order.customer_id);
           const lines = orderItems.filter((item) => item.order_id === order.id);
           return (
-            <article key={order.id} className="rounded-3xl border border-white/10 bg-white/5 p-5">
+            <article key={order.id} className="brand-soft-card rounded-3xl p-5">
               <div className="flex flex-col gap-4 border-b border-white/10 pb-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                   <p className="font-display text-2xl text-white">{order.order_number}</p>
                   <p className="mt-1 text-sm text-slate-400">{customer?.name ?? 'Walk-in customer'} · {formatDateTime(order.created_at)}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-display text-3xl text-cyan-200">{formatCurrency(order.total)}</p>
+                  <p className="font-display text-3xl text-[#C8F400]">{formatCurrency(order.total)}</p>
                   <p className="mt-1 text-xs uppercase tracking-[0.2em] text-slate-400">{order.payment_method}</p>
                 </div>
               </div>

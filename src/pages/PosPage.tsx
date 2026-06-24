@@ -98,7 +98,7 @@ export default function PosPage() {
   return (
     <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
       <Panel title="Catalog Search" subtitle="Build the basket with services and retail products." className="min-h-[720px]">
-        <label className="mb-4 flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+        <label className="brand-soft-card mb-4 flex items-center gap-3 rounded-2xl px-4 py-3">
           <Search className="h-4 w-4 text-slate-400" />
           <input
             value={query}
@@ -114,7 +114,7 @@ export default function PosPage() {
               key={item.id}
               type="button"
               onClick={() => addItem(item)}
-              className="rounded-3xl border border-white/10 bg-white/5 p-4 text-left transition hover:border-cyan-400/30 hover:bg-cyan-400/10"
+              className="brand-soft-card rounded-3xl p-4 text-left transition hover:border-[#C8F400]/30 hover:bg-[#1535D4]/18"
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
@@ -125,7 +125,7 @@ export default function PosPage() {
                   {item.item_type}
                 </span>
               </div>
-              <p className="mt-4 font-display text-2xl text-cyan-200">{formatCurrency(item.price)}</p>
+              <p className="mt-4 font-display text-2xl text-[#C8F400]">{formatCurrency(item.price)}</p>
             </button>
           ))}
         </div>
@@ -133,15 +133,15 @@ export default function PosPage() {
 
       <Panel title="Checkout Panel" subtitle="Finalize the customer, payment, and pricing breakdown.">
         <div className="space-y-5">
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
+          <div className="brand-soft-card rounded-3xl p-4">
             <div className="flex items-center gap-2 text-sm uppercase tracking-[0.2em] text-slate-400">
-              <ShoppingCart className="h-4 w-4 text-cyan-300" />
+              <ShoppingCart className="h-4 w-4 text-[#C8F400]" />
               Active cart
             </div>
             <div className="mt-4 space-y-3">
               {cart.length === 0 && <p className="text-sm text-slate-400">No items yet. Add services or products from the left panel.</p>}
               {cart.map((item) => (
-                <div key={item.id} className="rounded-2xl border border-white/10 bg-slate-950/60 p-4">
+                <div key={item.id} className="rounded-2xl border border-white/10 bg-[#2e3140]/90 p-4">
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <p className="font-medium text-white">{item.name}</p>
@@ -153,11 +153,11 @@ export default function PosPage() {
                   </div>
                   <div className="mt-4 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <button type="button" onClick={() => updateQuantity(item.id, item.quantity - 1)} className="rounded-xl border border-white/10 p-2 text-slate-300 transition hover:bg-white/5">
+                      <button type="button" onClick={() => updateQuantity(item.id, item.quantity - 1)} className="brand-secondary-btn rounded-xl p-2 text-slate-300">
                         <Minus className="h-4 w-4" />
                       </button>
                       <span className="min-w-10 text-center text-sm text-white">{item.quantity}</span>
-                      <button type="button" onClick={() => updateQuantity(item.id, item.quantity + 1)} className="rounded-xl border border-white/10 p-2 text-slate-300 transition hover:bg-white/5">
+                      <button type="button" onClick={() => updateQuantity(item.id, item.quantity + 1)} className="brand-secondary-btn rounded-xl p-2 text-slate-300">
                         <Plus className="h-4 w-4" />
                       </button>
                     </div>
@@ -174,7 +174,7 @@ export default function PosPage() {
               <select
                 value={selectedCustomer}
                 onChange={(event) => setSelectedCustomer(event.target.value)}
-                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
+                className="brand-input w-full rounded-2xl px-4 py-3"
               >
                 <option value="">Walk-in customer</option>
                 {customers.map((customer) => (
@@ -190,7 +190,7 @@ export default function PosPage() {
               <select
                 value={paymentMethod}
                 onChange={(event) => setPaymentMethod(event.target.value as PaymentMethod)}
-                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
+                className="brand-input w-full rounded-2xl px-4 py-3"
               >
                 {paymentMethods.map((method) => (
                   <option key={method} value={method}>
@@ -207,7 +207,7 @@ export default function PosPage() {
               type="number"
               value={discount}
               onChange={(event) => setDiscount(Number(event.target.value))}
-              className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
+              className="brand-input w-full rounded-2xl px-4 py-3"
             />
           </label>
 
@@ -217,12 +217,12 @@ export default function PosPage() {
               value={notes}
               onChange={(event) => setNotes(event.target.value)}
               rows={3}
-              className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
+              className="brand-input w-full rounded-2xl px-4 py-3"
               placeholder="Optional notes for the service team"
             />
           </label>
 
-          <div className="rounded-3xl border border-lime-300/15 bg-lime-300/10 p-5">
+          <div className="rounded-3xl border border-[#C8F400]/18 bg-[#C8F400]/10 p-5">
             <div className="flex items-center justify-between text-sm text-slate-300">
               <span>Subtotal</span>
               <span>{formatCurrency(subtotal)}</span>
@@ -236,7 +236,7 @@ export default function PosPage() {
               <span>{formatCurrency(tax)}</span>
             </div>
             <div className="mt-4 flex items-center justify-between border-t border-lime-300/15 pt-4">
-              <span className="text-sm uppercase tracking-[0.2em] text-lime-100">Total</span>
+              <span className="text-sm uppercase tracking-[0.2em] text-[#C8F400]">Total</span>
               <span className="font-display text-3xl text-white">{formatCurrency(total)}</span>
             </div>
           </div>
@@ -245,7 +245,7 @@ export default function PosPage() {
             type="button"
             disabled={!cart.length || submitting}
             onClick={handleCheckout}
-            className="w-full rounded-2xl bg-cyan-300 px-4 py-3 font-medium text-slate-950 transition hover:bg-cyan-200 disabled:cursor-not-allowed disabled:opacity-60"
+            className="brand-primary-btn w-full rounded-2xl px-4 py-3 font-medium disabled:cursor-not-allowed disabled:opacity-60"
           >
             {submitting ? 'Saving transaction...' : 'Complete transaction'}
           </button>
