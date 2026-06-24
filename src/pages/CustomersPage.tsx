@@ -36,7 +36,7 @@ export default function CustomersPage() {
 
   return (
     <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-      <Panel title="Database Pelanggan" subtitle="Nama, WhatsApp, plat, jumlah kunjungan, total belanja, dan poin.">
+      <Panel title="Pelanggan" subtitle="Cari pelanggan dengan cepat dari meja kasir.">
         <input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
@@ -50,23 +50,23 @@ export default function CustomersPage() {
               type="button"
               onClick={() => setSelectedCustomerId(customer.id)}
               className={`brand-soft-card w-full rounded-3xl p-4 text-left transition ${
-                customer.id === selectedCustomer?.id ? 'border-[#C8F400]/30 bg-[#1535D4]/18' : ''
+                customer.id === selectedCustomer?.id ? 'border-[#1535D4]/16 bg-[#f8fbff]' : ''
               }`}
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="font-medium text-white">{customer.name}</p>
-                  <p className="mt-1 text-sm text-slate-400">{customer.phone}</p>
+                  <p className="font-medium text-slate-900">{customer.name}</p>
+                  <p className="mt-1 text-sm text-slate-500">{customer.phone}</p>
                 </div>
-                <span className="rounded-full border border-[#C8F400]/20 px-2 py-1 text-xs uppercase tracking-[0.2em] text-[#C8F400]">
+                <span className="rounded-full border border-[#1535D4]/12 px-2 py-1 text-[11px] uppercase tracking-[0.16em] text-[#1535D4]">
                   {customer.points} poin
                 </span>
               </div>
-              <div className="mt-4 flex items-center justify-between text-sm text-slate-300">
+              <div className="mt-4 flex items-center justify-between text-sm text-slate-600">
                 <span>{customer.visits} kunjungan</span>
                 <span>{formatCurrency(customer.spend)}</span>
               </div>
-              <p className="mt-2 text-sm text-slate-300">
+              <p className="mt-2 text-sm text-slate-600">
                 {customer.vehicles.map((vehicle) => `${vehicle.plate} · ${vehicle.merk}`).join(' | ')}
               </p>
             </button>
@@ -75,42 +75,42 @@ export default function CustomersPage() {
       </Panel>
 
       <div className="space-y-6">
-        <Panel title="Detail Pelanggan" subtitle="Kendaraan, riwayat kunjungan, dan QC per motor.">
+        <Panel title="Detail Pelanggan" subtitle="Riwayat singkat kendaraan dan transaksi pelanggan.">
           {selectedCustomer ? (
             <div className="space-y-4">
               <div className="brand-soft-card rounded-3xl p-4">
-                <p className="font-display text-3xl text-white">{selectedCustomer.name}</p>
-                <p className="mt-2 text-sm text-slate-300">{selectedCustomer.phone}</p>
+                <p className="font-display text-[28px] text-slate-900">{selectedCustomer.name}</p>
+                <p className="mt-2 text-sm text-slate-600">{selectedCustomer.phone}</p>
                 <div className="mt-4 grid gap-3 md:grid-cols-3">
-                  <div className="rounded-2xl bg-[#1535D4]/35 p-4">
-                    <p className="text-xs uppercase tracking-[0.2em] text-slate-200">Kunjungan</p>
-                    <p className="mt-2 font-display text-2xl text-white">{selectedCustomer.visits}</p>
+                  <div className="rounded-2xl bg-[#eef4ff] p-4">
+                    <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Kunjungan</p>
+                    <p className="mt-2 font-display text-2xl text-[#1535D4]">{selectedCustomer.visits}</p>
                   </div>
-                  <div className="rounded-2xl bg-[#373A4A]/85 p-4">
-                    <p className="text-xs uppercase tracking-[0.2em] text-slate-200">Total belanja</p>
-                    <p className="mt-2 font-display text-2xl text-white">{formatCurrency(selectedCustomer.spend)}</p>
+                  <div className="rounded-2xl bg-[#f8fafc] p-4">
+                    <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Total belanja</p>
+                    <p className="mt-2 font-display text-2xl text-slate-900">{formatCurrency(selectedCustomer.spend)}</p>
                   </div>
-                  <div className="rounded-2xl bg-[#C8F400]/12 p-4">
-                    <p className="text-xs uppercase tracking-[0.2em] text-[#C8F400]">Poin</p>
-                    <p className="mt-2 font-display text-2xl text-white">{selectedCustomer.points}</p>
+                  <div className="rounded-2xl bg-[#f5ffcf] p-4">
+                    <p className="text-[11px] uppercase tracking-[0.16em] text-[#6b7f00]">Poin</p>
+                    <p className="mt-2 font-display text-2xl text-slate-900">{selectedCustomer.points}</p>
                   </div>
                 </div>
               </div>
 
               <div className="brand-soft-card rounded-3xl p-4">
-                <p className="text-sm uppercase tracking-[0.2em] text-slate-400">Daftar kendaraan</p>
+                <p className="text-sm uppercase tracking-[0.16em] text-slate-500">Daftar kendaraan</p>
                 <div className="mt-3 space-y-3">
                   {selectedCustomer.vehicles.map((vehicle) => (
-                    <div key={vehicle.plate} className="rounded-2xl border border-white/10 bg-[#2e3140]/80 p-4">
-                      <p className="font-medium text-white">{vehicle.plate}</p>
-                      <p className="mt-1 text-sm text-slate-300">{vehicle.merk}</p>
+                    <div key={vehicle.plate} className="rounded-2xl border border-slate-200 bg-[#f8fafc] p-4">
+                      <p className="font-medium text-slate-900">{vehicle.plate}</p>
+                      <p className="mt-1 text-sm text-slate-600">{vehicle.merk}</p>
                       <div className="mt-3 space-y-2">
                         {customerQC
                           .filter((qc) => qc.plate === vehicle.plate)
                           .map((qc) => (
-                            <div key={qc.id} className="flex items-center justify-between text-sm text-slate-300">
+                            <div key={qc.id} className="flex items-center justify-between text-sm text-slate-600">
                               <span>{formatDateTime(qc.time)} · {qc.washer}</span>
-                              <span className="text-[#C8F400]">Skor {qc.score}</span>
+                              <span className="text-[#1535D4]">Skor {qc.score}</span>
                             </div>
                           ))}
                       </div>
@@ -120,15 +120,15 @@ export default function CustomersPage() {
               </div>
 
               <div className="brand-soft-card rounded-3xl p-4">
-                <p className="text-sm uppercase tracking-[0.2em] text-slate-400">Riwayat kunjungan</p>
+                <p className="text-sm uppercase tracking-[0.16em] text-slate-500">Riwayat kunjungan</p>
                 <div className="mt-3 space-y-3">
                   {customerTransactions.map((tx) => (
-                    <div key={tx.id} className="flex items-center justify-between rounded-2xl border border-white/10 bg-[#2e3140]/80 p-4">
+                    <div key={tx.id} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-[#f8fafc] p-4">
                       <div>
-                        <p className="font-medium text-white">{tx.services.join(', ')}</p>
-                        <p className="mt-1 text-sm text-slate-300">{tx.washer} · {formatDateTime(tx.time)}</p>
+                        <p className="font-medium text-slate-900">{tx.services.join(', ')}</p>
+                        <p className="mt-1 text-sm text-slate-600">{tx.washer} · {formatDateTime(tx.time)}</p>
                       </div>
-                      <span className="text-white">{formatCurrency(tx.total)}</span>
+                      <span className="text-slate-900">{formatCurrency(tx.total)}</span>
                     </div>
                   ))}
                 </div>
@@ -139,7 +139,7 @@ export default function CustomersPage() {
           )}
         </Panel>
 
-        <Panel title="Tambah Pelanggan" subtitle="Tambah pelanggan baru atau kendaraan baru untuk owner yang sama.">
+        <Panel title="Tambah Pelanggan" subtitle="Tambah data pelanggan baru secara cepat.">
           <div className="grid gap-4 md:grid-cols-2">
             <input value={name} onChange={(event) => setName(event.target.value)} placeholder="Nama pelanggan" className="brand-input rounded-2xl px-4 py-3" />
             <input value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="Nomor WhatsApp" className="brand-input rounded-2xl px-4 py-3" />

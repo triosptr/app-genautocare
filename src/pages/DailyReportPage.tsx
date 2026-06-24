@@ -19,35 +19,35 @@ export default function DailyReportPage() {
 
   return (
     <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-      <Panel title="Laporan Harian" subtitle="Total pendapatan, jumlah transaksi, dan breakdown metode bayar.">
+      <Panel title="Laporan Harian" subtitle="Ringkasan singkat transaksi kasir hari ini.">
         <div className="grid gap-4 md:grid-cols-3">
           <div className="brand-soft-card rounded-3xl p-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Pendapatan</p>
-            <p className="mt-3 font-display text-3xl text-white">{formatCurrency(totalRevenue)}</p>
+            <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Pendapatan</p>
+            <p className="mt-3 font-display text-[28px] text-[#1535D4]">{formatCurrency(totalRevenue)}</p>
           </div>
           <div className="brand-soft-card rounded-3xl p-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Jumlah transaksi</p>
-            <p className="mt-3 font-display text-3xl text-white">{transactions.length}</p>
+            <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Jumlah transaksi</p>
+            <p className="mt-3 font-display text-[28px] text-slate-900">{transactions.length}</p>
           </div>
           <div className="brand-soft-card rounded-3xl p-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Siap PDF</p>
-            <p className="mt-3 text-sm text-slate-300">Struktur laporan siap dikembangkan ke export PDF.</p>
+            <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Status</p>
+            <p className="mt-3 text-sm text-slate-600">Struktur laporan siap dikembangkan ke export PDF.</p>
           </div>
         </div>
         <div className="mt-6 space-y-3">
           {paymentGroups.map((group) => (
             <div key={group.method} className="brand-soft-card flex items-center justify-between rounded-2xl p-4">
-              <span className="text-white">{group.method.toUpperCase()}</span>
-              <span className="text-[#C8F400]">{formatCurrency(group.total)}</span>
+              <span className="text-slate-700">{group.method.toUpperCase()}</span>
+              <span className="text-[#1535D4]">{formatCurrency(group.total)}</span>
             </div>
           ))}
         </div>
       </Panel>
 
-      <Panel title="Kirim Ke Owner" subtitle="Ringkasan laporan dapat dikirim cepat lewat WhatsApp owner.">
+      <Panel title="Kirim Laporan" subtitle="Bagikan ringkasan lewat WhatsApp bila diperlukan.">
         <div className="space-y-4">
           <div className="brand-soft-card rounded-3xl p-4">
-            <p className="text-sm text-slate-300 whitespace-pre-line">{reportMessage}</p>
+            <p className="whitespace-pre-line text-sm text-slate-600">{reportMessage}</p>
           </div>
           <a
             href={createWhatsAppLink('081234567890', reportMessage)}

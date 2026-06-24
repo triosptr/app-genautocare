@@ -87,7 +87,8 @@ const roleKey = 'gen-autocare-role';
 const settingsKey = 'gen-autocare-settings-v2';
 
 function readRole() {
-  return (localStorage.getItem(roleKey) as AppRole | null) ?? null;
+  const raw = localStorage.getItem(roleKey);
+  return raw ? ('kasir' as AppRole) : null;
 }
 
 function readSettings() {

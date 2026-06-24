@@ -9,10 +9,10 @@ import { formatCurrency } from '@/utils/format';
 const paymentMethods: PaymentMethod[] = ['cash', 'qris', 'transfer'];
 
 const tierStyles: Record<ServiceTier, string> = {
-  BASIC: 'bg-[#f0f2f7] text-[#373A4A] border-[#d8dbe5]',
-  STANDARD: 'bg-[#1535D4] text-white border-[#1535D4]',
-  PREMIUM: 'bg-[#e8a93b] text-[#111318] border-[#e8a93b]',
-  ELITE: 'bg-[#1a1c25] text-[#C8F400] border-[#C8F400]/30',
+  BASIC: 'bg-[#f8fafc] text-[#334155] border-slate-200',
+  STANDARD: 'bg-[#eef4ff] text-[#1535D4] border-[#cdd9ff]',
+  PREMIUM: 'bg-[#fff5df] text-[#8a5a00] border-[#f0d39c]',
+  ELITE: 'bg-[#f5ffcf] text-[#516000] border-[#d9e895]',
 };
 
 export default function CashierDetailPage() {
@@ -111,8 +111,8 @@ export default function CashierDetailPage() {
 
   return (
     <div className="space-y-6">
-      <section className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-        <Panel title="Step 1 — Data Motor & Pelanggan" subtitle="Cari pelanggan lama atau isi pelanggan baru dan data kendaraan.">
+      <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+        <Panel title="1. Data Pelanggan" subtitle="Cari pelanggan lama atau isi data pelanggan baru.">
           <div className="space-y-4">
             <input
               value={search}
@@ -126,11 +126,11 @@ export default function CashierDetailPage() {
                   key={customer.id}
                   type="button"
                   onClick={() => selectCustomer(customer.id)}
-                  className="brand-soft-card rounded-2xl p-4 text-left transition hover:border-[#C8F400]/30 hover:bg-[#1535D4]/18"
+                  className="brand-soft-card rounded-2xl p-4 text-left transition hover:border-[#1535D4]/16 hover:bg-[#f8fbff]"
                 >
-                  <p className="font-medium text-white">{customer.name}</p>
-                  <p className="mt-1 text-sm text-slate-300">{customer.phone}</p>
-                  <p className="mt-2 text-xs uppercase tracking-[0.2em] text-[#C8F400]">
+                  <p className="font-medium text-slate-900">{customer.name}</p>
+                  <p className="mt-1 text-sm text-slate-500">{customer.phone}</p>
+                  <p className="mt-2 text-[11px] uppercase tracking-[0.16em] text-[#1535D4]">
                     {customer.vehicles.length} kendaraan · {customer.points} poin
                   </p>
                 </button>
@@ -146,14 +146,14 @@ export default function CashierDetailPage() {
           </div>
         </Panel>
 
-        <Panel title="Ringkasan Invoice" subtitle="Subtotal, diskon, poin, metode bayar, dan invoice WhatsApp.">
+        <Panel title="Ringkasan" subtitle="Total, diskon, metode bayar, dan kirim invoice.">
           <div className="space-y-4">
             <div className="brand-soft-card rounded-2xl p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Subtotal</p>
-              <p className="mt-2 font-display text-3xl text-white">{formatCurrency(subtotal)}</p>
+              <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Subtotal</p>
+              <p className="mt-2 font-display text-[28px] text-[#1535D4]">{formatCurrency(subtotal)}</p>
             </div>
             <div className="brand-soft-card rounded-2xl p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Diskon</p>
+              <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Diskon</p>
               <input
                 type="number"
                 value={discount}
@@ -161,7 +161,7 @@ export default function CashierDetailPage() {
                 className="brand-input mt-3 w-full rounded-2xl px-4 py-3"
               />
             </div>
-            <label className="brand-soft-card flex items-center gap-3 rounded-2xl px-4 py-3 text-sm text-slate-200">
+            <label className="brand-soft-card flex items-center gap-3 rounded-2xl px-4 py-3 text-sm text-slate-700">
               <input type="checkbox" checked={usePoints} onChange={(event) => setUsePoints(event.target.checked)} />
               Gunakan poin pelanggan jika mencapai {settings.pointRedeemThreshold} poin
             </label>
@@ -172,7 +172,7 @@ export default function CashierDetailPage() {
                   type="button"
                   onClick={() => setPayment(method)}
                   className={`rounded-2xl border px-4 py-3 text-sm font-medium transition ${
-                    payment === method ? 'border-[#C8F400] bg-[#C8F400] text-[#1535D4]' : 'border-white/10 bg-white/5 text-white'
+                    payment === method ? 'border-[#1535D4] bg-[#1535D4] text-white' : 'border-slate-200 bg-white text-slate-700'
                   }`}
                 >
                   {method.toUpperCase()}
@@ -180,16 +180,16 @@ export default function CashierDetailPage() {
               ))}
             </div>
             {payment === 'transfer' && (
-              <div className="brand-soft-card rounded-2xl p-4 text-sm text-slate-200">
+              <div className="brand-soft-card rounded-2xl p-4 text-sm text-slate-700">
                 <p>{settings.bankBank}</p>
                 <p className="mt-1">{settings.bankName}</p>
-                <p className="mt-1 font-display text-2xl text-white">{settings.bankNo}</p>
+                <p className="mt-1 font-display text-2xl text-slate-900">{settings.bankNo}</p>
               </div>
             )}
-            <div className="rounded-3xl border border-[#C8F400]/18 bg-[#C8F400]/10 p-5">
+            <div className="rounded-3xl border border-[#1535D4]/10 bg-[#eef4ff] p-5">
               <div className="flex items-center justify-between">
-                <span className="text-sm uppercase tracking-[0.2em] text-[#C8F400]">Total</span>
-                <span className="font-display text-3xl text-white">{formatCurrency(total)}</span>
+                <span className="text-sm uppercase tracking-[0.16em] text-[#1535D4]">Total</span>
+                <span className="font-display text-[30px] text-slate-900">{formatCurrency(total)}</span>
               </div>
             </div>
             <button type="button" onClick={processTransaction} className="brand-primary-btn w-full rounded-2xl px-4 py-3 font-semibold">
@@ -209,30 +209,34 @@ export default function CashierDetailPage() {
         </Panel>
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-        <Panel title="Step 2 — Pilih Layanan" subtitle="Pilih layanan dengan tier visual sesuai harga dan komisi.">
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+        <Panel title="2. Pilih Layanan" subtitle="Tampilan layanan dibuat lebih rapi dan mudah dibaca.">
+          <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-4">
             {services.map((service) => (
               <button
                 key={service.id}
                 type="button"
                 onClick={() => toggleService(service.id)}
-                className={`rounded-3xl border p-4 text-left transition ${tierStyles[service.tier]} ${
-                  selectedServices.includes(service.id) ? 'ring-2 ring-[#C8F400]' : ''
+                className={`flex min-h-[220px] flex-col justify-between rounded-3xl border p-4 text-left transition ${tierStyles[service.tier]} ${
+                  selectedServices.includes(service.id) ? 'ring-2 ring-[#1535D4]' : ''
                 }`}
               >
-                <p className="text-xs uppercase tracking-[0.22em]">{service.tier}</p>
-                <p className="mt-3 font-display text-2xl">{service.name}</p>
-                <p className="mt-4 text-3xl font-black">{formatCurrency(service.price)}</p>
-                <p className="mt-3 text-xs uppercase tracking-[0.18em]">
-                  Komisi {service.kType === 'flat' ? formatCurrency(service.kVal) : `${service.kVal}%`}
-                </p>
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.14em]">{service.tier}</p>
+                  <p className="mt-3 font-display text-[18px] leading-tight md:text-[20px]">{service.name}</p>
+                </div>
+                <div className="mt-5 space-y-2">
+                  <p className="font-display text-[22px] leading-none font-bold md:text-[24px]">{formatCurrency(service.price)}</p>
+                  <p className="text-[10px] uppercase tracking-[0.12em] opacity-90">
+                    Komisi {service.kType === 'flat' ? formatCurrency(service.kVal) : `${service.kVal}%`}
+                  </p>
+                </div>
               </button>
             ))}
           </div>
         </Panel>
 
-        <Panel title="Step 3 — Pilih Teknisi" subtitle="Hanya teknisi yang hadir yang dapat dipilih.">
+        <Panel title="3. Pilih Teknisi" subtitle="Hanya teknisi hadir yang bisa dipilih.">
           <div className="space-y-3">
             {activeEmployees.map((employee) => (
               <button
@@ -240,23 +244,23 @@ export default function CashierDetailPage() {
                 type="button"
                 onClick={() => setWasherId(employee.id)}
                 className={`brand-soft-card flex w-full items-center justify-between rounded-2xl p-4 text-left transition ${
-                  washerId === employee.id ? 'border-[#C8F400]/30 bg-[#1535D4]/18' : ''
+                  washerId === employee.id ? 'border-[#1535D4]/16 bg-[#f8fbff]' : ''
                 }`}
               >
                 <div>
-                  <p className="font-medium text-white">{employee.name}</p>
-                  <p className="mt-1 text-sm text-slate-300">{employee.activeMotorCount} motor aktif</p>
+                  <p className="font-medium text-slate-900">{employee.name}</p>
+                  <p className="mt-1 text-sm text-slate-500">{employee.activeMotorCount} motor aktif</p>
                 </div>
-                <span className="text-xs uppercase tracking-[0.2em] text-[#C8F400]">Hadir</span>
+                <span className="text-[11px] uppercase tracking-[0.16em] text-[#1535D4]">Hadir</span>
               </button>
             ))}
           </div>
         </Panel>
       </section>
 
-      <Panel title="Akses Cepat" subtitle="Mode POS untuk proses super cepat tanpa dialog konfirmasi tambahan.">
+      <Panel title="Akses Cepat" subtitle="Buka POS bila ingin transaksi cepat di satu layar.">
         <Link to="/pos" className="brand-primary-btn inline-flex rounded-2xl px-5 py-3 text-sm font-semibold">
-          Buka Mode POS Fullscreen
+          Buka POS
         </Link>
       </Panel>
     </div>

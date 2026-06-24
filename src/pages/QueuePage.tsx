@@ -11,20 +11,20 @@ export default function QueuePage() {
   ];
 
   return (
-    <Panel title="Antrian Harian" subtitle="Kanban `Masuk → Dicuci → Selesai` dengan foto sebelum dan aksi cepat.">
+    <Panel title="Antrian Harian" subtitle="Pantau status motor yang sedang diproses.">
       <div className="grid gap-4 xl:grid-cols-3">
         {columns.map((column) => (
           <div key={column.key} className="brand-soft-card rounded-3xl p-4">
-            <p className="font-display text-2xl uppercase tracking-[0.12em] text-white">{column.title}</p>
-            <p className="mt-1 text-sm text-slate-400">{column.description}</p>
+            <p className="font-display text-xl uppercase tracking-[0.08em] text-slate-900">{column.title}</p>
+            <p className="mt-1 text-sm text-slate-500">{column.description}</p>
             <div className="mt-4 space-y-3">
               {transactions
                 .filter((tx) => tx.status === column.key)
                 .map((tx) => (
-                  <div key={tx.id} className="rounded-2xl border border-white/10 bg-[#2e3140]/90 p-4">
-                    <p className="font-medium text-white">{tx.plate}</p>
-                    <p className="mt-1 text-sm text-slate-300">{tx.merk} · {tx.cust}</p>
-                    <p className="mt-1 text-xs uppercase tracking-[0.2em] text-[#C8F400]">{tx.washer}</p>
+                  <div key={tx.id} className="rounded-2xl border border-slate-200 bg-[#f8fafc] p-4">
+                    <p className="font-medium text-slate-900">{tx.plate}</p>
+                    <p className="mt-1 text-sm text-slate-500">{tx.merk} · {tx.cust}</p>
+                    <p className="mt-1 text-[11px] uppercase tracking-[0.16em] text-[#1535D4]">{tx.washer}</p>
                     <p className="mt-2 text-xs text-slate-500">{formatDateTime(tx.time)}</p>
                     <div className="mt-4 flex flex-wrap gap-2">
                       {column.key === 'Masuk' && (

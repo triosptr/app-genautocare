@@ -7,18 +7,12 @@ export interface NavItem {
 }
 
 export const navItems: NavItem[] = [
-  { to: '/', label: 'Dashboard', roles: ['owner', 'manager_ops', 'kasir'] },
-  { to: '/cashier', label: 'Kasir Detail', roles: ['owner', 'manager_ops', 'kasir'] },
+  { to: '/', label: 'Ringkasan', roles: ['kasir'] },
+  { to: '/cashier', label: 'Transaksi', roles: ['kasir'] },
   { to: '/pos', label: 'Mode POS', roles: ['kasir'] },
-  { to: '/queue', label: 'Antrian', roles: ['owner', 'manager_ops', 'kasir'] },
-  { to: '/inventory', label: 'Gudang', roles: ['owner', 'manager_ops', 'kasir'] },
-  { to: '/quality', label: 'Quality Check', roles: ['owner', 'manager_ops'] },
-  { to: '/attendance', label: 'Absensi', roles: ['owner', 'manager_ops', 'kasir'] },
-  { to: '/customers', label: 'Pelanggan', roles: ['owner', 'manager_ops', 'kasir'] },
-  { to: '/reports/daily', label: 'Laporan Harian', roles: ['owner', 'manager_ops', 'kasir'] },
-  { to: '/costs', label: 'Biaya Operasional', roles: ['owner', 'manager_ops'] },
-  { to: '/recap', label: 'Rekap & Bagi Hasil', roles: ['owner', 'manager_ops'] },
-  { to: '/settings', label: 'Pengaturan', roles: ['owner'] },
+  { to: '/queue', label: 'Antrian', roles: ['kasir'] },
+  { to: '/customers', label: 'Pelanggan', roles: ['kasir'] },
+  { to: '/reports/daily', label: 'Laporan', roles: ['kasir'] },
 ];
 
 export function canAccess(role: AppRole | null, path: string) {
@@ -28,7 +22,7 @@ export function canAccess(role: AppRole | null, path: string) {
 
   const match = navItems.find((item) => item.to === path);
   if (!match) {
-    return path === '/pos' ? role === 'kasir' || role === 'owner' || role === 'manager_ops' : false;
+    return path === '/pos' ? role === 'kasir' : false;
   }
 
   return match.roles.includes(role);
@@ -36,13 +30,9 @@ export function canAccess(role: AppRole | null, path: string) {
 
 export function getRoleLabel(role: AppRole | null) {
   switch (role) {
-    case 'owner':
-      return 'Owner';
-    case 'manager_ops':
-      return 'Manager Ops';
     case 'kasir':
       return 'Kasir';
     default:
-      return 'Belum dipilih';
+      return 'Kasir';
   }
 }

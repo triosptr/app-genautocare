@@ -71,22 +71,22 @@ export default function PosPage() {
 
   return (
     <div className="space-y-6">
-      <Panel title="Mode POS" subtitle="Fullscreen iPad-style cashier flow tanpa dialog konfirmasi tambahan.">
-        <div className="mb-4 flex items-center gap-2 text-sm text-slate-300">
-          <MonitorUp className="h-4 w-4 text-[#C8F400]" />
+      <Panel title="Mode POS" subtitle="Satu layar untuk transaksi cepat.">
+        <div className="mb-4 flex items-center gap-2 text-sm text-slate-600">
+          <MonitorUp className="h-4 w-4 text-[#1535D4]" />
           <span>Tombol proses langsung membuat transaksi dan memasukkan motor ke antrian.</span>
         </div>
       </Panel>
 
       <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-        <Panel title="Panel Kiri" subtitle="Cari pelanggan, pilih layanan, dan tentukan teknisi." className="min-h-[720px]">
+        <Panel title="Pilih Data" subtitle="Cari pelanggan, layanan, dan teknisi." className="min-h-[720px]">
           <label className="brand-soft-card mb-4 flex items-center gap-3 rounded-2xl px-4 py-3">
             <Search className="h-4 w-4 text-slate-400" />
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Cari pelanggan, plat, layanan, atau tier"
-              className="w-full bg-transparent text-sm text-white outline-none placeholder:text-slate-500"
+              className="w-full bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400"
             />
           </label>
 
@@ -123,8 +123,8 @@ export default function PosPage() {
                 }
                 className={`rounded-3xl border p-4 text-left transition ${
                   selectedServices.includes(item.id)
-                    ? 'border-[#C8F400] bg-[#1535D4] text-white'
-                    : 'brand-soft-card text-white hover:border-[#C8F400]/30 hover:bg-[#1535D4]/18'
+                    ? 'border-[#1535D4] bg-[#eef4ff] text-[#1535D4]'
+                    : 'brand-soft-card text-slate-900 hover:border-[#1535D4]/16 hover:bg-[#f8fbff]'
                 }`}
               >
                 <div className="flex items-start justify-between gap-4">
@@ -132,28 +132,28 @@ export default function PosPage() {
                     <p className="font-medium">{item.name}</p>
                     <p className="mt-1 text-sm opacity-80">{item.tier}</p>
                   </div>
-                  <span className="rounded-full border border-white/15 px-2 py-1 text-xs uppercase tracking-[0.16em]">{item.tier}</span>
+                  <span className="rounded-full border border-slate-200 px-2 py-1 text-[11px] uppercase tracking-[0.12em]">{item.tier}</span>
                 </div>
-                <p className="mt-4 font-display text-2xl text-[#C8F400]">{formatCurrency(item.price)}</p>
+                <p className="mt-4 font-display text-xl text-[#1535D4]">{formatCurrency(item.price)}</p>
               </button>
             ))}
           </div>
         </Panel>
 
-        <Panel title="Panel Kanan" subtitle="Ringkasan order, metode bayar, dan proses besar." className="sticky top-4 h-fit">
+        <Panel title="Ringkasan Order" subtitle="Total, bayar, dan proses transaksi." className="sticky top-4 h-fit">
           <div className="space-y-5">
             <div className="brand-soft-card rounded-3xl p-4">
               <div className="flex items-center gap-2 text-sm uppercase tracking-[0.2em] text-slate-400">
-                <ShoppingCart className="h-4 w-4 text-[#C8F400]" />
+                <ShoppingCart className="h-4 w-4 text-[#1535D4]" />
                 Ringkasan order
               </div>
               <div className="mt-4 space-y-3">
                 {selectedServiceData.length === 0 && <p className="text-sm text-slate-400">Belum ada layanan dipilih.</p>}
                 {selectedServiceData.map((item) => (
-                  <div key={item.id} className="rounded-2xl border border-white/10 bg-[#2e3140]/90 p-4">
-                    <p className="font-medium text-white">{item.name}</p>
-                    <p className="mt-1 text-sm text-slate-400">{item.tier}</p>
-                    <p className="mt-3 text-lg text-[#C8F400]">{formatCurrency(item.price)}</p>
+                  <div key={item.id} className="rounded-2xl border border-slate-200 bg-[#f8fafc] p-4">
+                    <p className="font-medium text-slate-900">{item.name}</p>
+                    <p className="mt-1 text-sm text-slate-500">{item.tier}</p>
+                    <p className="mt-3 text-lg text-[#1535D4]">{formatCurrency(item.price)}</p>
                   </div>
                 ))}
               </div>
@@ -167,7 +167,7 @@ export default function PosPage() {
                 className="brand-input rounded-2xl px-4 py-3"
                 placeholder="Diskon Rp"
               />
-              <label className="brand-soft-card flex items-center gap-3 rounded-2xl px-4 py-3 text-sm text-slate-200">
+              <label className="brand-soft-card flex items-center gap-3 rounded-2xl px-4 py-3 text-sm text-slate-700">
                 <input type="checkbox" checked={usePoints} onChange={(event) => setUsePoints(event.target.checked)} />
                 Gunakan poin
               </label>
@@ -180,7 +180,7 @@ export default function PosPage() {
                   type="button"
                   onClick={() => setPaymentMethod(method)}
                   className={`rounded-2xl border px-4 py-3 text-sm font-medium transition ${
-                    paymentMethod === method ? 'border-[#C8F400] bg-[#C8F400] text-[#1535D4]' : 'border-white/10 bg-white/5 text-white'
+                    paymentMethod === method ? 'border-[#1535D4] bg-[#1535D4] text-white' : 'border-slate-200 bg-white text-slate-700'
                   }`}
                 >
                   {method.toUpperCase()}
@@ -188,18 +188,18 @@ export default function PosPage() {
               ))}
             </div>
 
-            <div className="rounded-3xl border border-[#C8F400]/18 bg-[#C8F400]/10 p-5">
-              <div className="flex items-center justify-between text-sm text-slate-300">
+            <div className="rounded-3xl border border-[#1535D4]/10 bg-[#eef4ff] p-5">
+              <div className="flex items-center justify-between text-sm text-slate-600">
                 <span>Subtotal</span>
                 <span>{formatCurrency(subtotal)}</span>
               </div>
-              <div className="mt-2 flex items-center justify-between text-sm text-slate-300">
+              <div className="mt-2 flex items-center justify-between text-sm text-slate-600">
                 <span>Diskon + poin</span>
                 <span>- {formatCurrency(discount + pointsValue)}</span>
               </div>
-              <div className="mt-4 flex items-center justify-between border-t border-[#C8F400]/15 pt-4">
-                <span className="text-sm uppercase tracking-[0.2em] text-[#C8F400]">Total</span>
-                <span className="font-display text-3xl text-white">{formatCurrency(total)}</span>
+              <div className="mt-4 flex items-center justify-between border-t border-[#1535D4]/10 pt-4">
+                <span className="text-sm uppercase tracking-[0.16em] text-[#1535D4]">Total</span>
+                <span className="font-display text-[30px] text-slate-900">{formatCurrency(total)}</span>
               </div>
             </div>
 
@@ -215,31 +215,31 @@ export default function PosPage() {
         </Panel>
       </div>
 
-      <Panel title="Status Bar Operasional" subtitle="Tap cepat untuk memantau antrian, pembayaran, dan teknisi hadir.">
+      <Panel title="Status Ringkas" subtitle="Pantau antrian dan pembayaran tanpa pindah halaman.">
         <div className="grid gap-4 xl:grid-cols-3">
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-            <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Live Queue</p>
+          <div className="rounded-3xl border border-slate-200 bg-white p-5">
+            <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Live Queue</p>
             <div className="mt-4 grid gap-3 md:grid-cols-3">
-              <div className="rounded-2xl bg-[#1535D4]/35 p-4">
-                <p className="text-sm text-slate-200">Masuk</p>
-                <p className="mt-2 font-display text-3xl text-white">{queueStats.masuk}</p>
+              <div className="rounded-2xl bg-[#eef4ff] p-4">
+                <p className="text-sm text-slate-600">Masuk</p>
+                <p className="mt-2 font-display text-3xl text-[#1535D4]">{queueStats.masuk}</p>
               </div>
-              <div className="rounded-2xl bg-[#373A4A]/85 p-4">
-                <p className="text-sm text-slate-200">Dicuci</p>
-                <p className="mt-2 font-display text-3xl text-white">{queueStats.dicuci}</p>
+              <div className="rounded-2xl bg-[#f8fafc] p-4">
+                <p className="text-sm text-slate-600">Dicuci</p>
+                <p className="mt-2 font-display text-3xl text-slate-900">{queueStats.dicuci}</p>
               </div>
-              <div className="rounded-2xl bg-[#C8F400]/12 p-4">
-                <p className="text-sm text-[#C8F400]">Selesai</p>
-                <p className="mt-2 font-display text-3xl text-white">{queueStats.selesai}</p>
+              <div className="rounded-2xl bg-[#f5ffcf] p-4">
+                <p className="text-sm text-[#6b7f00]">Selesai</p>
+                <p className="mt-2 font-display text-3xl text-slate-900">{queueStats.selesai}</p>
               </div>
             </div>
           </div>
 
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-            <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Pendapatan</p>
+          <div className="rounded-3xl border border-slate-200 bg-white p-5">
+            <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Pendapatan</p>
             <div className="mt-4 space-y-3">
               {Object.entries(paymentBreakdown).map(([key, amount]) => (
-                <div key={key} className="flex items-center justify-between text-sm text-slate-200">
+                <div key={key} className="flex items-center justify-between text-sm text-slate-700">
                   <span>{key.toUpperCase()}</span>
                   <span>{formatCurrency(amount)}</span>
                 </div>
@@ -247,11 +247,11 @@ export default function PosPage() {
             </div>
           </div>
 
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-            <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Teknisi hadir</p>
+          <div className="rounded-3xl border border-slate-200 bg-white p-5">
+            <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Teknisi hadir</p>
             <div className="mt-4 space-y-3">
               {activeEmployees.map((employee) => (
-                <div key={employee.id} className="flex items-center justify-between text-sm text-slate-200">
+                <div key={employee.id} className="flex items-center justify-between text-sm text-slate-700">
                   <span>{employee.name}</span>
                   <span>{employee.activeMotorCount} motor</span>
                 </div>
@@ -263,15 +263,15 @@ export default function PosPage() {
         <div className="mt-6 grid gap-4 xl:grid-cols-3">
           {(['Masuk', 'Dicuci', 'Selesai'] as const).map((status) => (
             <div key={status} className="brand-soft-card rounded-3xl p-4">
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white">{status}</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-900">{status}</p>
               <div className="mt-4 space-y-3">
                 {transactions
                   .filter((tx) => tx.status === status)
                   .slice(0, 3)
                   .map((tx) => (
-                    <div key={tx.id} className="rounded-2xl border border-white/10 bg-[#2e3140]/80 p-3">
-                      <p className="font-medium text-white">{tx.plate}</p>
-                      <p className="mt-1 text-sm text-slate-300">{tx.cust}</p>
+                    <div key={tx.id} className="rounded-2xl border border-slate-200 bg-[#f8fafc] p-3">
+                      <p className="font-medium text-slate-900">{tx.plate}</p>
+                      <p className="mt-1 text-sm text-slate-500">{tx.cust}</p>
                       <div className="mt-3 flex gap-2">
                         {status === 'Masuk' && (
                           <button type="button" onClick={() => updateQueueStatus(tx.id, 'Dicuci')} className="brand-secondary-btn rounded-xl px-3 py-2 text-xs">
