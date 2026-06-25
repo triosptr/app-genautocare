@@ -1,19 +1,22 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import html2canvas from 'html2canvas';
 import { createWhatsAppLink } from '@/lib/whatsapp';
-import type { Transaction } from '@/types/app';
+import { useCashierStore } from '@/store/useCashierStore';
+import type { PaymentInfo, Transaction } from '@/types/app';
 import { formatCurrency } from '@/utils/format';
 
 interface InvoiceModalProps {
   transaction: Transaction | null;
   businessName: string;
+  paymentInfo: PaymentInfo;
   receiptFooter: string;
   onClose: () => void;
 }
 
-export function InvoiceModal({ transaction, businessName, receiptFooter, onClose }: InvoiceModalProps) {
+export function InvoiceModal({ transaction, businessName, paymentInfo, receiptFooter, onClose }: InvoiceModalProps) {
   const invoiceRef = useRef<HTMLDivElement>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [status, setStatus] = useState<string | null>(null);
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -25,17 +28,37 @@ export function InvoiceModal({ transaction, businessName, receiptFooter, onClose
 
   if (!transaction) return null;
 
+  const services = useCashierStore((state) => state.services);
+  const invoiceLines = useMemo(() => {
+    const byId = Object.fromEntries(services.map((service) => [service.id, service]));
+    return transaction.serviceIds.map((id) => {
+      const svc = byId[id];
+      return {
+        id,
+        name: svc?.name ?? id,
+        price: svc?.price ?? 0,
+      };
+    });
+  }, [services, transaction.serviceIds]);
+
+  const subtotal = invoiceLines.reduce((sum, line) => sum + line.price, 0);
+  const discount = transaction.disc ?? 0;
+  const total = Math.max(0, subtotal - discount);
+  const invoiceDate = new Date(transaction.time);
+
   const invoiceMessage = [
-    businessName,
+    `*${businessName}*`,
     `No Invoice: ${transaction.invoiceNo}`,
-    `Tanggal: ${new Date(transaction.time).toLocaleDateString('id-ID')}`,
+    `Tanggal: ${invoiceDate.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}`,
     `Motor: ${transaction.merk} - ${transaction.plate}`,
     `Layanan: ${transaction.services.join(', ')}`,
-    `Subtotal: ${formatCurrency(transaction.subtotal)}`,
+    `Subtotal: ${formatCurrency(subtotal)}`,
     `Diskon: ${formatCurrency(transaction.disc)}`,
-    `Total: ${formatCurrency(transaction.total)}`,
+    `Total: ${formatCurrency(total)}`,
     `Metode Bayar: ${transaction.pay.toUpperCase()}`,
     `Teknisi: ${transaction.washer}`,
+    '',
+    'Invoice sudah tersalin. Tinggal paste ke chat lalu kirim.',
     receiptFooter,
   ].join('\n');
 
@@ -46,10 +69,11 @@ export function InvoiceModal({ transaction, businessName, receiptFooter, onClose
     
     try {
       setIsProcessing(true);
+      setStatus(null);
       
       const canvas = await html2canvas(invoiceRef.current, { 
         scale: 2,
-        backgroundColor: '#ffffff',
+        backgroundColor: null,
         useCORS: true,
         windowWidth: invoiceRef.current.scrollWidth,
         windowHeight: invoiceRef.current.scrollHeight,
@@ -65,44 +89,61 @@ export function InvoiceModal({ transaction, businessName, receiptFooter, onClose
           typeof navigator.share === 'function' &&
           (!navigator.canShare || navigator.canShare({ files: [file] }));
 
-        if (canShareFiles) {
-          try {
-            await navigator.share({
-              title: `Invoice ${businessName}`,
-              text: invoiceMessage,
-              files: [file],
-            });
-            setIsProcessing(false);
-            return;
-          } catch (shareError) {
-            console.log('Share canceled or failed', shareError);
-          }
-        }
-        
+        let copiedText = false;
+        let copiedImage = false;
+
+        try {
+          await navigator.clipboard.writeText(invoiceMessage);
+          copiedText = true;
+        } catch {}
+
         try {
           await navigator.clipboard.write([
             new ClipboardItem({
-              'image/png': blob
+              'image/png': blob,
             })
           ]);
-          alert('Gambar invoice berhasil disalin! Silakan "Paste" (Ctrl+V / Cmd+V) di kolom chat WhatsApp untuk mengirimkan gambar tersebut beserta pesannya.');
+          copiedImage = true;
         } catch (clipboardError) {
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `${transaction.invoiceNo}.png`;
-          a.click();
-          URL.revokeObjectURL(url);
-          alert('Browser tidak mendukung copy gambar otomatis. Gambar invoice telah didownload. Anda bisa melampirkannya secara manual di WhatsApp.');
+          if (canShareFiles) {
+            try {
+              await navigator.share({
+                title: `Invoice ${businessName}`,
+                text: invoiceMessage,
+                files: [file],
+              });
+              setIsProcessing(false);
+              return;
+            } catch {}
+          }
+
+          try {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${transaction.invoiceNo}.png`;
+            a.click();
+            URL.revokeObjectURL(url);
+          } catch {}
         }
-        
+
+        const nextStatus =
+          copiedImage && copiedText
+            ? 'Gambar + teks invoice sudah tercopy. WhatsApp dibuka, tinggal paste lalu kirim.'
+            : copiedImage
+              ? 'Gambar invoice sudah tercopy. WhatsApp dibuka, tinggal paste lalu kirim.'
+              : copiedText
+                ? 'Teks invoice sudah tercopy. WhatsApp dibuka, tinggal paste lalu kirim.'
+                : 'Gambar invoice ter-download. WhatsApp dibuka, lampirkan gambar lalu kirim.';
+
+        setStatus(nextStatus);
         window.open(waLink, '_blank');
         setIsProcessing(false);
       }, 'image/png');
       
     } catch (error) {
       console.error('Error generating invoice image:', error);
-      alert('Terjadi kesalahan saat memproses gambar invoice.');
+      setStatus('Gagal memproses gambar. WhatsApp dibuka dengan teks invoice.');
       window.open(waLink, '_blank');
       setIsProcessing(false);
     }
@@ -111,69 +152,119 @@ export function InvoiceModal({ transaction, businessName, receiptFooter, onClose
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
       <div className="w-full max-w-[420px] overflow-hidden rounded-[24px] bg-white shadow-2xl">
-        <div ref={invoiceRef} className="bg-white rounded-t-[24px]">
-          <div className="bg-[#111318] p-6 text-white rounded-t-[24px]">
-            <div className="flex items-center gap-2">
-              <span className="font-display text-2xl font-black italic tracking-[-0.04em] text-[#C8F400]">GEN</span>
-              <span className="font-display text-2xl font-black tracking-tight">AUTO CARE</span>
-            </div>
-            <p className="mt-2 text-sm text-slate-400">
-              {transaction.invoiceNo} · {new Date(transaction.time).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
-            </p>
-          </div>
+        <div className="p-4">
+          <div
+            ref={invoiceRef}
+            className="relative aspect-[3/4] w-full overflow-hidden rounded-[20px] bg-[#0a1a66] text-white shadow-[0_18px_50px_-26px_rgba(0,0,0,0.6)]"
+          >
+            <div className="absolute inset-0 opacity-[0.18]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.14) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.14) 1px, transparent 1px)', backgroundSize: '36px 36px' }} />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(200,244,0,0.18),_transparent_42%),radial-gradient(circle_at_bottom_right,_rgba(200,244,0,0.08),_transparent_55%)]" />
 
-          <div className="p-6 pb-2">
-            <div className="space-y-3 border-b border-slate-200 pb-4 text-sm">
-              <div className="flex justify-between">
-                <span className="text-slate-500">Motor</span>
-                <span className="font-medium text-slate-900">{transaction.merk} · {transaction.plate}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Dikerjakan</span>
-                <span className="font-medium text-slate-900">{transaction.washer}</span>
-              </div>
-            </div>
+            <div className="relative flex h-full flex-col p-6">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/8 px-3 py-2">
+                    <span className="font-display text-[16px] font-black italic tracking-[-0.04em] text-[#C8F400]">GEN</span>
+                    <span className="font-display text-[16px] font-black tracking-tight text-white">AUTO CARE</span>
+                  </div>
+                  <p className="mt-3 text-[11px] uppercase tracking-[0.22em] text-white/68">GROOM EVERY NEED</p>
+                </div>
 
-            <div className="border-b border-slate-200 py-4 text-sm">
-              <div className="flex justify-between">
-                <span className="font-medium text-slate-900">{transaction.services.join(', ')}</span>
-                <span className="font-medium text-slate-900">{formatCurrency(transaction.subtotal)}</span>
+                <div className="text-right">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70">Invoice</p>
+                  <p className="mt-2 text-sm font-semibold text-white">{transaction.invoiceNo}</p>
+                  <p className="mt-1 text-xs text-white/70">{invoiceDate.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
+                </div>
               </div>
-            </div>
 
-            <div className="space-y-2 py-4 text-sm">
-              <div className="flex justify-between">
-                <span className="text-slate-500">Subtotal</span>
-                <span className="text-slate-500">{formatCurrency(transaction.subtotal)}</span>
+              <div className="mt-8">
+                <p className="font-display text-[62px] font-black leading-[0.88] tracking-[-0.06em]">INVOICE</p>
               </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Diskon</span>
-                <span className="text-slate-500">- {formatCurrency(transaction.disc)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Pembayaran</span>
-                <span className="text-slate-500 uppercase">{transaction.pay}</span>
-              </div>
-            </div>
 
-            <div className="mt-2 rounded-[16px] bg-[#1535D4] p-5 text-white shadow-lg">
-              <div className="flex items-center justify-between">
-                <span className="font-medium tracking-wide">TOTAL</span>
-                <span className="font-display text-3xl">{formatCurrency(transaction.total)}</span>
+              <div className="mt-8 grid grid-cols-2 gap-4 text-sm">
+                <div className="rounded-[16px] border border-white/10 bg-white/8 p-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Billing To</p>
+                  <p className="mt-3 font-semibold text-white">{transaction.cust || 'Walk In'}</p>
+                  <p className="mt-1 text-xs text-white/70">{transaction.customerPhone || '-'}</p>
+                </div>
+                <div className="rounded-[16px] border border-white/10 bg-white/8 p-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Detail Motor</p>
+                  <p className="mt-3 font-semibold text-white">{transaction.merk}</p>
+                  <p className="mt-1 text-xs text-white/70">{transaction.plate}</p>
+                  <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-white/68">Teknisi</p>
+                  <p className="mt-1 text-sm font-semibold text-white">{transaction.washer}</p>
+                </div>
+              </div>
+
+              <div className="mt-8 overflow-hidden rounded-[18px] border border-white/12 bg-white">
+                <div className="grid grid-cols-[1.2fr_0.6fr_0.4fr_0.7fr] gap-2 bg-[#C8F400] px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#111318]">
+                  <div>Layanan</div>
+                  <div className="text-right">Harga</div>
+                  <div className="text-right">Qty</div>
+                  <div className="text-right">Total</div>
+                </div>
+                <div className="divide-y divide-slate-200/80">
+                  {invoiceLines.map((line) => (
+                    <div key={line.id} className="grid grid-cols-[1.2fr_0.6fr_0.4fr_0.7fr] items-center gap-2 px-4 py-3 text-[13px] text-slate-900">
+                      <div className="font-medium">{line.name}</div>
+                      <div className="text-right">{formatCurrency(line.price)}</div>
+                      <div className="text-right">1</div>
+                      <div className="text-right font-medium">{formatCurrency(line.price)}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-8 grid grid-cols-2 gap-4">
+                <div className="rounded-[16px] border border-white/10 bg-white/8 p-4 text-sm">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Pembayaran</p>
+                  <p className="mt-3 font-semibold uppercase text-white">{transaction.pay}</p>
+                  {transaction.pay === 'transfer' && (
+                    <div className="mt-3 text-xs text-white/70">
+                      <p>{paymentInfo.bankBank}</p>
+                      <p className="mt-1">{paymentInfo.bankName}</p>
+                      <p className="mt-1 font-semibold text-white">{paymentInfo.bankNo}</p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="rounded-[16px] border border-white/10 bg-white/8 p-4 text-sm">
+                  <div className="flex items-center justify-between text-white/80">
+                    <span>Subtotal</span>
+                    <span>{formatCurrency(subtotal)}</span>
+                  </div>
+                  <div className="mt-2 flex items-center justify-between text-white/80">
+                    <span>Diskon</span>
+                    <span>- {formatCurrency(discount)}</span>
+                  </div>
+                  <div className="mt-4 rounded-[14px] bg-[#1535D4] px-4 py-4 text-white">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Total</span>
+                      <span className="font-display text-[28px] font-extrabold">{formatCurrency(total)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-auto pt-6">
+                <div className="rounded-[16px] border border-white/10 bg-white/8 p-4 text-xs text-white/72">
+                  <p className="font-semibold text-white/88">{receiptFooter}</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="p-6 pt-2 space-y-3">
+        <div className="px-6 pb-6 space-y-3">
           <button
             type="button"
             onClick={handleSendWA}
             disabled={isProcessing}
             className="flex w-full items-center justify-center gap-2 rounded-[16px] bg-[#2f9e44] px-4 py-4 text-[15px] font-semibold text-white transition hover:bg-[#2b8a3e] disabled:opacity-70"
           >
-            {isProcessing ? 'Memproses Gambar...' : 'Kirim Invoice ke WhatsApp'}
+            {isProcessing ? 'Memproses...' : 'Copy Invoice & Buka WhatsApp'}
           </button>
+          {status && <p className="text-center text-xs text-slate-600">{status}</p>}
           <button
             type="button"
             onClick={onClose}

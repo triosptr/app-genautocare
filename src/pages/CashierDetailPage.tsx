@@ -277,6 +277,7 @@ export default function CashierDetailPage() {
         <InvoiceModal
           transaction={currentTx}
           businessName={settings.businessName}
+          paymentInfo={{ bankBank: settings.bankBank, bankName: settings.bankName, bankNo: settings.bankNo }}
           receiptFooter={settings.receiptFooter}
           onClose={() => setShowInvoice(false)}
         />
