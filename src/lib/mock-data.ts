@@ -35,6 +35,7 @@ export const demoCustomers: Customer[] = [
     plate: 'BH 1009 JFR',
     visits: 12,
     spend: 410000,
+    points: 80,
     vehicles: [
       { plate: 'BH 1009 JFR', merk: 'Honda Beat' },
       { plate: 'BH 2177 ZK', merk: 'Yamaha NMax' },
@@ -47,6 +48,7 @@ export const demoCustomers: Customer[] = [
     plate: 'BH 4567 AC',
     visits: 7,
     spend: 255000,
+    points: 120,
     vehicles: [{ plate: 'BH 4567 AC', merk: 'Honda Scoopy' }],
   },
 ];
@@ -71,6 +73,8 @@ export const demoTransactions: Transaction[] = [
     commissionTotal: 10500,
     pay: 'qris',
     disc: 0,
+    pointsEarned: 10,
+    pointsRedeemed: 0,
   },
   {
     id: 'tx-2',
@@ -91,6 +95,8 @@ export const demoTransactions: Transaction[] = [
     commissionTotal: 6250,
     pay: 'cash',
     disc: 0,
+    pointsEarned: 10,
+    pointsRedeemed: 0,
   },
   {
     id: 'tx-3',
@@ -111,6 +117,8 @@ export const demoTransactions: Transaction[] = [
     commissionTotal: 3600,
     pay: 'transfer',
     disc: 0,
+    pointsEarned: 0,
+    pointsRedeemed: 0,
   },
 ];
 

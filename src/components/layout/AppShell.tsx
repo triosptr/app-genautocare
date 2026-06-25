@@ -49,7 +49,7 @@ export function AppShell({ mode, role, onSignOut, children }: AppShellProps) {
                 className={({ isActive }) =>
                   cn(
                     'flex items-center gap-3 rounded-[14px] px-4 py-3 text-sm font-semibold transition-colors duration-200',
-                    isActive ? 'bg-[#C8F400] text-[#111318]' : 'text-white/90 hover:bg-white/10',
+                    isActive ? 'bg-[#0c2aa6] text-white' : 'text-white/90 hover:bg-white/10',
                   )
                 }
               >

@@ -26,6 +26,7 @@ export default function CashierDetailPage() {
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [washerId, setWasherId] = useState('');
   const [discount, setDiscount] = useState(0);
+  const [usePoints, setUsePoints] = useState(false);
   const [payment, setPayment] = useState<PaymentMethod>('cash');
   const [lastTxId, setLastTxId] = useState<string | null>(null);
   const [showInvoice, setShowInvoice] = useState(false);
@@ -43,9 +44,13 @@ export default function CashierDetailPage() {
   );
 
   const pickedServices = services.filter((service) => selectedServices.includes(service.id));
+  const selectedCustomer = selectedCustomerId ? customers.find((entry) => entry.id === selectedCustomerId) ?? null : null;
+  const customerPoints = selectedCustomer?.points ?? 0;
+  const eligiblePoints = customerPoints >= 150;
+  const redeemValue = usePoints && eligiblePoints && pickedServices.length > 0 ? Math.min(...pickedServices.map((service) => service.price)) : 0;
   const subtotal = pickedServices.reduce((sum, service) => sum + service.price, 0);
   const commissionPreview = pickedServices.reduce((sum, service) => sum + Math.round((service.price * service.commissionPct) / 100), 0);
-  const total = Math.max(0, subtotal - discount);
+  const total = Math.max(0, subtotal - discount - redeemValue);
   const currentTx = lastTxId ? useCashierStore.getState().transactions.find((tx) => tx.id === lastTxId) : null;
 
   function selectCustomer(customerId: string) {
@@ -59,6 +64,7 @@ export default function CashierDetailPage() {
     setPhone(customer.phone);
     setPlate(customer.plate);
     setMerk(customer.vehicles[0]?.merk ?? '');
+    setUsePoints(false);
   }
 
   function toggleService(serviceId: string) {
@@ -83,6 +89,7 @@ export default function CashierDetailPage() {
       washerId,
       paymentMethod: payment,
       discount,
+      usePoints,
     });
 
     setLastTxId(txId);
@@ -95,6 +102,7 @@ export default function CashierDetailPage() {
     setSelectedServices([]);
     setWasherId('');
     setDiscount(0);
+    setUsePoints(false);
     setSelectedCustomerId('');
   }
 
@@ -162,13 +170,13 @@ export default function CashierDetailPage() {
                           <p className={cn('text-[10px] uppercase tracking-[0.14em]', selectedServices.includes(service.id) ? 'text-white/70' : 'text-slate-500')}>
                             {service.tier}
                           </p>
-                      {selectedServices.includes(service.id) && <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#C8F400]" />}
+                          {selectedServices.includes(service.id) && <span className="mt-1 h-2.5 w-2.5 rounded-full bg-white" />}
                     </div>
                     <p className="mt-3 font-display text-[18px] leading-tight md:text-[20px]">{service.name}</p>
                   </div>
                   <div className="mt-5 space-y-2">
                     <p className="font-display text-[22px] font-bold leading-none tabular-nums md:text-[24px]">{formatCurrency(service.price)}</p>
-                        <p className={cn('text-[10px] uppercase tracking-[0.14em]', selectedServices.includes(service.id) ? 'text-[#C8F400]' : 'text-slate-500')}>
+                        <p className={cn('text-[10px] uppercase tracking-[0.14em]', selectedServices.includes(service.id) ? 'text-white/80' : 'text-slate-500')}>
                       Komisi {service.commissionPct}%
                     </p>
                   </div>
@@ -190,7 +198,7 @@ export default function CashierDetailPage() {
                   )}
                 >
                   <p className={cn('font-medium', washerId === employee.id ? 'text-white' : 'text-slate-900')}>{employee.name}</p>
-                  <span className={cn('text-[11px] uppercase tracking-[0.16em]', washerId === employee.id ? 'text-[#C8F400]' : 'text-[#1535D4]')}>
+                  <span className={cn('text-[11px] uppercase tracking-[0.16em]', washerId === employee.id ? 'text-white/80' : 'text-[#1535D4]')}>
                     Pilih
                   </span>
                 </button>
@@ -242,6 +250,39 @@ export default function CashierDetailPage() {
                 />
               </div>
 
+              {selectedCustomer && (
+                <div className="brand-outline-card rounded-[16px] p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Poin Member</p>
+                      <p className="mt-2 text-sm font-semibold text-slate-900 tabular-nums">{customerPoints} / 150</p>
+                      <p className="mt-1 text-xs text-slate-500">+10 poin per transaksi · Tukar 150 poin = gratis 1x cuci</p>
+                    </div>
+                    <button
+                      type="button"
+                      disabled={!eligiblePoints || pickedServices.length === 0}
+                      onClick={() => setUsePoints((value) => !value)}
+                      className={cn(
+                        'rounded-[12px] border px-3 py-2 text-xs font-semibold transition',
+                        usePoints
+                          ? 'border-[#1535D4] bg-[#1535D4] text-white'
+                          : 'border-slate-300 bg-white text-slate-700 hover:bg-[#f8f9fc]',
+                        (!eligiblePoints || pickedServices.length === 0) && 'opacity-60',
+                      )}
+                    >
+                      Gunakan
+                    </button>
+                  </div>
+
+                  {usePoints && redeemValue > 0 && (
+                    <div className="mt-3 flex items-center justify-between rounded-[14px] bg-[#eef4ff] px-4 py-3 text-sm">
+                      <span className="text-slate-700">Tukar 150 poin (gratis 1x cuci)</span>
+                      <span className="font-semibold text-[#1535D4] tabular-nums">- {formatCurrency(redeemValue)}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
               <div className="grid gap-3 sm:grid-cols-3">
                 {paymentMethods.map((method) => (
                   <button
@@ -251,7 +292,7 @@ export default function CashierDetailPage() {
                     className={cn(
                       'rounded-[12px] border px-4 py-3 text-sm font-semibold transition',
                       payment === method
-                        ? 'border-[#1535D4] bg-[#1535D4] text-[#C8F400]'
+                        ? 'border-[#1535D4] bg-[#1535D4] text-white'
                         : 'border-slate-300 bg-[#f8f9fc] text-slate-700 hover:bg-white',
                     )}
                   >

@@ -28,6 +28,7 @@ interface CreateTransactionInput {
   washerId: string;
   paymentMethod: PaymentMethod;
   discount: number;
+  usePoints: boolean;
 }
 
 interface SaveCustomerInput {
@@ -139,6 +140,7 @@ export const useCashierStore = create<CashierStore>((set, get) => ({
         plate: input.plate,
         visits: existing?.visits ?? 0,
         spend: existing?.spend ?? 0,
+        points: existing?.points ?? 0,
         vehicles: mergedVehicles,
       };
 
@@ -163,9 +165,16 @@ export const useCashierStore = create<CashierStore>((set, get) => ({
         plate: input.plate,
         merk: input.merk,
       });
+    const customerPoints = get().customers.find((entry) => entry.id === customerId)?.points ?? 0;
     const subtotal = services.reduce((sum, service) => sum + service.price, 0);
     const commissionTotal = services.reduce((sum, service) => sum + Math.round((service.price * service.commissionPct) / 100), 0);
-    const total = Math.max(0, subtotal - input.discount);
+    const pointsRedeemed = input.usePoints && customerPoints >= 150 ? 150 : 0;
+    const redeemValue =
+      pointsRedeemed > 0 && services.length > 0 ? Math.min(...services.map((service) => service.price)) : 0;
+    const effectiveDiscount = input.discount + redeemValue;
+    const total = Math.max(0, subtotal - effectiveDiscount);
+    const earnEligible = customerId !== 'walk-in' && customerName !== 'Walk In';
+    const pointsEarned = earnEligible && !input.usePoints ? 10 : 0;
 
     const transaction: Transaction = {
       id: transactionId,
@@ -185,7 +194,9 @@ export const useCashierStore = create<CashierStore>((set, get) => ({
       total,
       commissionTotal,
       pay: input.paymentMethod,
-      disc: input.discount,
+      disc: effectiveDiscount,
+      pointsEarned,
+      pointsRedeemed,
     };
 
     set((state) => ({
@@ -199,11 +210,14 @@ export const useCashierStore = create<CashierStore>((set, get) => ({
           ? entry.vehicles
           : [{ plate: input.plate, merk: input.merk }, ...entry.vehicles];
 
+        const nextPoints = Math.max(0, entry.points - pointsRedeemed) + pointsEarned;
+
         return {
           ...entry,
           plate: input.plate,
           visits: entry.visits + 1,
           spend: entry.spend + total,
+          points: nextPoints,
           vehicles,
         };
       }),

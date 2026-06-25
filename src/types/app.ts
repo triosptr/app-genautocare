@@ -29,6 +29,7 @@ export interface Customer {
   plate: string;
   visits: number;
   spend: number;
+  points: number;
   vehicles: Vehicle[];
 }
 
@@ -51,6 +52,8 @@ export interface Transaction {
   commissionTotal: number;
   pay: PaymentMethod;
   disc: number;
+  pointsEarned: number;
+  pointsRedeemed: number;
 }
 
 export interface PaymentInfo {

@@ -4,18 +4,37 @@ import { StatCard } from '@/components/ui/StatCard';
 import { useCashierStore } from '@/store/useCashierStore';
 import { formatCurrency, formatDateTime } from '@/utils/format';
 
+function dateKeyFromLocal(date: Date) {
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  const day = `${date.getDate()}`.padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 export default function DashboardPage() {
   const { transactions, customers } = useCashierStore();
-  const todayKey = new Date().toISOString().split('T')[0];
-  const yesterdayKey = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-  const todayTransactions = transactions.filter((tx) => new Date(tx.time).toISOString().split('T')[0] === todayKey);
-  const yesterdayTransactions = transactions.filter((tx) => new Date(tx.time).toISOString().split('T')[0] === yesterdayKey);
+  const todayKey = dateKeyFromLocal(new Date());
+  const yesterdayKey = dateKeyFromLocal(new Date(Date.now() - 24 * 60 * 60 * 1000));
+  const todayTransactions = transactions.filter((tx) => dateKeyFromLocal(new Date(tx.time)) === todayKey);
+  const yesterdayTransactions = transactions.filter((tx) => dateKeyFromLocal(new Date(tx.time)) === yesterdayKey);
   const todayRevenue = todayTransactions.reduce((sum, tx) => sum + tx.total, 0);
   const yesterdayRevenue = yesterdayTransactions.reduce((sum, tx) => sum + tx.total, 0);
   const delta = yesterdayRevenue ? ((todayRevenue - yesterdayRevenue) / yesterdayRevenue) * 100 : 0;
   const activeCustomers = customers.length;
   const todayCommission = todayTransactions.reduce((sum, tx) => sum + tx.commissionTotal, 0);
   const qrisCount = todayTransactions.filter((tx) => tx.pay === 'qris').length;
+
+  const last7Days = Array.from({ length: 7 }).map((_, index) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (6 - index));
+    const key = dateKeyFromLocal(date);
+    const revenue = transactions
+      .filter((tx) => dateKeyFromLocal(new Date(tx.time)) === key)
+      .reduce((sum, tx) => sum + tx.total, 0);
+    const label = date.toLocaleDateString('id-ID', { weekday: 'short' });
+    return { key, label, revenue };
+  });
+  const maxRevenue = Math.max(1, ...last7Days.map((entry) => entry.revenue));
 
   const topTechnicians = Object.entries(
     todayTransactions.reduce<Record<string, number>>((acc, tx) => {
@@ -38,6 +57,48 @@ export default function DashboardPage() {
         <StatCard label="Transaksi" value={String(todayTransactions.length)} hint="Jumlah transaksi pada hari ini." accent="neutral" />
         <StatCard label="Pelanggan" value={String(activeCustomers)} hint="Pelanggan yang tersimpan di aplikasi kasir." accent="dark" />
       </section>
+
+      <Panel title="Pendapatan 7 Hari Terakhir" subtitle={`Hari ini ${formatCurrency(todayRevenue)} · Kemarin ${formatCurrency(yesterdayRevenue)}`}>
+        <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="brand-outline-card rounded-[16px] p-5">
+            <div className="flex items-end justify-between gap-2">
+              {last7Days.map((entry) => {
+                const height = Math.round((entry.revenue / maxRevenue) * 140);
+                const isToday = entry.key === todayKey;
+                const isYesterday = entry.key === yesterdayKey;
+                return (
+                  <div key={entry.key} className="flex flex-1 flex-col items-center gap-2">
+                    <div className="text-[11px] font-semibold tabular-nums text-slate-500">{entry.revenue ? formatCurrency(entry.revenue).replace('Rp', '').trim() : '0'}</div>
+                    <div className="flex w-full items-end justify-center">
+                      <div
+                        className={`w-[78%] rounded-[12px] ${isToday ? 'bg-[#1535D4]' : isYesterday ? 'bg-[#b7c6ff]' : 'bg-[#d9e2ff]'}`}
+                        style={{ height: Math.max(18, height) }}
+                      />
+                    </div>
+                    <div className="text-[11px] font-semibold text-slate-600">{entry.label}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <div className="brand-outline-card rounded-[16px] p-5">
+              <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Trend vs kemarin</p>
+              <div className="mt-3 flex items-center gap-3">
+                {delta >= 0 ? <ArrowUpRight className="h-5 w-5 text-[#1535D4]" /> : <ArrowDownRight className="h-5 w-5 text-[#e0483c]" />}
+                <p className="font-display text-2xl text-slate-900">{delta.toFixed(1)}%</p>
+              </div>
+            </div>
+            <div className="brand-outline-card rounded-[16px] p-5">
+              <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Total 7 hari</p>
+              <p className="mt-2 font-display text-2xl text-slate-900 tabular-nums">
+                {formatCurrency(last7Days.reduce((sum, entry) => sum + entry.revenue, 0))}
+              </p>
+            </div>
+          </div>
+        </div>
+      </Panel>
 
       <section className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <Panel title="Transaksi Terbaru" subtitle="Ringkas dan cepat dipantau dari meja kasir.">

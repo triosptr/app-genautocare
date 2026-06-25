@@ -74,6 +74,10 @@ export default function CustomersPage() {
                 <span>{customer.visits} kunjungan</span>
                 <span className="tabular-nums">{formatCurrency(customer.spend)}</span>
               </div>
+              <div className="mt-2 flex items-center justify-between text-xs text-slate-500">
+                <span className="uppercase tracking-[0.14em]">Poin</span>
+                <span className="font-semibold tabular-nums text-[#1535D4]">{customer.points}</span>
+              </div>
               <p className="mt-2 text-sm text-slate-600">
                 {customer.vehicles.map((vehicle) => `${vehicle.plate} · ${vehicle.merk}`).join(' | ')}
               </p>
@@ -99,7 +103,7 @@ export default function CustomersPage() {
               <div className="brand-soft-card rounded-3xl p-4">
                 <p className="font-display text-[28px] text-slate-900">{selectedCustomer.name}</p>
                 <p className="mt-2 text-sm text-slate-600">{selectedCustomer.phone}</p>
-                <div className="mt-4 grid gap-3 md:grid-cols-2">
+                <div className="mt-4 grid gap-3 md:grid-cols-3">
                   <div className="rounded-2xl bg-[#eef4ff] p-4">
                     <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Kunjungan</p>
                     <p className="mt-2 font-display text-2xl text-[#1535D4] tabular-nums">{selectedCustomer.visits}</p>
@@ -107,6 +111,17 @@ export default function CustomersPage() {
                   <div className="rounded-2xl bg-[#f8fafc] p-4">
                     <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Total belanja</p>
                     <p className="mt-2 font-display text-2xl text-slate-900 tabular-nums">{formatCurrency(selectedCustomer.spend)}</p>
+                  </div>
+                  <div className="rounded-2xl bg-[#f8fafc] p-4">
+                    <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Poin Member</p>
+                    <p className="mt-2 font-display text-2xl text-slate-900 tabular-nums">{selectedCustomer.points}</p>
+                    <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-slate-200">
+                      <div
+                        className="h-full rounded-full bg-[#1535D4]"
+                        style={{ width: `${Math.min(100, (selectedCustomer.points / 150) * 100)}%` }}
+                      />
+                    </div>
+                    <p className="mt-2 text-xs text-slate-500">150 poin = gratis 1x cuci</p>
                   </div>
                 </div>
               </div>
