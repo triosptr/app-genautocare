@@ -9,12 +9,13 @@ interface BrandLogoProps {
 
 export function BrandLogo({ variant = 'on-dark', compact = false, className }: BrandLogoProps) {
   void variant;
+  void compact;
 
   return (
     <img
       src={logoUrl}
       alt="GEN AUTO CARE"
-      className={cn('block select-none object-contain', compact ? 'h-14 w-auto' : 'h-16 w-auto', className)}
+      className={cn('block h-[18px] w-[14px] select-none object-contain', className)}
       draggable={false}
     />
   );
