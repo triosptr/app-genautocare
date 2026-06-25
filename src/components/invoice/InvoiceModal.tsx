@@ -209,17 +209,25 @@ export function InvoiceModal({ transaction, businessName, paymentInfo, receiptFo
 
   const invoiceMessage = [
     `*${businessName}*`,
-    `No Invoice: ${transaction.invoiceNo}`,
+    `Invoice: ${transaction.invoiceNo}`,
     `Tanggal: ${invoiceDate.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}`,
-    `Motor: ${transaction.merk} - ${transaction.plate}`,
-    `Layanan: ${transaction.services.join(', ')}`,
-    `Subtotal: ${formatCurrency(subtotal)}`,
-    `Diskon: ${formatCurrency(transaction.disc)}`,
-    `Total: ${formatCurrency(total)}`,
-    `Metode Bayar: ${transaction.pay.toUpperCase()}`,
+    '',
+    `Pelanggan: ${transaction.cust || 'Walk In'}`,
+    `Motor: ${transaction.merk} · ${transaction.plate}`,
     `Teknisi: ${transaction.washer}`,
     '',
-    'Invoice sudah tersalin. Tinggal paste ke chat lalu kirim.',
+    '*Rincian Layanan*',
+    ...invoiceLines.map((line) => `- ${line.name} — ${formatCurrency(line.price)}`),
+    '',
+    `Subtotal: ${formatCurrency(subtotal)}`,
+    `Diskon: - ${formatCurrency(discount)}`,
+    `TOTAL: ${formatCurrency(total)}`,
+    '',
+    `Metode Bayar: ${transaction.pay.toUpperCase()}`,
+    ...(transaction.pay === 'transfer'
+      ? ['Transfer ke:', `${paymentInfo.bankBank} · ${paymentInfo.bankName}`, `${paymentInfo.bankNo}`]
+      : []),
+    '',
     receiptFooter,
   ].join('\n');
 
