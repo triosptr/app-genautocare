@@ -67,7 +67,7 @@ export function InvoiceModal({ transaction, businessName, paymentInfo, receiptFo
     <div
       style={{
         width: 794,
-        minHeight: 1123,
+        height: 1123,
         background: '#1535d4',
         borderRadius: 6,
         overflow: 'hidden',
@@ -231,13 +231,30 @@ export function InvoiceModal({ transaction, businessName, paymentInfo, receiptFo
     try {
       setIsProcessing(true);
       setStatus(null);
+
+      try {
+        await (document as unknown as { fonts?: { ready: Promise<void> } }).fonts?.ready;
+      } catch {}
+
+      await new Promise<void>((resolve) => {
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+      });
       
       const canvas = await html2canvas(invoiceRef.current, { 
         scale: 2,
         backgroundColor: '#1535d4',
         useCORS: true,
-        windowWidth: invoiceRef.current.scrollWidth,
-        windowHeight: invoiceRef.current.scrollHeight,
+        width: 794,
+        height: 1123,
+        windowWidth: 794,
+        windowHeight: 1123,
+        scrollX: 0,
+        scrollY: 0,
+        onclone: (doc) => {
+          doc.documentElement.style.background = '#1535d4';
+          doc.body.style.background = '#1535d4';
+          doc.body.style.margin = '0';
+        },
       });
       
       canvas.toBlob(async (blob) => {
