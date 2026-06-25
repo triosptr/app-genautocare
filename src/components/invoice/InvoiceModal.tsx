@@ -155,10 +155,10 @@ export function InvoiceModal({ transaction, businessName, paymentInfo, receiptFo
         <div className="p-4">
           <div
             ref={invoiceRef}
-            className="relative aspect-[3/4] w-full overflow-hidden rounded-[20px] bg-[#0a1a66] text-white shadow-[0_18px_50px_-26px_rgba(0,0,0,0.6)]"
+            className="relative aspect-[3/4] w-full overflow-hidden rounded-[20px] bg-[#1535D4] text-white shadow-[0_18px_50px_-26px_rgba(0,0,0,0.6)]"
           >
             <div className="absolute inset-0 opacity-[0.18]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.14) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.14) 1px, transparent 1px)', backgroundSize: '36px 36px' }} />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(200,244,0,0.18),_transparent_42%),radial-gradient(circle_at_bottom_right,_rgba(200,244,0,0.08),_transparent_55%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(200,244,0,0.18),_transparent_42%),radial-gradient(circle_at_bottom_right,_rgba(17,19,24,0.22),_transparent_55%)]" />
 
             <div className="relative flex h-full flex-col p-6">
               <div className="flex items-start justify-between gap-4">
@@ -178,10 +178,12 @@ export function InvoiceModal({ transaction, businessName, paymentInfo, receiptFo
               </div>
 
               <div className="mt-8">
-                <p className="font-display text-[62px] font-black leading-[0.88] tracking-[-0.06em]">INVOICE</p>
+                <p className="font-display text-[46px] font-black leading-[0.92] tracking-[-0.06em] text-[#C8F400] drop-shadow-[0_10px_28px_rgba(0,0,0,0.45)] sm:text-[60px]">
+                  INVOICE
+                </p>
               </div>
 
-              <div className="mt-8 grid grid-cols-2 gap-4 text-sm">
+              <div className="mt-7 grid grid-cols-2 gap-4 text-sm">
                 <div className="rounded-[16px] border border-white/10 bg-white/8 p-4">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Billing To</p>
                   <p className="mt-3 font-semibold text-white">{transaction.cust || 'Walk In'}</p>
@@ -196,7 +198,7 @@ export function InvoiceModal({ transaction, businessName, paymentInfo, receiptFo
                 </div>
               </div>
 
-              <div className="mt-8 overflow-hidden rounded-[18px] border border-white/12 bg-white">
+              <div className="mt-7 overflow-hidden rounded-[18px] border border-white/12 bg-white">
                 <div className="grid grid-cols-[1.2fr_0.6fr_0.4fr_0.7fr] gap-2 bg-[#C8F400] px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#111318]">
                   <div>Layanan</div>
                   <div className="text-right">Harga</div>
@@ -206,16 +208,18 @@ export function InvoiceModal({ transaction, businessName, paymentInfo, receiptFo
                 <div className="divide-y divide-slate-200/80">
                   {invoiceLines.map((line) => (
                     <div key={line.id} className="grid grid-cols-[1.2fr_0.6fr_0.4fr_0.7fr] items-center gap-2 px-4 py-3 text-[13px] text-slate-900">
-                      <div className="font-medium">{line.name}</div>
-                      <div className="text-right">{formatCurrency(line.price)}</div>
+                      <div className="min-w-0 font-medium">
+                        <p className="truncate">{line.name}</p>
+                      </div>
+                      <div className="text-right tabular-nums">{formatCurrency(line.price)}</div>
                       <div className="text-right">1</div>
-                      <div className="text-right font-medium">{formatCurrency(line.price)}</div>
+                      <div className="text-right font-medium tabular-nums">{formatCurrency(line.price)}</div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="mt-8 grid grid-cols-2 gap-4">
+              <div className="mt-7 grid grid-cols-2 gap-4">
                 <div className="rounded-[16px] border border-white/10 bg-white/8 p-4 text-sm">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Pembayaran</p>
                   <p className="mt-3 font-semibold uppercase text-white">{transaction.pay}</p>
@@ -229,18 +233,18 @@ export function InvoiceModal({ transaction, businessName, paymentInfo, receiptFo
                 </div>
 
                 <div className="rounded-[16px] border border-white/10 bg-white/8 p-4 text-sm">
-                  <div className="flex items-center justify-between text-white/80">
+                  <div className="flex items-center justify-between text-white/80 tabular-nums">
                     <span>Subtotal</span>
                     <span>{formatCurrency(subtotal)}</span>
                   </div>
-                  <div className="mt-2 flex items-center justify-between text-white/80">
+                  <div className="mt-2 flex items-center justify-between text-white/80 tabular-nums">
                     <span>Diskon</span>
                     <span>- {formatCurrency(discount)}</span>
                   </div>
                   <div className="mt-4 rounded-[14px] bg-[#1535D4] px-4 py-4 text-white">
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Total</span>
-                      <span className="font-display text-[28px] font-extrabold">{formatCurrency(total)}</span>
+                      <span className="font-display text-[28px] font-extrabold tabular-nums">{formatCurrency(total)}</span>
                     </div>
                   </div>
                 </div>
