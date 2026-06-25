@@ -1,11 +1,13 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom';
 import { BrandLogo } from '@/components/branding/BrandLogo';
 import { AppShell } from '@/components/layout/AppShell';
 import CashierDetailPage from '@/pages/CashierDetailPage';
 import CustomersPage from '@/pages/CustomersPage';
 import DashboardPage from '@/pages/DashboardPage';
+import LoginPage from '@/pages/LoginPage';
 import ReportsPage from '@/pages/ReportsPage';
+import SettingsPage from '@/pages/SettingsPage';
 import { useCashierStore } from '@/store/useCashierStore';
 
 function LoadingScreen() {
@@ -20,7 +22,7 @@ function LoadingScreen() {
 }
 
 export default function App() {
-  const { initialize, mode, ready } = useCashierStore();
+  const { initialize, mode, ready, currentRole, clearRole } = useCashierStore();
 
   useEffect(() => {
     initialize();
@@ -30,17 +32,31 @@ export default function App() {
     return <LoadingScreen />;
   }
 
+  function ProtectedLayout() {
+    if (!currentRole) {
+      return <Navigate to="/login" replace />;
+    }
+
+    return (
+      <AppShell mode={mode} role="kasir" onSignOut={clearRole}>
+        <Outlet />
+      </AppShell>
+    );
+  }
+
   return (
     <BrowserRouter>
-      <AppShell mode={mode} role="kasir">
-        <Routes>
+      <Routes>
+        <Route path="/login" element={currentRole ? <Navigate to="/" replace /> : <LoginPage />} />
+        <Route element={<ProtectedLayout />}>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/cashier" element={<CashierDetailPage />} />
           <Route path="/customers" element={<CustomersPage />} />
           <Route path="/reports" element={<ReportsPage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </AppShell>
+          <Route path="/settings" element={<SettingsPage />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </BrowserRouter>
   );
 }

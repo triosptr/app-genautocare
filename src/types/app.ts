@@ -2,6 +2,7 @@ export type AppMode = 'demo' | 'hybrid';
 export type AppRole = 'kasir';
 export type PaymentMethod = 'cash' | 'qris' | 'transfer';
 export type ServiceTier = 'BASIC' | 'STANDARD' | 'PREMIUM' | 'ELITE';
+export type DiscountMode = 'amount' | 'percent';
 
 export interface Service {
   id: string;
@@ -66,4 +67,5 @@ export interface SettingsState extends PaymentInfo {
   businessName: string;
   receiptFooter: string;
   services: Service[];
+  discountMode: DiscountMode;
 }

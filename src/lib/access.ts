@@ -11,6 +11,7 @@ export const navItems: NavItem[] = [
   { to: '/cashier', label: 'Transaksi', roles: ['kasir'] },
   { to: '/customers', label: 'Pelanggan', roles: ['kasir'] },
   { to: '/reports', label: 'Laporan Pendapatan', roles: ['kasir'] },
+  { to: '/settings', label: 'Pengaturan', roles: ['kasir'] },
 ];
 
 export function canAccess(role: AppRole | null, path: string) {

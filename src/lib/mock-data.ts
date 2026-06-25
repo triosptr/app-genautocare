@@ -129,4 +129,5 @@ export const defaultSettings: SettingsState = {
   bankNo: '1234567890',
   bankBank: 'BCA',
   services: demoServices,
+  discountMode: 'amount',
 };

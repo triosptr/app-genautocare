@@ -1,4 +1,4 @@
-import { BarChart3, LayoutGrid, LogOut, ReceiptText, Search, Users } from 'lucide-react';
+import { BarChart3, LayoutGrid, LogOut, ReceiptText, Search, Settings, Users } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useMemo, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
@@ -12,6 +12,7 @@ const iconMap = {
   '/cashier': ReceiptText,
   '/customers': Users,
   '/reports': BarChart3,
+  '/settings': Settings,
 };
 
 interface AppShellProps {

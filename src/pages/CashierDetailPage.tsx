@@ -25,7 +25,7 @@ export default function CashierDetailPage() {
   const [merk, setMerk] = useState('');
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [washerId, setWasherId] = useState('');
-  const [discount, setDiscount] = useState(0);
+  const [discountInput, setDiscountInput] = useState(0);
   const [usePoints, setUsePoints] = useState(false);
   const [payment, setPayment] = useState<PaymentMethod>('cash');
   const [lastTxId, setLastTxId] = useState<string | null>(null);
@@ -50,7 +50,9 @@ export default function CashierDetailPage() {
   const redeemValue = usePoints && eligiblePoints && pickedServices.length > 0 ? Math.min(...pickedServices.map((service) => service.price)) : 0;
   const subtotal = pickedServices.reduce((sum, service) => sum + service.price, 0);
   const commissionPreview = pickedServices.reduce((sum, service) => sum + Math.round((service.price * service.commissionPct) / 100), 0);
-  const total = Math.max(0, subtotal - discount - redeemValue);
+  const discountValue =
+    settings.discountMode === 'percent' ? Math.round((subtotal * discountInput) / 100) : discountInput;
+  const total = Math.max(0, subtotal - discountValue - redeemValue);
   const currentTx = lastTxId ? transactions.find((tx) => tx.id === lastTxId) ?? null : null;
 
   function selectCustomer(customerId: string) {
@@ -88,7 +90,7 @@ export default function CashierDetailPage() {
       serviceIds: selectedServices,
       washerId,
       paymentMethod: payment,
-      discount,
+      discount: discountValue,
       usePoints,
     });
 
@@ -101,7 +103,7 @@ export default function CashierDetailPage() {
     setMerk('');
     setSelectedServices([]);
     setWasherId('');
-    setDiscount(0);
+    setDiscountInput(0);
     setUsePoints(false);
     setSelectedCustomerId('');
   }
@@ -239,14 +241,19 @@ export default function CashierDetailPage() {
               </div>
 
               <div className="brand-outline-card rounded-[16px] p-4">
-                <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Diskon (Rp)</p>
+                <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">
+                  Diskon {settings.discountMode === 'percent' ? '(%)' : '(Rp)'}
+                </p>
                 <input
                   type="number"
-                  value={discount || ''}
-                  onChange={(event) => setDiscount(Number(event.target.value))}
+                  value={discountInput || ''}
+                  onChange={(event) => setDiscountInput(Number(event.target.value))}
                   placeholder="0"
                   className="brand-input mt-3 w-full rounded-2xl px-4 py-3"
                 />
+                {settings.discountMode === 'percent' && (
+                  <p className="mt-2 text-xs text-slate-500">Setara {formatCurrency(discountValue)} dari subtotal.</p>
+                )}
               </div>
 
               {selectedCustomer && (

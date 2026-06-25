@@ -10,6 +10,7 @@ import type {
   AppMode,
   AppRole,
   Customer,
+  DiscountMode,
   Employee,
   PaymentMethod,
   Service,
@@ -51,6 +52,9 @@ interface CashierStore {
   initialize: () => void;
   setRole: (role: AppRole) => void;
   clearRole: () => void;
+  signIn: (username: string, password: string) => boolean;
+  updateSettings: (patch: Partial<SettingsState>) => void;
+  setServices: (services: Service[]) => void;
   saveCustomer: (input: SaveCustomerInput) => string;
   createTransaction: (input: CreateTransactionInput) => string;
 }
@@ -58,9 +62,16 @@ interface CashierStore {
 const roleKey = 'gen-autocare-role';
 const settingsKey = 'gen-autocare-settings-v2';
 
+const cashierUsername = 'genautocarekasir';
+const cashierPassword = 'appgen123';
+
 function readRole() {
   const raw = localStorage.getItem(roleKey);
   return raw ? ('kasir' as AppRole) : null;
+}
+
+function writeSettings(next: SettingsState) {
+  localStorage.setItem(settingsKey, JSON.stringify(next));
 }
 
 function readSettings() {
@@ -84,6 +95,8 @@ function readSettings() {
       ...defaultSettings,
       ...parsed,
       services,
+      discountMode:
+        (parsed as Partial<SettingsState>).discountMode === 'percent' ? ('percent' as DiscountMode) : ('amount' as DiscountMode),
     };
   } catch {
     return defaultSettings;
@@ -104,14 +117,15 @@ export const useCashierStore = create<CashierStore>((set, get) => ({
   transactions: [],
   settings: defaultSettings,
   initialize: () => {
+    const settings = readSettings();
     set({
       ready: true,
       currentRole: readRole(),
-      services: demoServices,
+      services: settings.services,
       employees: demoEmployees,
       customers: demoCustomers,
       transactions: demoTransactions,
-      settings: readSettings(),
+      settings,
     });
   },
   setRole: (role) => {
@@ -121,6 +135,38 @@ export const useCashierStore = create<CashierStore>((set, get) => ({
   clearRole: () => {
     localStorage.removeItem(roleKey);
     set({ currentRole: null });
+  },
+  signIn: (username, password) => {
+    const normalizedUser = username.trim();
+    const normalizedPass = password;
+    const ok = normalizedUser === cashierUsername && normalizedPass === cashierPassword;
+    if (ok) {
+      get().setRole('kasir');
+    }
+    return ok;
+  },
+  updateSettings: (patch) => {
+    set((state) => {
+      const next: SettingsState = {
+        ...state.settings,
+        ...patch,
+      };
+      writeSettings(next);
+      return { settings: next };
+    });
+  },
+  setServices: (services) => {
+    set((state) => {
+      const nextSettings: SettingsState = {
+        ...state.settings,
+        services,
+      };
+      writeSettings(nextSettings);
+      return {
+        services,
+        settings: nextSettings,
+      };
+    });
   },
   saveCustomer: (input) => {
     const customerId = input.id ?? crypto.randomUUID();
