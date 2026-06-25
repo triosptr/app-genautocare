@@ -14,10 +14,10 @@ function isoHoursAgo(hours: number) {
 }
 
 export const demoServices: Service[] = [
-  { id: 'svc-1', name: 'Basic Wash', price: 18000, tier: 'BASIC' },
-  { id: 'svc-2', name: 'Standard Wash', price: 25000, tier: 'STANDARD' },
-  { id: 'svc-3', name: 'Premium Wash', price: 35000, tier: 'PREMIUM' },
-  { id: 'svc-4', name: 'Elite Detailing', price: 50000, tier: 'ELITE' },
+  { id: 'svc-1', name: 'Basic Wash', price: 18000, tier: 'BASIC', commissionPct: 20 },
+  { id: 'svc-2', name: 'Standard Wash', price: 25000, tier: 'STANDARD', commissionPct: 25 },
+  { id: 'svc-3', name: 'Premium Wash', price: 35000, tier: 'PREMIUM', commissionPct: 30 },
+  { id: 'svc-4', name: 'Elite Detailing', price: 50000, tier: 'ELITE', commissionPct: 30 },
 ];
 
 export const demoEmployees: Employee[] = [
@@ -68,6 +68,7 @@ export const demoTransactions: Transaction[] = [
     serviceIds: ['svc-3'],
     subtotal: 35000,
     total: 35000,
+    commissionTotal: 10500,
     pay: 'qris',
     disc: 0,
   },
@@ -87,6 +88,7 @@ export const demoTransactions: Transaction[] = [
     serviceIds: ['svc-2'],
     subtotal: 25000,
     total: 25000,
+    commissionTotal: 6250,
     pay: 'cash',
     disc: 0,
   },
@@ -106,6 +108,7 @@ export const demoTransactions: Transaction[] = [
     serviceIds: ['svc-1'],
     subtotal: 18000,
     total: 18000,
+    commissionTotal: 3600,
     pay: 'transfer',
     disc: 0,
   },

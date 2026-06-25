@@ -1,6 +1,5 @@
 export type AppMode = 'demo' | 'hybrid';
 export type AppRole = 'kasir';
-export type DeviceMode = 'desktop' | 'ipad' | 'mobile';
 export type PaymentMethod = 'cash' | 'qris' | 'transfer';
 export type ServiceTier = 'BASIC' | 'STANDARD' | 'PREMIUM' | 'ELITE';
 
@@ -9,6 +8,7 @@ export interface Service {
   name: string;
   price: number;
   tier: ServiceTier;
+  commissionPct: number;
 }
 
 export interface Employee {
@@ -48,6 +48,7 @@ export interface Transaction {
   serviceIds: string[];
   subtotal: number;
   total: number;
+  commissionTotal: number;
   pay: PaymentMethod;
   disc: number;
 }

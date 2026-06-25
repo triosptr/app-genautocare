@@ -10,6 +10,7 @@ export const navItems: NavItem[] = [
   { to: '/', label: 'Ringkasan', roles: ['kasir'] },
   { to: '/cashier', label: 'Transaksi', roles: ['kasir'] },
   { to: '/customers', label: 'Pelanggan', roles: ['kasir'] },
+  { to: '/reports', label: 'Laporan', roles: ['kasir'] },
 ];
 
 export function canAccess(role: AppRole | null, path: string) {

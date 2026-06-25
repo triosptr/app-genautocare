@@ -5,6 +5,7 @@ import { AppShell } from '@/components/layout/AppShell';
 import CashierDetailPage from '@/pages/CashierDetailPage';
 import CustomersPage from '@/pages/CustomersPage';
 import DashboardPage from '@/pages/DashboardPage';
+import ReportsPage from '@/pages/ReportsPage';
 import LoginPage from '@/pages/LoginPage';
 import { useCashierStore } from '@/store/useCashierStore';
 
@@ -20,7 +21,7 @@ function LoadingScreen() {
 }
 
 export default function App() {
-  const { initialize, clearRole, mode, currentRole, ready, deviceMode, setDeviceMode } = useCashierStore();
+  const { initialize, clearRole, mode, currentRole, ready } = useCashierStore();
 
   useEffect(() => {
     initialize();
@@ -36,15 +37,14 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <AppShell mode={mode} role={currentRole} deviceMode={deviceMode} onChangeDeviceMode={setDeviceMode} onSignOut={clearRole}>
-        <div className="mt-6">
-          <Routes>
-            <Route path="/" element={<DashboardPage />} />
-            <Route path="/cashier" element={<CashierDetailPage />} />
-            <Route path="/customers" element={<CustomersPage />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </div>
+      <AppShell mode={mode} role={currentRole} onSignOut={clearRole}>
+        <Routes>
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/cashier" element={<CashierDetailPage />} />
+          <Route path="/customers" element={<CustomersPage />} />
+          <Route path="/reports" element={<ReportsPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </AppShell>
     </BrowserRouter>
   );

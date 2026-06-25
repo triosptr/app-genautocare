@@ -4,7 +4,7 @@ import { useCashierStore } from '@/store/useCashierStore';
 import { formatCurrency, formatDateTime } from '@/utils/format';
 
 export default function CustomersPage() {
-  const { customers, transactions, saveCustomer, deviceMode } = useCashierStore();
+  const { customers, transactions, saveCustomer } = useCashierStore();
   const [query, setQuery] = useState('');
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>(customers[0]?.id ?? '');
   const [name, setName] = useState('');
@@ -20,6 +20,18 @@ export default function CustomersPage() {
   const selectedCustomer = customers.find((customer) => customer.id === selectedCustomerId) ?? filteredCustomers[0] ?? null;
   const customerTransactions = transactions.filter((tx) => tx.customerId === selectedCustomer?.id);
 
+  function handleEditSelected() {
+    if (!selectedCustomer) {
+      return;
+    }
+
+    setSelectedCustomerId(selectedCustomer.id);
+    setName(selectedCustomer.name);
+    setPhone(selectedCustomer.phone);
+    setPlate(selectedCustomer.plate);
+    setMerk(selectedCustomer.vehicles[0]?.merk ?? '');
+  }
+
   function handleSave() {
     if (!name || !phone || !plate || !merk) {
       return;
@@ -34,7 +46,7 @@ export default function CustomersPage() {
   }
 
   return (
-    <div className={`grid gap-6 ${deviceMode === 'mobile' ? 'grid-cols-1' : 'xl:grid-cols-[0.95fr_1.05fr]'}`}>
+    <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
       <Panel title="Pelanggan" subtitle="Cari pelanggan dengan cepat dari meja kasir.">
         <input
           value={query}
@@ -71,7 +83,17 @@ export default function CustomersPage() {
       </Panel>
 
       <div className="space-y-6">
-        <Panel title="Detail Pelanggan" subtitle="Riwayat singkat kendaraan dan transaksi pelanggan.">
+        <Panel
+          title="Detail Pelanggan"
+          subtitle="Riwayat singkat kendaraan dan transaksi pelanggan."
+          actions={
+            selectedCustomer ? (
+              <button type="button" onClick={handleEditSelected} className="brand-secondary-btn rounded-2xl px-4 py-2 text-sm font-medium">
+                Edit
+              </button>
+            ) : null
+          }
+        >
           {selectedCustomer ? (
             <div className="space-y-4">
               <div className="brand-soft-card rounded-3xl p-4">
@@ -121,7 +143,7 @@ export default function CustomersPage() {
           )}
         </Panel>
 
-        <Panel title="Tambah Pelanggan" subtitle="Tambah data pelanggan baru secara cepat.">
+        <Panel title="Simpan Pelanggan" subtitle="Tambah atau perbarui data pelanggan secara cepat.">
           <div className="grid gap-4 md:grid-cols-2">
             <input value={name} onChange={(event) => setName(event.target.value)} placeholder="Nama pelanggan" className="brand-input rounded-2xl px-4 py-3" />
             <input value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="Nomor WhatsApp" className="brand-input rounded-2xl px-4 py-3" />
@@ -129,7 +151,7 @@ export default function CustomersPage() {
             <input value={merk} onChange={(event) => setMerk(event.target.value)} placeholder="Merk motor" className="brand-input rounded-2xl px-4 py-3" />
           </div>
           <button type="button" onClick={handleSave} className="brand-primary-btn mt-4 rounded-2xl px-4 py-3 font-medium">
-            Simpan pelanggan
+            Simpan
           </button>
         </Panel>
       </div>

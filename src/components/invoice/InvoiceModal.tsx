@@ -59,8 +59,13 @@ export function InvoiceModal({ transaction, businessName, receiptFooter, onClose
         if (!blob) throw new Error('Gagal memproses gambar');
         
         const file = new File([blob], `${transaction.invoiceNo}.png`, { type: 'image/png' });
-        
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+
+        const canShareFiles =
+          typeof navigator !== 'undefined' &&
+          typeof navigator.share === 'function' &&
+          (!navigator.canShare || navigator.canShare({ files: [file] }));
+
+        if (canShareFiles) {
           try {
             await navigator.share({
               title: `Invoice ${businessName}`,

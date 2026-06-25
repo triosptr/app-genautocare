@@ -10,7 +10,6 @@ import type {
   AppMode,
   AppRole,
   Customer,
-  DeviceMode,
   Employee,
   PaymentMethod,
   Service,
@@ -43,7 +42,6 @@ interface CashierStore {
   mode: AppMode;
   ready: boolean;
   currentRole: AppRole | null;
-  deviceMode: DeviceMode;
   services: Service[];
   employees: Employee[];
   customers: Customer[];
@@ -51,7 +49,6 @@ interface CashierStore {
   settings: SettingsState;
   initialize: () => void;
   setRole: (role: AppRole) => void;
-  setDeviceMode: (mode: DeviceMode) => void;
   clearRole: () => void;
   saveCustomer: (input: SaveCustomerInput) => string;
   createTransaction: (input: CreateTransactionInput) => string;
@@ -59,7 +56,6 @@ interface CashierStore {
 
 const roleKey = 'gen-autocare-role';
 const settingsKey = 'gen-autocare-settings-v2';
-const deviceModeKey = 'gen-autocare-device-mode';
 
 function readRole() {
   const raw = localStorage.getItem(roleKey);
@@ -73,18 +69,24 @@ function readSettings() {
   }
 
   try {
-    return JSON.parse(raw) as SettingsState;
+    const parsed = JSON.parse(raw) as SettingsState;
+    const fallbackById = Object.fromEntries(demoServices.map((service) => [service.id, service]));
+    const services = (parsed.services ?? demoServices).map((service) => ({
+      ...service,
+      commissionPct:
+        typeof (service as Service).commissionPct === 'number'
+          ? (service as Service).commissionPct
+          : (fallbackById[service.id]?.commissionPct ?? 0),
+    }));
+
+    return {
+      ...defaultSettings,
+      ...parsed,
+      services,
+    };
   } catch {
     return defaultSettings;
   }
-}
-
-function readDeviceMode() {
-  const raw = localStorage.getItem(deviceModeKey);
-  if (raw === 'ipad' || raw === 'mobile' || raw === 'desktop') {
-    return raw;
-  }
-  return 'desktop' as DeviceMode;
 }
 
 function buildInvoiceNumber() {
@@ -95,7 +97,6 @@ export const useCashierStore = create<CashierStore>((set, get) => ({
   mode: 'demo',
   ready: false,
   currentRole: null,
-  deviceMode: 'desktop',
   services: [],
   employees: [],
   customers: [],
@@ -105,7 +106,6 @@ export const useCashierStore = create<CashierStore>((set, get) => ({
     set({
       ready: true,
       currentRole: readRole(),
-      deviceMode: readDeviceMode(),
       services: demoServices,
       employees: demoEmployees,
       customers: demoCustomers,
@@ -116,10 +116,6 @@ export const useCashierStore = create<CashierStore>((set, get) => ({
   setRole: (role) => {
     localStorage.setItem(roleKey, role);
     set({ currentRole: role });
-  },
-  setDeviceMode: (mode) => {
-    localStorage.setItem(deviceModeKey, mode);
-    set({ deviceMode: mode });
   },
   clearRole: () => {
     localStorage.removeItem(roleKey);
@@ -168,6 +164,7 @@ export const useCashierStore = create<CashierStore>((set, get) => ({
         merk: input.merk,
       });
     const subtotal = services.reduce((sum, service) => sum + service.price, 0);
+    const commissionTotal = services.reduce((sum, service) => sum + Math.round((service.price * service.commissionPct) / 100), 0);
     const total = Math.max(0, subtotal - input.discount);
 
     const transaction: Transaction = {
@@ -186,6 +183,7 @@ export const useCashierStore = create<CashierStore>((set, get) => ({
       serviceIds: services.map((service) => service.id),
       subtotal,
       total,
+      commissionTotal,
       pay: input.paymentMethod,
       disc: input.discount,
     };
