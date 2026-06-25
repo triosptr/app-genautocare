@@ -61,20 +61,20 @@ export default function CustomersPage() {
               type="button"
               onClick={() => setSelectedCustomerId(customer.id)}
               className={`brand-soft-card w-full rounded-3xl p-4 text-left transition ${
-                customer.id === selectedCustomer?.id ? 'border-[#1535D4] bg-[#1535D4] text-white' : ''
+                customer.id === selectedCustomer?.id ? 'border-[#1535D4]/18 bg-[#f8fbff]' : ''
               }`}
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="font-medium">{customer.name}</p>
-                  <p className="mt-1 text-sm text-white/70">{customer.phone}</p>
+                  <p className="mt-1 text-sm text-slate-500">{customer.phone}</p>
                 </div>
               </div>
-              <div className="mt-4 flex items-center justify-between text-sm text-white/70">
+              <div className="mt-4 flex items-center justify-between text-sm text-slate-600">
                 <span>{customer.visits} kunjungan</span>
                 <span className="tabular-nums">{formatCurrency(customer.spend)}</span>
               </div>
-              <p className="mt-2 text-sm text-white/65">
+              <p className="mt-2 text-sm text-slate-600">
                 {customer.vehicles.map((vehicle) => `${vehicle.plate} · ${vehicle.merk}`).join(' | ')}
               </p>
             </button>
@@ -97,49 +97,49 @@ export default function CustomersPage() {
           {selectedCustomer ? (
             <div className="space-y-4">
               <div className="brand-soft-card rounded-3xl p-4">
-                <p className="font-display text-[28px] text-white">{selectedCustomer.name}</p>
-                <p className="mt-2 text-sm text-white/70">{selectedCustomer.phone}</p>
+                <p className="font-display text-[28px] text-slate-900">{selectedCustomer.name}</p>
+                <p className="mt-2 text-sm text-slate-600">{selectedCustomer.phone}</p>
                 <div className="mt-4 grid gap-3 md:grid-cols-2">
-                  <div className="rounded-2xl border border-white/10 bg-white/4 p-4">
-                    <p className="text-[11px] uppercase tracking-[0.16em] text-white/55">Kunjungan</p>
-                    <p className="mt-2 font-display text-2xl text-[#C8F400] tabular-nums">{selectedCustomer.visits}</p>
+                  <div className="rounded-2xl bg-[#eef4ff] p-4">
+                    <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Kunjungan</p>
+                    <p className="mt-2 font-display text-2xl text-[#1535D4] tabular-nums">{selectedCustomer.visits}</p>
                   </div>
-                  <div className="rounded-2xl border border-white/10 bg-white/4 p-4">
-                    <p className="text-[11px] uppercase tracking-[0.16em] text-white/55">Total belanja</p>
-                    <p className="mt-2 font-display text-2xl text-white tabular-nums">{formatCurrency(selectedCustomer.spend)}</p>
+                  <div className="rounded-2xl bg-[#f8fafc] p-4">
+                    <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Total belanja</p>
+                    <p className="mt-2 font-display text-2xl text-slate-900 tabular-nums">{formatCurrency(selectedCustomer.spend)}</p>
                   </div>
                 </div>
               </div>
 
               <div className="brand-soft-card rounded-3xl p-4">
-                <p className="text-sm uppercase tracking-[0.16em] text-white/55">Daftar kendaraan</p>
+                <p className="text-sm uppercase tracking-[0.16em] text-slate-500">Daftar kendaraan</p>
                 <div className="mt-3 space-y-3">
                   {selectedCustomer.vehicles.map((vehicle) => (
-                    <div key={vehicle.plate} className="rounded-2xl border border-white/10 bg-white/4 p-4">
-                      <p className="font-medium text-white">{vehicle.plate}</p>
-                      <p className="mt-1 text-sm text-white/70">{vehicle.merk}</p>
+                    <div key={vehicle.plate} className="rounded-2xl border border-slate-200 bg-[#f8fafc] p-4">
+                      <p className="font-medium text-slate-900">{vehicle.plate}</p>
+                      <p className="mt-1 text-sm text-slate-600">{vehicle.merk}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
               <div className="brand-soft-card rounded-3xl p-4">
-                <p className="text-sm uppercase tracking-[0.16em] text-white/55">Riwayat kunjungan</p>
+                <p className="text-sm uppercase tracking-[0.16em] text-slate-500">Riwayat kunjungan</p>
                 <div className="mt-3 space-y-3">
                   {customerTransactions.map((tx) => (
-                    <div key={tx.id} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/4 p-4">
+                    <div key={tx.id} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-[#f8fafc] p-4">
                       <div>
-                        <p className="font-medium text-white">{tx.services.join(', ')}</p>
-                        <p className="mt-1 text-sm text-white/70">{tx.washer} · {formatDateTime(tx.time)}</p>
+                        <p className="font-medium text-slate-900">{tx.services.join(', ')}</p>
+                        <p className="mt-1 text-sm text-slate-600">{tx.washer} · {formatDateTime(tx.time)}</p>
                       </div>
-                      <span className="text-white tabular-nums">{formatCurrency(tx.total)}</span>
+                      <span className="text-slate-900 tabular-nums">{formatCurrency(tx.total)}</span>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
           ) : (
-            <p className="text-sm text-white/60">Belum ada pelanggan dipilih.</p>
+            <p className="text-sm text-slate-400">Belum ada pelanggan dipilih.</p>
           )}
         </Panel>
 

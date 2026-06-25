@@ -67,28 +67,28 @@ export default function ReportsPage() {
         <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <div className="brand-outline-card rounded-[16px] p-4">
-              <p className="text-[11px] uppercase tracking-[0.16em] text-white/55">Pendapatan</p>
-              <p className="mt-2 font-display text-[24px] text-[#C8F400] tabular-nums">{formatCurrency(revenue)}</p>
-              <p className="mt-2 text-sm text-white/60">{delta >= 0 ? '+' : ''}{delta.toFixed(1)}% vs kemarin</p>
+              <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Pendapatan</p>
+              <p className="mt-2 font-display text-[24px] text-[#1535D4] tabular-nums">{formatCurrency(revenue)}</p>
+              <p className="mt-2 text-sm text-slate-500">{delta >= 0 ? '+' : ''}{delta.toFixed(1)}% vs kemarin</p>
             </div>
             <div className="brand-outline-card rounded-[16px] p-4">
-              <p className="text-[11px] uppercase tracking-[0.16em] text-white/55">Komisi teknisi</p>
-              <p className="mt-2 font-display text-[24px] text-white tabular-nums">{formatCurrency(commission)}</p>
-              <p className="mt-2 text-sm text-white/60">{txCount} transaksi</p>
+              <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Komisi teknisi</p>
+              <p className="mt-2 font-display text-[24px] text-slate-900 tabular-nums">{formatCurrency(commission)}</p>
+              <p className="mt-2 text-sm text-slate-500">{txCount} transaksi</p>
             </div>
             <div className="brand-outline-card rounded-[16px] p-4">
-              <p className="text-[11px] uppercase tracking-[0.16em] text-white/55">Cash</p>
-              <p className="mt-2 font-display text-[24px] text-white tabular-nums">{formatCurrency(payBreakdown.cash)}</p>
+              <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Cash</p>
+              <p className="mt-2 font-display text-[24px] text-slate-900 tabular-nums">{formatCurrency(payBreakdown.cash)}</p>
             </div>
             <div className="brand-outline-card rounded-[16px] p-4">
-              <p className="text-[11px] uppercase tracking-[0.16em] text-white/55">QRIS / Transfer</p>
-              <p className="mt-2 font-display text-[24px] text-white tabular-nums">{formatCurrency(payBreakdown.qris + payBreakdown.transfer)}</p>
+              <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">QRIS / Transfer</p>
+              <p className="mt-2 font-display text-[24px] text-slate-900 tabular-nums">{formatCurrency(payBreakdown.qris + payBreakdown.transfer)}</p>
             </div>
           </div>
 
           <div className="flex items-end gap-3">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/55">Tanggal</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">Tanggal</p>
               <input
                 type="date"
                 value={dateKey}
@@ -101,23 +101,23 @@ export default function ReportsPage() {
       </Panel>
 
       <Panel title="Komisi per Teknisi" subtitle={`Tanggal ${toInputDate(dateKey)} (vs ${prevDateKey})`}>
-        <div className="overflow-hidden rounded-[16px] border border-white/10 bg-white/4">
-          <div className="grid grid-cols-[1.2fr_0.6fr_0.8fr_0.8fr] gap-2 bg-white/6 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/55">
+        <div className="overflow-hidden rounded-[16px] border border-slate-200 bg-white">
+          <div className="grid grid-cols-[1.2fr_0.6fr_0.8fr_0.8fr] gap-2 bg-[#f7f8fb] px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
             <div>Teknisi</div>
             <div className="text-right">Transaksi</div>
             <div className="text-right">Pendapatan</div>
             <div className="text-right">Komisi</div>
           </div>
-          <div className="divide-y divide-white/10">
+          <div className="divide-y divide-slate-200">
             {technicianRows.length === 0 ? (
-              <div className="p-5 text-sm text-white/60">Belum ada transaksi untuk tanggal ini.</div>
+              <div className="p-5 text-sm text-slate-500">Belum ada transaksi untuk tanggal ini.</div>
             ) : (
               technicianRows.map((row) => (
-                <div key={row.key} className="grid grid-cols-[1.2fr_0.6fr_0.8fr_0.8fr] items-center gap-2 px-4 py-4 text-sm text-white/80">
-                  <div className="font-medium text-white">{row.name}</div>
+                <div key={row.key} className="grid grid-cols-[1.2fr_0.6fr_0.8fr_0.8fr] items-center gap-2 px-4 py-4 text-sm">
+                  <div className="font-medium text-slate-900">{row.name}</div>
                   <div className="text-right tabular-nums">{row.count}</div>
-                  <div className="text-right font-medium tabular-nums text-white">{formatCurrency(row.revenue)}</div>
-                  <div className="text-right font-medium tabular-nums text-[#C8F400]">{formatCurrency(row.commission)}</div>
+                  <div className="text-right font-medium tabular-nums text-slate-900">{formatCurrency(row.revenue)}</div>
+                  <div className="text-right font-medium tabular-nums text-[#1535D4]">{formatCurrency(row.commission)}</div>
                 </div>
               ))
             )}

@@ -13,10 +13,10 @@ export function Panel({ title, subtitle, actions, className, children }: PanelPr
   return (
     <section className={cn('brand-panel rounded-[18px] p-4 md:p-5', className)}>
       {(title || actions) && (
-        <header className="mb-4 flex items-start justify-between gap-4 border-b border-white/10 pb-4">
+        <header className="mb-4 flex items-start justify-between gap-4 border-b border-slate-200/80 pb-4">
           <div>
-            {title && <h2 className="font-display text-[20px] font-extrabold tracking-[-0.01em] text-white">{title}</h2>}
-            {subtitle && <p className="mt-1 text-[13px] text-white/60">{subtitle}</p>}
+            {title && <h2 className="font-display text-[20px] font-extrabold tracking-[-0.01em] text-slate-900">{title}</h2>}
+            {subtitle && <p className="mt-1 text-[13px] text-slate-500">{subtitle}</p>}
           </div>
           {actions}
         </header>

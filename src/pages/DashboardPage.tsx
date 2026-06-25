@@ -47,16 +47,16 @@ export default function DashboardPage() {
               return (
                 <div key={tx.id} className="brand-outline-card flex flex-col gap-4 rounded-[16px] p-4 lg:flex-row lg:items-center lg:justify-between">
                   <div>
-                    <p className="font-medium text-white">{tx.invoiceNo}</p>
-                    <p className="mt-1 text-sm text-white/65">
+                    <p className="font-medium text-slate-900">{tx.invoiceNo}</p>
+                    <p className="mt-1 text-sm text-slate-500">
                       {customerName} · {tx.plate} · {tx.merk}
                     </p>
                   </div>
                   <div className="flex items-center gap-6">
-                    <div className="text-sm text-white/60">{formatDateTime(tx.time)}</div>
+                    <div className="text-sm text-slate-500">{formatDateTime(tx.time)}</div>
                     <div className="text-right">
-                      <p className="font-display text-lg text-[#C8F400] tabular-nums">{formatCurrency(tx.total)}</p>
-                      <p className="text-[11px] uppercase tracking-[0.16em] text-white/50">
+                      <p className="font-display text-lg text-[#1535D4] tabular-nums">{formatCurrency(tx.total)}</p>
+                      <p className="text-[11px] uppercase tracking-[0.16em] text-[#79809a]">
                         {tx.pay}
                       </p>
                     </div>
@@ -78,13 +78,13 @@ export default function DashboardPage() {
               </div>
             </div>
             <div className="brand-outline-card rounded-[16px] p-5">
-              <p className="text-sm uppercase tracking-[0.16em] text-white/55">Komisi teknisi hari ini</p>
-              <p className="mt-2 font-display text-2xl text-[#C8F400] tabular-nums">{formatCurrency(todayCommission)}</p>
+              <p className="text-sm uppercase tracking-[0.16em] text-[#79809a]">Komisi teknisi hari ini</p>
+              <p className="mt-2 font-display text-2xl text-slate-900 tabular-nums">{formatCurrency(todayCommission)}</p>
             </div>
             <div className="brand-outline-card rounded-[16px] p-5">
-              <Users className="h-5 w-5 text-[#C8F400]" />
-              <p className="mt-4 text-sm uppercase tracking-[0.16em] text-white/55">Transaksi QRIS</p>
-              <p className="mt-2 text-2xl font-display text-white tabular-nums">{qrisCount} transaksi</p>
+              <Users className="h-5 w-5 text-[#1535D4]" />
+              <p className="mt-4 text-sm uppercase tracking-[0.16em] text-[#79809a]">Transaksi QRIS</p>
+              <p className="mt-2 text-2xl font-display text-slate-900 tabular-nums">{qrisCount} transaksi</p>
             </div>
           </div>
         </Panel>
@@ -96,10 +96,10 @@ export default function DashboardPage() {
             {topTechnicians.map(([name, count], index) => (
               <div key={name} className="brand-outline-card flex items-center justify-between rounded-[16px] p-4">
                 <div>
-                  <p className="text-[11px] uppercase tracking-[0.16em] text-white/55">Rank {index + 1}</p>
-                  <p className="mt-2 font-medium text-white">{name}</p>
+                  <p className="text-[11px] uppercase tracking-[0.16em] text-[#79809a]">Rank {index + 1}</p>
+                  <p className="mt-2 font-medium text-slate-900">{name}</p>
                 </div>
-                <p className="font-display text-[28px] text-[#C8F400] tabular-nums">{count}</p>
+                <p className="font-display text-[28px] text-[#1535D4] tabular-nums">{count}</p>
               </div>
             ))}
           </div>

@@ -329,9 +329,9 @@ export function InvoiceModal({ transaction, businessName, paymentInfo, receiptFo
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-[440px] overflow-hidden rounded-[24px] border border-white/10 bg-[#0d1220] shadow-[0_24px_80px_-54px_rgba(0,0,0,0.92)]">
+      <div className="w-full max-w-[520px] overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_24px_80px_-54px_rgba(15,20,34,0.35)]">
         <div className="p-4">
-          <div ref={previewWrapRef} className="aspect-[794/1123] w-full border border-white/10 bg-black/20 overflow-hidden">
+          <div ref={previewWrapRef} className="aspect-[794/1123] w-full overflow-hidden rounded-[16px] border border-slate-200 bg-white">
             <div style={{ width: 794, height: 1123, transform: `scale(${previewScale})`, transformOrigin: 'top left' }}>
               {invoicePoster}
             </div>
@@ -348,16 +348,16 @@ export function InvoiceModal({ transaction, businessName, paymentInfo, receiptFo
             type="button"
             onClick={handleSendWA}
             disabled={isProcessing}
-            className="flex w-full items-center justify-center gap-2 rounded-[16px] bg-[#2f9e44] px-4 py-4 text-[15px] font-semibold text-white transition hover:bg-[#2b8a3e] disabled:opacity-70"
+            className="brand-primary-btn flex w-full items-center justify-center gap-2 rounded-[16px] px-4 py-4 text-[15px] font-semibold disabled:opacity-70"
           >
             {isProcessing ? 'Memproses...' : 'Copy Invoice & Buka WhatsApp'}
           </button>
-          {status && <p className="text-center text-xs text-white/60">{status}</p>}
+          {status && <p className="text-center text-xs text-slate-600">{status}</p>}
           <button
             type="button"
             onClick={onClose}
             disabled={isProcessing}
-            className="w-full rounded-[16px] px-4 py-4 text-[15px] font-medium text-white/70 transition hover:bg-white/8 hover:text-white disabled:opacity-50"
+            className="brand-secondary-btn w-full rounded-[16px] px-4 py-4 text-[15px] font-medium disabled:opacity-50"
           >
             Tutup
           </button>

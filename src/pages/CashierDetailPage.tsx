@@ -9,10 +9,10 @@ import { formatCurrency } from '@/utils/format';
 const paymentMethods: PaymentMethod[] = ['cash', 'qris', 'transfer'];
 
 const tierStyles: Record<ServiceTier, string> = {
-  BASIC: 'border-white/10 bg-white/4 text-white',
-  STANDARD: 'border-white/10 bg-white/4 text-white',
-  PREMIUM: 'border-white/10 bg-white/4 text-white',
-  ELITE: 'border-white/10 bg-white/4 text-white',
+  BASIC: 'bg-[#f8f9fc] text-slate-900 border-[#d8dce7]',
+  STANDARD: 'bg-[#f8f9fc] text-slate-900 border-[#d8dce7]',
+  PREMIUM: 'bg-[#f8f9fc] text-slate-900 border-[#d8dce7]',
+  ELITE: 'bg-[#f8f9fc] text-slate-900 border-[#d8dce7]',
 };
 
 export default function CashierDetailPage() {
@@ -120,9 +120,9 @@ export default function CashierDetailPage() {
                       onClick={() => selectCustomer(customer.id)}
                       className="brand-outline-card rounded-[16px] p-4 text-left"
                     >
-                      <p className="font-medium text-white">{customer.name}</p>
-                      <p className="mt-1 text-sm text-white/60">{customer.phone}</p>
-                      <p className="mt-2 text-[11px] uppercase tracking-[0.16em] text-[#C8F400]">
+                      <p className="font-medium text-slate-900">{customer.name}</p>
+                      <p className="mt-1 text-sm text-slate-500">{customer.phone}</p>
+                      <p className="mt-2 text-[11px] uppercase tracking-[0.16em] text-[#1535D4]">
                         {customer.vehicles.length} kendaraan
                       </p>
                     </button>
@@ -152,21 +152,23 @@ export default function CashierDetailPage() {
                   type="button"
                   onClick={() => toggleService(service.id)}
                   className={cn(
-                    'relative flex min-h-[160px] flex-col justify-between rounded-[16px] border p-4 text-left transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_24px_70px_-46px_rgba(0,0,0,0.92)]',
+                        'relative flex min-h-[160px] flex-col justify-between rounded-[16px] border p-4 text-left transition-all duration-200 hover:-translate-y-1 hover:shadow-lg',
                     tierStyles[service.tier],
-                    selectedServices.includes(service.id) ? 'border-[#1535D4] bg-[#1535D4] text-white' : '',
+                        selectedServices.includes(service.id) ? 'border-[#1535D4] bg-[#1535D4] text-white' : '',
                   )}
                 >
                   <div>
                     <div className="flex items-start justify-between gap-2">
-                      <p className="text-[10px] uppercase tracking-[0.14em] text-white/70">{service.tier}</p>
+                          <p className={cn('text-[10px] uppercase tracking-[0.14em]', selectedServices.includes(service.id) ? 'text-white/70' : 'text-slate-500')}>
+                            {service.tier}
+                          </p>
                       {selectedServices.includes(service.id) && <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#C8F400]" />}
                     </div>
                     <p className="mt-3 font-display text-[18px] leading-tight md:text-[20px]">{service.name}</p>
                   </div>
                   <div className="mt-5 space-y-2">
                     <p className="font-display text-[22px] font-bold leading-none tabular-nums md:text-[24px]">{formatCurrency(service.price)}</p>
-                    <p className={cn('text-[10px] uppercase tracking-[0.14em]', selectedServices.includes(service.id) ? 'text-[#C8F400]' : 'text-white/60')}>
+                        <p className={cn('text-[10px] uppercase tracking-[0.14em]', selectedServices.includes(service.id) ? 'text-[#C8F400]' : 'text-slate-500')}>
                       Komisi {service.commissionPct}%
                     </p>
                   </div>
@@ -187,8 +189,8 @@ export default function CashierDetailPage() {
                     washerId === employee.id ? 'border-[#1535D4] bg-[#1535D4] text-white' : '',
                   )}
                 >
-                  <p className="font-medium">{employee.name}</p>
-                  <span className={cn('text-[11px] uppercase tracking-[0.16em]', washerId === employee.id ? 'text-[#C8F400]' : 'text-white/60')}>
+                  <p className={cn('font-medium', washerId === employee.id ? 'text-white' : 'text-slate-900')}>{employee.name}</p>
+                  <span className={cn('text-[11px] uppercase tracking-[0.16em]', washerId === employee.id ? 'text-[#C8F400]' : 'text-[#1535D4]')}>
                     Pilih
                   </span>
                 </button>
@@ -201,17 +203,17 @@ export default function CashierDetailPage() {
           <Panel title="Ringkasan" subtitle="Periksa total dan proses invoice.">
             <div className="space-y-4">
               <div className="brand-outline-card rounded-[16px] p-4">
-                <p className="text-[11px] uppercase tracking-[0.16em] text-white/55">Layanan dipilih</p>
+                <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Layanan dipilih</p>
                 <div className="mt-3 space-y-2">
                   {pickedServices.length === 0 ? (
-                    <p className="text-sm text-white/60">Belum ada layanan dipilih.</p>
+                    <p className="text-sm text-slate-500">Belum ada layanan dipilih.</p>
                   ) : (
                     pickedServices.map((svc) => (
-                      <div key={svc.id} className="flex items-center justify-between text-sm text-white/70">
-                        <span className="min-w-0 font-medium text-white">
+                      <div key={svc.id} className="flex items-center justify-between text-sm text-slate-700">
+                        <span className="min-w-0 font-medium text-slate-900">
                           <span className="block truncate">{svc.name}</span>
                         </span>
-                        <span className="tabular-nums text-white/80">{formatCurrency(svc.price)}</span>
+                        <span className="tabular-nums text-slate-700">{formatCurrency(svc.price)}</span>
                       </div>
                     ))
                   )}
@@ -220,17 +222,17 @@ export default function CashierDetailPage() {
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="brand-outline-card rounded-[16px] p-4">
-                  <p className="text-[11px] uppercase tracking-[0.16em] text-white/55">Subtotal</p>
-                  <p className="mt-2 font-display text-[26px] text-white tabular-nums">{formatCurrency(subtotal)}</p>
+                  <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Subtotal</p>
+                  <p className="mt-2 font-display text-[26px] text-[#1535D4] tabular-nums">{formatCurrency(subtotal)}</p>
                 </div>
                 <div className="brand-outline-card rounded-[16px] p-4">
-                  <p className="text-[11px] uppercase tracking-[0.16em] text-white/55">Komisi teknisi</p>
-                  <p className="mt-2 font-display text-[26px] text-[#C8F400] tabular-nums">{formatCurrency(commissionPreview)}</p>
+                  <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Komisi teknisi</p>
+                  <p className="mt-2 font-display text-[26px] text-slate-900 tabular-nums">{formatCurrency(commissionPreview)}</p>
                 </div>
               </div>
 
               <div className="brand-outline-card rounded-[16px] p-4">
-                <p className="text-[11px] uppercase tracking-[0.16em] text-white/55">Diskon (Rp)</p>
+                <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Diskon (Rp)</p>
                 <input
                   type="number"
                   value={discount || ''}
@@ -250,7 +252,7 @@ export default function CashierDetailPage() {
                       'rounded-[12px] border px-4 py-3 text-sm font-semibold transition',
                       payment === method
                         ? 'border-[#1535D4] bg-[#1535D4] text-[#C8F400]'
-                        : 'border-white/10 bg-white/4 text-white/80 hover:bg-white/6',
+                        : 'border-slate-300 bg-[#f8f9fc] text-slate-700 hover:bg-white',
                     )}
                   >
                     {method.toUpperCase()}
@@ -259,17 +261,17 @@ export default function CashierDetailPage() {
               </div>
 
               {payment === 'transfer' && (
-                <div className="brand-outline-card rounded-[16px] p-4 text-sm text-white/70">
+                <div className="brand-outline-card rounded-[16px] p-4 text-sm text-slate-700">
                   <p>{settings.bankBank}</p>
-                  <p className="mt-1 text-white/80">{settings.bankName}</p>
-                  <p className="mt-1 font-display text-2xl text-white tabular-nums">{settings.bankNo}</p>
+                  <p className="mt-1">{settings.bankName}</p>
+                  <p className="mt-1 font-display text-2xl text-slate-900 tabular-nums">{settings.bankNo}</p>
                 </div>
               )}
 
               <div className="rounded-[16px] border border-[#1535D4] bg-[#1535D4] p-5">
                 <div className="flex items-center justify-between">
                   <span className="text-sm uppercase tracking-[0.16em] text-white/70">TOTAL</span>
-                  <span className="font-display text-[30px] text-[#C8F400] tabular-nums">{formatCurrency(total)}</span>
+                  <span className="font-display text-[30px] text-white tabular-nums">{formatCurrency(total)}</span>
                 </div>
               </div>
 

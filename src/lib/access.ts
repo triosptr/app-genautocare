@@ -7,10 +7,10 @@ export interface NavItem {
 }
 
 export const navItems: NavItem[] = [
-  { to: '/', label: 'Ringkasan', roles: ['kasir'] },
+  { to: '/', label: 'Dashboard', roles: ['kasir'] },
   { to: '/cashier', label: 'Transaksi', roles: ['kasir'] },
   { to: '/customers', label: 'Pelanggan', roles: ['kasir'] },
-  { to: '/reports', label: 'Laporan', roles: ['kasir'] },
+  { to: '/reports', label: 'Laporan Pendapatan', roles: ['kasir'] },
 ];
 
 export function canAccess(role: AppRole | null, path: string) {
