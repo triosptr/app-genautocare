@@ -6,7 +6,6 @@ import CashierDetailPage from '@/pages/CashierDetailPage';
 import CustomersPage from '@/pages/CustomersPage';
 import DashboardPage from '@/pages/DashboardPage';
 import ReportsPage from '@/pages/ReportsPage';
-import LoginPage from '@/pages/LoginPage';
 import { useCashierStore } from '@/store/useCashierStore';
 
 function LoadingScreen() {
@@ -21,7 +20,7 @@ function LoadingScreen() {
 }
 
 export default function App() {
-  const { initialize, clearRole, mode, currentRole, ready } = useCashierStore();
+  const { initialize, mode, ready } = useCashierStore();
 
   useEffect(() => {
     initialize();
@@ -31,13 +30,9 @@ export default function App() {
     return <LoadingScreen />;
   }
 
-  if (!currentRole) {
-    return <LoginPage />;
-  }
-
   return (
     <BrowserRouter>
-      <AppShell mode={mode} role={currentRole} onSignOut={clearRole}>
+      <AppShell mode={mode} role="kasir">
         <Routes>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/cashier" element={<CashierDetailPage />} />

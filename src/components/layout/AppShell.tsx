@@ -62,12 +62,12 @@ export function AppShell({ mode, role, onSignOut, children }: AppShellProps) {
                 to={link.to}
                 className={({ isActive }) =>
                   cn(
-                    'flex items-center gap-3 rounded-[14px] px-4 py-3 text-sm font-medium transition',
-                    isActive ? 'bg-[#C8F400] text-[#111318]' : 'text-white/90 hover:bg-white/8',
+                    'flex items-center gap-3 rounded-[14px] px-4 py-3 text-sm font-medium transition-colors duration-200',
+                    isActive ? 'bg-[#1535D4] text-[#C8F400]' : 'text-white/88 hover:bg-white/8',
                   )
                 }
               >
-                <Icon className="h-4 w-4" />
+                <Icon className="h-4 w-4 opacity-80" />
                 <span>{link.label}</span>
               </NavLink>
             );
@@ -99,23 +99,23 @@ export function AppShell({ mode, role, onSignOut, children }: AppShellProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#eef0f5] text-slate-900">
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/80 backdrop-blur lg:hidden">
+    <div className="min-h-screen bg-[#060912] text-white">
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-[#0d1220]/80 backdrop-blur lg:hidden">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
-            className="grid h-10 w-10 place-items-center rounded-[14px] border border-slate-200 bg-white text-slate-900 transition hover:bg-slate-50"
+            className="grid h-10 w-10 place-items-center rounded-[14px] border border-white/10 bg-white/5 text-white transition hover:bg-white/10"
           >
             <Menu className="h-5 w-5" />
           </button>
           <div className="text-center">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">GEN Auto Care</p>
-            <p className="font-display text-[18px] font-extrabold text-slate-900">{pageName}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/55">GEN Auto Care</p>
+            <p className="font-display text-[18px] font-extrabold text-white">{pageName}</p>
           </div>
-          <div className="inline-flex items-center gap-2 rounded-[14px] border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700">
-            <Clock3 className="h-4 w-4 text-[#1535D4]" />
-            <span>{nowLabel}</span>
+          <div className="inline-flex items-center gap-2 rounded-[14px] border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/80">
+            <Clock3 className="h-4 w-4 text-[#C8F400]" />
+            <span className="tabular-nums">{nowLabel}</span>
           </div>
         </div>
       </header>
@@ -140,18 +140,20 @@ export function AppShell({ mode, role, onSignOut, children }: AppShellProps) {
 
         <main className="min-h-screen px-4 py-6 lg:px-8 lg:py-8">
           <div className="mx-auto w-full space-y-6">
-            <div className="hidden items-center justify-between gap-4 rounded-[22px] border border-slate-200 bg-white p-5 shadow-[0_8px_24px_rgba(0,0,0,0.04)] lg:flex">
+            <div className="hidden items-center justify-between gap-4 rounded-[22px] border border-white/10 bg-[#0d1220] p-5 shadow-[0_18px_60px_-36px_rgba(0,0,0,0.85)] lg:flex">
               <div>
-                <p className="brand-eyebrow text-slate-500">GEN Auto Care</p>
-                <h1 className="mt-2 brand-title text-[26px] text-slate-900">{pageName}</h1>
+                <p className="brand-eyebrow text-white/55">GEN Auto Care</p>
+                <h1 className="mt-2 brand-title text-[26px] text-white">{pageName}</h1>
               </div>
-              <div className="inline-flex items-center gap-2 rounded-[14px] border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-                <Clock3 className="h-4 w-4 text-[#1535D4]" />
-                <span>{nowLabel}</span>
+              <div className="inline-flex items-center gap-2 rounded-[14px] border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/80">
+                <Clock3 className="h-4 w-4 text-[#C8F400]" />
+                <span className="tabular-nums">{nowLabel}</span>
               </div>
             </div>
 
-            {children}
+            <div key={location.pathname} className="page-enter">
+              {children}
+            </div>
           </div>
         </main>
       </div>

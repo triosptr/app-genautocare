@@ -9,10 +9,10 @@ import { formatCurrency } from '@/utils/format';
 const paymentMethods: PaymentMethod[] = ['cash', 'qris', 'transfer'];
 
 const tierStyles: Record<ServiceTier, string> = {
-  BASIC: 'bg-[#f3f4f8] text-[#5e6578] border-[#d8dce7]',
-  STANDARD: 'bg-[#1535D4] text-white border-[#1535D4]',
-  PREMIUM: 'bg-[#f0b13f] text-[#111318] border-[#f0b13f]',
-  ELITE: 'bg-[#373A4A] text-[#C8F400] border-[#373A4A]',
+  BASIC: 'border-white/10 bg-white/4 text-white',
+  STANDARD: 'border-white/10 bg-white/4 text-white',
+  PREMIUM: 'border-white/10 bg-white/4 text-white',
+  ELITE: 'border-white/10 bg-white/4 text-white',
 };
 
 export default function CashierDetailPage() {
@@ -88,7 +88,6 @@ export default function CashierDetailPage() {
     setLastTxId(txId);
     setShowInvoice(true);
     
-    // reset form
     setCustomerName('');
     setPhone('');
     setPlate('');
@@ -121,9 +120,9 @@ export default function CashierDetailPage() {
                       onClick={() => selectCustomer(customer.id)}
                       className="brand-outline-card rounded-[16px] p-4 text-left"
                     >
-                      <p className="font-medium text-slate-900">{customer.name}</p>
-                      <p className="mt-1 text-sm text-slate-500">{customer.phone}</p>
-                      <p className="mt-2 text-[11px] uppercase tracking-[0.16em] text-[#1535D4]">
+                      <p className="font-medium text-white">{customer.name}</p>
+                      <p className="mt-1 text-sm text-white/60">{customer.phone}</p>
+                      <p className="mt-2 text-[11px] uppercase tracking-[0.16em] text-[#C8F400]">
                         {customer.vehicles.length} kendaraan
                       </p>
                     </button>
@@ -153,18 +152,23 @@ export default function CashierDetailPage() {
                   type="button"
                   onClick={() => toggleService(service.id)}
                   className={cn(
-                    'flex min-h-[160px] flex-col justify-between rounded-[16px] border p-4 text-left transition-all duration-200 hover:-translate-y-1 hover:shadow-lg',
+                    'relative flex min-h-[160px] flex-col justify-between rounded-[16px] border p-4 text-left transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_24px_70px_-46px_rgba(0,0,0,0.92)]',
                     tierStyles[service.tier],
-                    selectedServices.includes(service.id) ? 'ring-2 ring-[#C8F400] ring-offset-2 ring-offset-[#eef0f5]' : '',
+                    selectedServices.includes(service.id) ? 'border-[#1535D4] bg-[#1535D4] text-white' : '',
                   )}
                 >
                   <div>
-                    <p className="text-[10px] uppercase tracking-[0.14em]">{service.tier}</p>
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="text-[10px] uppercase tracking-[0.14em] text-white/70">{service.tier}</p>
+                      {selectedServices.includes(service.id) && <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#C8F400]" />}
+                    </div>
                     <p className="mt-3 font-display text-[18px] leading-tight md:text-[20px]">{service.name}</p>
                   </div>
                   <div className="mt-5 space-y-2">
-                    <p className="font-display text-[22px] font-bold leading-none md:text-[24px]">{formatCurrency(service.price)}</p>
-                    <p className="text-[10px] uppercase tracking-[0.14em] opacity-80">Komisi {service.commissionPct}%</p>
+                    <p className="font-display text-[22px] font-bold leading-none tabular-nums md:text-[24px]">{formatCurrency(service.price)}</p>
+                    <p className={cn('text-[10px] uppercase tracking-[0.14em]', selectedServices.includes(service.id) ? 'text-[#C8F400]' : 'text-white/60')}>
+                      Komisi {service.commissionPct}%
+                    </p>
                   </div>
                 </button>
               ))}
@@ -180,11 +184,13 @@ export default function CashierDetailPage() {
                   onClick={() => setWasherId(employee.id)}
                   className={cn(
                     'brand-outline-card flex items-center justify-between rounded-[16px] p-4 text-left transition',
-                    washerId === employee.id ? 'border-[#1535D4] bg-white shadow-[inset_0_0_0_1px_#1535D4]' : '',
+                    washerId === employee.id ? 'border-[#1535D4] bg-[#1535D4] text-white' : '',
                   )}
                 >
-                  <p className="font-medium text-slate-900">{employee.name}</p>
-                  <span className="text-[11px] uppercase tracking-[0.16em] text-[#1535D4]">Pilih</span>
+                  <p className="font-medium">{employee.name}</p>
+                  <span className={cn('text-[11px] uppercase tracking-[0.16em]', washerId === employee.id ? 'text-[#C8F400]' : 'text-white/60')}>
+                    Pilih
+                  </span>
                 </button>
               ))}
             </div>
@@ -195,15 +201,17 @@ export default function CashierDetailPage() {
           <Panel title="Ringkasan" subtitle="Periksa total dan proses invoice.">
             <div className="space-y-4">
               <div className="brand-outline-card rounded-[16px] p-4">
-                <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Layanan dipilih</p>
+                <p className="text-[11px] uppercase tracking-[0.16em] text-white/55">Layanan dipilih</p>
                 <div className="mt-3 space-y-2">
                   {pickedServices.length === 0 ? (
-                    <p className="text-sm text-slate-500">Belum ada layanan dipilih.</p>
+                    <p className="text-sm text-white/60">Belum ada layanan dipilih.</p>
                   ) : (
                     pickedServices.map((svc) => (
-                      <div key={svc.id} className="flex items-center justify-between text-sm text-slate-700">
-                        <span className="font-medium text-slate-900">{svc.name}</span>
-                        <span>{formatCurrency(svc.price)}</span>
+                      <div key={svc.id} className="flex items-center justify-between text-sm text-white/70">
+                        <span className="min-w-0 font-medium text-white">
+                          <span className="block truncate">{svc.name}</span>
+                        </span>
+                        <span className="tabular-nums text-white/80">{formatCurrency(svc.price)}</span>
                       </div>
                     ))
                   )}
@@ -212,17 +220,17 @@ export default function CashierDetailPage() {
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="brand-outline-card rounded-[16px] p-4">
-                  <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Subtotal</p>
-                  <p className="mt-2 font-display text-[26px] text-[#1535D4]">{formatCurrency(subtotal)}</p>
+                  <p className="text-[11px] uppercase tracking-[0.16em] text-white/55">Subtotal</p>
+                  <p className="mt-2 font-display text-[26px] text-white tabular-nums">{formatCurrency(subtotal)}</p>
                 </div>
                 <div className="brand-outline-card rounded-[16px] p-4">
-                  <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Komisi teknisi</p>
-                  <p className="mt-2 font-display text-[26px] text-slate-900">{formatCurrency(commissionPreview)}</p>
+                  <p className="text-[11px] uppercase tracking-[0.16em] text-white/55">Komisi teknisi</p>
+                  <p className="mt-2 font-display text-[26px] text-[#C8F400] tabular-nums">{formatCurrency(commissionPreview)}</p>
                 </div>
               </div>
 
               <div className="brand-outline-card rounded-[16px] p-4">
-                <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500">Diskon (Rp)</p>
+                <p className="text-[11px] uppercase tracking-[0.16em] text-white/55">Diskon (Rp)</p>
                 <input
                   type="number"
                   value={discount || ''}
@@ -241,8 +249,8 @@ export default function CashierDetailPage() {
                     className={cn(
                       'rounded-[12px] border px-4 py-3 text-sm font-semibold transition',
                       payment === method
-                        ? 'border-[#1535D4] bg-white text-[#1535D4] shadow-[inset_0_0_0_1px_#1535D4]'
-                        : 'border-slate-300 bg-[#f8f9fc] text-slate-700',
+                        ? 'border-[#1535D4] bg-[#1535D4] text-[#C8F400]'
+                        : 'border-white/10 bg-white/4 text-white/80 hover:bg-white/6',
                     )}
                   >
                     {method.toUpperCase()}
@@ -251,17 +259,17 @@ export default function CashierDetailPage() {
               </div>
 
               {payment === 'transfer' && (
-                <div className="brand-outline-card rounded-[16px] p-4 text-sm text-slate-700">
+                <div className="brand-outline-card rounded-[16px] p-4 text-sm text-white/70">
                   <p>{settings.bankBank}</p>
-                  <p className="mt-1">{settings.bankName}</p>
-                  <p className="mt-1 font-display text-2xl text-slate-900">{settings.bankNo}</p>
+                  <p className="mt-1 text-white/80">{settings.bankName}</p>
+                  <p className="mt-1 font-display text-2xl text-white tabular-nums">{settings.bankNo}</p>
                 </div>
               )}
 
               <div className="rounded-[16px] border border-[#1535D4] bg-[#1535D4] p-5">
                 <div className="flex items-center justify-between">
                   <span className="text-sm uppercase tracking-[0.16em] text-white/70">TOTAL</span>
-                  <span className="font-display text-[30px] text-white">{formatCurrency(total)}</span>
+                  <span className="font-display text-[30px] text-[#C8F400] tabular-nums">{formatCurrency(total)}</span>
                 </div>
               </div>
 

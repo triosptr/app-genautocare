@@ -10,16 +10,16 @@ export function StatCard({ label, value, hint, accent = 'neutral' }: StatCardPro
     accent === 'blue'
       ? 'border-[#1535D4] bg-[#1535D4] text-white'
       : accent === 'dark'
-        ? 'border-[#373A4A] bg-[#373A4A] text-white'
-        : 'border-[#d8dce7] bg-[#f7f8fb] text-slate-900';
-  const labelClass = accent === 'neutral' ? 'text-[#9aa0b4]' : 'text-white/74';
-  const valueClass = accent === 'neutral' ? 'text-[#111318]' : 'text-white';
-  const hintClass = accent === 'neutral' ? 'text-slate-500' : 'text-white/72';
+        ? 'border-white/10 bg-white/6 text-white'
+        : 'border-white/10 bg-[#0d1220] text-white';
+  const labelClass = accent === 'blue' ? 'text-white/70' : 'text-white/55';
+  const valueClass = accent === 'blue' ? 'text-[#C8F400]' : 'text-white';
+  const hintClass = 'text-white/60';
 
   return (
-    <article className={`rounded-[16px] border p-5 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.04),_0_1px_3px_rgba(0,0,0,0.02)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_8px_24px_-4px_rgba(0,0,0,0.06)] ${cardClass}`}>
+    <article className={`rounded-[16px] border p-5 shadow-[0_18px_60px_-44px_rgba(0,0,0,0.92)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_24px_70px_-46px_rgba(0,0,0,0.92)] ${cardClass}`}>
       <p className={`text-[11px] uppercase tracking-[0.18em] ${labelClass}`}>{label}</p>
-      <p className={`mt-4 font-display text-[32px] leading-none ${valueClass}`}>{value}</p>
+      <p className={`mt-4 font-display text-[32px] leading-none tabular-nums ${valueClass}`}>{value}</p>
       <p className={`mt-4 text-[13px] ${hintClass}`}>{hint}</p>
     </article>
   );
