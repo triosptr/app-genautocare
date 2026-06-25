@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 240" role="img" aria-label="GEN AUTO CARE">
+  <defs>
+    <style>
+      .lime { fill: currentColor; }
+      .display { font-family: Saira, 'Plus Jakarta Sans', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; font-weight: 900; font-style: italic; }
+      .mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-weight: 800; }
+    </style>
+  </defs>
+  <g transform="translate(20 22) skewX(-10)">
+    <text class="lime display" x="0" y="130" font-size="164" letter-spacing="-6">GEN</text>
+    <rect class="lime" x="-6" y="46" width="470" height="10" opacity="0.18" />
+    <rect class="lime" x="40" y="96" width="520" height="10" opacity="0.14" />
+    <rect class="lime" x="10" y="146" width="500" height="10" opacity="0.12" />
+  </g>
+  <g transform="translate(56 186)">
+    <text class="lime mono" x="0" y="0" font-size="34" letter-spacing="3">GROOM EVERY NEED</text>
+  </g>
+  <g transform="translate(748 42) rotate(90)">
+    <text class="lime display" x="0" y="0" font-size="48" letter-spacing="2">AUTO CARE</text>
+  </g>
+</svg>
