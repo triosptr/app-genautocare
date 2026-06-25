@@ -51,6 +51,8 @@ export function InvoiceModal({ transaction, businessName, receiptFooter, onClose
         scale: 2,
         backgroundColor: '#ffffff',
         useCORS: true,
+        windowWidth: invoiceRef.current.scrollWidth,
+        windowHeight: invoiceRef.current.scrollHeight,
       });
       
       canvas.toBlob(async (blob) => {
@@ -78,7 +80,7 @@ export function InvoiceModal({ transaction, businessName, receiptFooter, onClose
               'image/png': blob
             })
           ]);
-          alert('Gambar invoice berhasil disalin! Silakan "Paste" (Ctrl+V / Cmd+V) di chat WhatsApp.');
+          alert('Gambar invoice berhasil disalin! Silakan "Paste" (Ctrl+V / Cmd+V) di kolom chat WhatsApp untuk mengirimkan gambar tersebut beserta pesannya.');
         } catch (clipboardError) {
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
@@ -86,6 +88,7 @@ export function InvoiceModal({ transaction, businessName, receiptFooter, onClose
           a.download = `${transaction.invoiceNo}.png`;
           a.click();
           URL.revokeObjectURL(url);
+          alert('Browser tidak mendukung copy gambar otomatis. Gambar invoice telah didownload. Anda bisa melampirkannya secara manual di WhatsApp.');
         }
         
         window.open(waLink, '_blank');
@@ -103,8 +106,8 @@ export function InvoiceModal({ transaction, businessName, receiptFooter, onClose
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
       <div className="w-full max-w-[420px] overflow-hidden rounded-[24px] bg-white shadow-2xl">
-        <div ref={invoiceRef} className="bg-white">
-          <div className="bg-[#111318] p-6 text-white">
+        <div ref={invoiceRef} className="bg-white rounded-t-[24px]">
+          <div className="bg-[#111318] p-6 text-white rounded-t-[24px]">
             <div className="flex items-center gap-2">
               <span className="font-display text-2xl font-black italic tracking-[-0.04em] text-[#C8F400]">GEN</span>
               <span className="font-display text-2xl font-black tracking-tight">AUTO CARE</span>
@@ -148,7 +151,7 @@ export function InvoiceModal({ transaction, businessName, receiptFooter, onClose
               </div>
             </div>
 
-            <div className="mt-2 rounded-[16px] bg-[#1535D4] p-5 text-white">
+            <div className="mt-2 rounded-[16px] bg-[#1535D4] p-5 text-white shadow-lg">
               <div className="flex items-center justify-between">
                 <span className="font-medium tracking-wide">TOTAL</span>
                 <span className="font-display text-3xl">{formatCurrency(transaction.total)}</span>
