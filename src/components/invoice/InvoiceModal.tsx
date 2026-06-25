@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import html2canvas from 'html2canvas';
 import { createWhatsAppLink } from '@/lib/whatsapp';
+import logoUrl from '@/assets/gen-logo.png';
 import { useCashierStore } from '@/store/useCashierStore';
 import type { PaymentInfo, Transaction } from '@/types/app';
 import { formatCurrency } from '@/utils/format';
@@ -82,25 +83,9 @@ export function InvoiceModal({ transaction, businessName, paymentInfo, receiptFo
     >
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 6, background: '#C8F400' }} />
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 44 }}>
-        <div>
-          <div
-            style={{
-              fontFamily: "'Space Grotesk',sans-serif",
-              fontStyle: 'italic',
-              fontWeight: 700,
-              fontSize: 30,
-              lineHeight: 1,
-              letterSpacing: '-0.01em',
-            }}
-          >
-            <span style={{ color: '#C8F400' }}>GEN</span>
-            <span style={{ color: '#f9f9f9', fontWeight: 600, marginLeft: 7 }}>AUTO CARE</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginTop: 9 }}>
-            <span style={{ width: 26, height: 3, background: '#C8F400', borderRadius: 2 }} />
-            <span style={{ fontSize: 11, fontWeight: 700, color: '#C8F400', letterSpacing: '0.22em' }}>GROOM EVERY NEED</span>
-          </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+          <img src={logoUrl} alt={`${businessName} logo`} style={{ display: 'block', width: 120, height: 150, objectFit: 'contain' }} />
         </div>
 
         <div style={{ textAlign: 'right' }}>
