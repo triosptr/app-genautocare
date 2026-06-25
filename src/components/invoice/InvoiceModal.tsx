@@ -15,6 +15,8 @@ interface InvoiceModalProps {
 
 export function InvoiceModal({ transaction, businessName, paymentInfo, receiptFooter, onClose }: InvoiceModalProps) {
   const invoiceRef = useRef<HTMLDivElement>(null);
+  const previewWrapRef = useRef<HTMLDivElement>(null);
+  const [previewScale, setPreviewScale] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
 
@@ -46,114 +48,160 @@ export function InvoiceModal({ transaction, businessName, paymentInfo, receiptFo
   const total = Math.max(0, subtotal - discount);
   const invoiceDate = new Date(transaction.time);
 
+  useEffect(() => {
+    function syncScale() {
+      const el = previewWrapRef.current;
+      if (!el) return;
+      const width = el.getBoundingClientRect().width;
+      setPreviewScale(width / 794);
+    }
+
+    syncScale();
+    window.addEventListener('resize', syncScale);
+    return () => window.removeEventListener('resize', syncScale);
+  }, []);
+
+  const statusLabel = 'LUNAS';
+
   const invoicePoster = (
-    <div className="relative h-full w-full overflow-hidden bg-[#1535D4] text-white">
-      <div
-        className="absolute inset-0 opacity-[0.18]"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(255,255,255,0.14) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.14) 1px, transparent 1px)',
-          backgroundSize: '36px 36px',
-        }}
-      />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(200,244,0,0.18),_transparent_42%),radial-gradient(circle_at_bottom_right,_rgba(17,19,24,0.22),_transparent_55%)]" />
+    <div
+      style={{
+        width: 794,
+        minHeight: 1123,
+        background: '#1535d4',
+        borderRadius: 6,
+        overflow: 'hidden',
+        position: 'relative',
+        color: '#f9f9f9',
+        padding: '56px 60px',
+        fontFamily: "'Manrope',sans-serif",
+        boxShadow: '0 40px 90px -30px rgba(8,18,80,0.7)',
+      }}
+    >
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 6, background: '#C8F400' }} />
 
-      <div className="relative flex h-full flex-col p-6">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/8 px-3 py-2">
-              <span className="font-display text-[16px] font-black italic tracking-[-0.04em] text-[#C8F400]">GEN</span>
-              <span className="font-display text-[16px] font-black tracking-tight text-white">AUTO CARE</span>
-            </div>
-            <p className="mt-3 text-[11px] uppercase tracking-[0.22em] text-white/68">GROOM EVERY NEED</p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 44 }}>
+        <div>
+          <div
+            style={{
+              fontFamily: "'Space Grotesk',sans-serif",
+              fontStyle: 'italic',
+              fontWeight: 700,
+              fontSize: 30,
+              lineHeight: 1,
+              letterSpacing: '-0.01em',
+            }}
+          >
+            <span style={{ color: '#C8F400' }}>GEN</span>
+            <span style={{ color: '#f9f9f9', fontWeight: 600, marginLeft: 7 }}>AUTO CARE</span>
           </div>
-
-          <div className="text-right">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70">Invoice</p>
-            <p className="mt-2 text-sm font-semibold text-white">{transaction.invoiceNo}</p>
-            <p className="mt-1 text-xs text-white/70">
-              {invoiceDate.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
-            </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginTop: 9 }}>
+            <span style={{ width: 26, height: 3, background: '#C8F400', borderRadius: 2 }} />
+            <span style={{ fontSize: 11, fontWeight: 700, color: '#C8F400', letterSpacing: '0.22em' }}>GROOM EVERY NEED</span>
           </div>
         </div>
 
-        <div className="mt-8">
-          <p className="font-display text-[56px] font-black leading-[0.92] tracking-[-0.06em] text-[#C8F400] drop-shadow-[0_10px_28px_rgba(0,0,0,0.45)]">
+        <div style={{ textAlign: 'right' }}>
+          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 600, fontSize: 30, letterSpacing: '0.16em', color: '#f9f9f9' }}>
             INVOICE
-          </p>
-        </div>
-
-        <div className="mt-7 grid grid-cols-2 gap-4 text-sm">
-          <div className="border border-white/10 bg-white/8 p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Billing To</p>
-            <p className="mt-3 font-semibold text-white">{transaction.cust || 'Walk In'}</p>
-            <p className="mt-1 text-xs text-white/70">{transaction.customerPhone || '-'}</p>
           </div>
-          <div className="border border-white/10 bg-white/8 p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Detail Motor</p>
-            <p className="mt-3 font-semibold text-white">{transaction.merk}</p>
-            <p className="mt-1 text-xs text-white/70">{transaction.plate}</p>
-            <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-white/68">Teknisi</p>
-            <p className="mt-1 text-sm font-semibold text-white">{transaction.washer}</p>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, marginTop: 11, padding: '5px 13px', background: '#C8F400', borderRadius: 20 }}>
+            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#16181d' }} />
+            <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.14em', color: '#16181d' }}>{statusLabel}</span>
           </div>
         </div>
+      </div>
 
-        <div className="mt-7 overflow-hidden border border-white/12 bg-white">
-          <div className="grid grid-cols-[1.2fr_0.6fr_0.4fr_0.7fr] gap-2 bg-[#C8F400] px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#111318]">
-            <div>Layanan</div>
-            <div className="text-right">Harga</div>
-            <div className="text-right">Qty</div>
-            <div className="text-right">Total</div>
+      <div style={{ display: 'flex', gap: 24, marginBottom: 40 }}>
+        <div style={{ flex: 1.2, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.18)', borderRadius: 16, padding: '22px 24px' }}>
+          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 12 }}>
+            Ditagihkan Kepada
           </div>
-          <div className="divide-y divide-slate-200/80">
-            {invoiceLines.map((line) => (
-              <div key={line.id} className="grid grid-cols-[1.2fr_0.6fr_0.4fr_0.7fr] items-center gap-2 px-4 py-3 text-[13px] text-slate-900">
-                <div className="min-w-0 font-medium">
-                  <p className="truncate">{line.name}</p>
-                </div>
-                <div className="text-right tabular-nums">{formatCurrency(line.price)}</div>
-                <div className="text-right">1</div>
-                <div className="text-right font-medium tabular-nums">{formatCurrency(line.price)}</div>
-              </div>
+          <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 14 }}>{transaction.cust || 'Walk In'}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ background: '#f9f9f9', color: '#16181d', borderRadius: 9, padding: '7px 13px', fontFamily: "'JetBrains Mono',monospace", fontWeight: 700, fontSize: 16, letterSpacing: '0.06em' }}>
+              {transaction.plate}
+            </div>
+            <div style={{ fontSize: 14, fontWeight: 500, color: 'rgba(255,255,255,0.82)' }}>{transaction.merk}</div>
+          </div>
+        </div>
+
+        <div style={{ flex: 1, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.18)', borderRadius: 16, padding: '22px 24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: 13, marginBottom: 13, borderBottom: '1px solid rgba(255,255,255,0.16)' }}>
+            <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>No. Invoice</span>
+            <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 600 }}>{transaction.invoiceNo}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: 13, marginBottom: 13, borderBottom: '1px solid rgba(255,255,255,0.16)' }}>
+            <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>Tanggal</span>
+            <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 600 }}>
+              {invoiceDate.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
+            </span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>Metode Bayar</span>
+            <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 600 }}>{transaction.pay.toUpperCase()}</span>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 70px 150px 150px', padding: '0 4px 13px', borderBottom: '2px solid #C8F400' }}>
+        <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>Layanan</span>
+        <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.12em', textAlign: 'center' }}>Qty</span>
+        <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.12em', textAlign: 'right' }}>Harga</span>
+        <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.12em', textAlign: 'right' }}>Jumlah</span>
+      </div>
+
+      {invoiceLines.map((line) => (
+        <div
+          key={line.id}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 70px 150px 150px',
+            alignItems: 'center',
+            padding: '17px 4px',
+            borderBottom: '1px solid rgba(255,255,255,0.12)',
+          }}
+        >
+          <span style={{ fontSize: 15, fontWeight: 600 }}>{line.name}</span>
+          <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, textAlign: 'center', color: 'rgba(255,255,255,0.7)' }}>1</span>
+          <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, textAlign: 'right', color: 'rgba(255,255,255,0.7)' }}>{formatCurrency(line.price)}</span>
+          <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, textAlign: 'right', fontWeight: 600 }}>{formatCurrency(line.price)}</span>
+        </div>
+      ))}
+
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 30 }}>
+        <div style={{ width: 340 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0' }}>
+            <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)' }}>Subtotal</span>
+            <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14 }}>{formatCurrency(subtotal)}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.18)' }}>
+            <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)' }}>Diskon</span>
+            <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, color: '#C8F400', fontWeight: 600 }}>
+              − {formatCurrency(discount)}
+            </span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16, padding: '18px 22px', background: '#C8F400', borderRadius: 14, boxShadow: '0 16px 34px -12px rgba(200,244,0,0.55)' }}>
+            <span style={{ fontSize: 15, fontWeight: 800, color: '#16181d', letterSpacing: '0.04em' }}>TOTAL</span>
+            <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 24, fontWeight: 700, color: '#16181d' }}>{formatCurrency(total)}</span>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ position: 'absolute', left: 60, right: 60, bottom: 46, paddingTop: 24, borderTop: '1px dashed rgba(255,255,255,0.22)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+        <div>
+          <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.72)', lineHeight: 1.6 }}>
+            {receiptFooter.split('\n').map((line, index) => (
+              <div key={`${index}-${line}`}>{line}</div>
             ))}
           </div>
-        </div>
-
-        <div className="mt-7 grid grid-cols-2 gap-4">
-          <div className="border border-white/10 bg-white/8 p-4 text-sm">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Pembayaran</p>
-            <p className="mt-3 font-semibold uppercase text-white">{transaction.pay}</p>
-            {transaction.pay === 'transfer' && (
-              <div className="mt-3 text-xs text-white/70">
-                <p>{paymentInfo.bankBank}</p>
-                <p className="mt-1">{paymentInfo.bankName}</p>
-                <p className="mt-1 font-semibold text-white">{paymentInfo.bankNo}</p>
-              </div>
-            )}
-          </div>
-
-          <div className="border border-white/10 bg-white/8 p-4 text-sm">
-            <div className="flex items-center justify-between text-white/80 tabular-nums">
-              <span>Subtotal</span>
-              <span>{formatCurrency(subtotal)}</span>
-            </div>
-            <div className="mt-2 flex items-center justify-between text-white/80 tabular-nums">
-              <span>Diskon</span>
-              <span>- {formatCurrency(discount)}</span>
-            </div>
-            <div className="mt-4 bg-[#0c2aa6] px-4 py-4 text-white">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Total</span>
-                <span className="font-display text-[28px] font-extrabold tabular-nums">{formatCurrency(total)}</span>
-              </div>
-            </div>
+          <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 10, letterSpacing: '0.04em' }}>
+            Setiap hari · 08.00 – 21.00 WIB
           </div>
         </div>
-
-        <div className="mt-auto pt-6">
-          <div className="border border-white/10 bg-white/8 p-4 text-xs text-white/72">
-            <p className="font-semibold text-white/88">{receiptFooter}</p>
-          </div>
+        <div style={{ textAlign: 'right' }}>
+          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 6 }}>Hormat Kami</div>
+          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontStyle: 'italic', fontWeight: 700, fontSize: 15, color: '#C8F400' }}>{businessName}</div>
         </div>
       </div>
     </div>
@@ -186,7 +234,7 @@ export function InvoiceModal({ transaction, businessName, paymentInfo, receiptFo
       
       const canvas = await html2canvas(invoiceRef.current, { 
         scale: 2,
-        backgroundColor: null,
+        backgroundColor: '#1535d4',
         useCORS: true,
         windowWidth: invoiceRef.current.scrollWidth,
         windowHeight: invoiceRef.current.scrollHeight,
@@ -266,11 +314,13 @@ export function InvoiceModal({ transaction, businessName, paymentInfo, receiptFo
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
       <div className="w-full max-w-[440px] overflow-hidden rounded-[24px] border border-white/10 bg-[#0d1220] shadow-[0_24px_80px_-54px_rgba(0,0,0,0.92)]">
         <div className="p-4">
-          <div className="aspect-[3/4] w-full border border-white/10 bg-black/20">
-            {invoicePoster}
+          <div ref={previewWrapRef} className="aspect-[794/1123] w-full border border-white/10 bg-black/20 overflow-hidden">
+            <div style={{ width: 794, height: 1123, transform: `scale(${previewScale})`, transformOrigin: 'top left' }}>
+              {invoicePoster}
+            </div>
           </div>
-          <div className="fixed left-[-99999px] top-0 h-[1200px] w-[900px]">
-            <div ref={invoiceRef} className="h-full w-full">
+          <div className="fixed left-[-99999px] top-0">
+            <div ref={invoiceRef} style={{ width: 794, height: 1123 }}>
               {invoicePoster}
             </div>
           </div>
