@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Panel } from '@/components/ui/Panel';
+import { cn } from '@/lib/utils';
 import { useCashierStore } from '@/store/useCashierStore';
 import { formatCurrency, formatDateTime } from '@/utils/format';
 
@@ -55,34 +56,35 @@ export default function CustomersPage() {
           className="brand-input mb-4 w-full rounded-2xl px-4 py-3"
         />
         <div className="space-y-3">
-          {filteredCustomers.map((customer) => (
-            <button
-              key={customer.id}
-              type="button"
-              onClick={() => setSelectedCustomerId(customer.id)}
-              className={`brand-soft-card w-full rounded-3xl p-4 text-left transition ${
-                customer.id === selectedCustomer?.id ? 'border-[#1535D4]/18 bg-[#f8fbff]' : ''
-              }`}
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="font-medium">{customer.name}</p>
-                  <p className="mt-1 text-sm text-slate-500">{customer.phone}</p>
+          {filteredCustomers.map((customer) => {
+            const isSelected = customer.id === selectedCustomer?.id;
+            return (
+              <button
+                key={customer.id}
+                type="button"
+                onClick={() => setSelectedCustomerId(customer.id)}
+                className={cn('brand-soft-card w-full rounded-3xl p-4 text-left transition', isSelected && 'brand-selected')}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className={cn('font-medium', isSelected ? 'text-white' : 'text-slate-900')}>{customer.name}</p>
+                    <p className={cn('mt-1 text-sm', isSelected ? 'text-white/80' : 'text-slate-500')}>{customer.phone}</p>
+                  </div>
                 </div>
-              </div>
-              <div className="mt-4 flex items-center justify-between text-sm text-slate-600">
-                <span>{customer.visits} kunjungan</span>
-                <span className="tabular-nums">{formatCurrency(customer.spend)}</span>
-              </div>
-              <div className="mt-2 flex items-center justify-between text-xs text-slate-500">
-                <span className="uppercase tracking-[0.14em]">Poin</span>
-                <span className="font-semibold tabular-nums text-[#1535D4]">{customer.points}</span>
-              </div>
-              <p className="mt-2 text-sm text-slate-600">
-                {customer.vehicles.map((vehicle) => `${vehicle.plate} · ${vehicle.merk}`).join(' | ')}
-              </p>
-            </button>
-          ))}
+                <div className={cn('mt-4 flex items-center justify-between text-sm', isSelected ? 'text-white/80' : 'text-slate-600')}>
+                  <span>{customer.visits} kunjungan</span>
+                  <span className="tabular-nums">{formatCurrency(customer.spend)}</span>
+                </div>
+                <div className={cn('mt-2 flex items-center justify-between text-xs', isSelected ? 'text-white/70' : 'text-slate-500')}>
+                  <span className="uppercase tracking-[0.14em]">Poin</span>
+                  <span className={cn('font-semibold tabular-nums', isSelected ? 'text-white' : 'text-[#1535D4]')}>{customer.points}</span>
+                </div>
+                <p className={cn('mt-2 text-sm', isSelected ? 'text-white/75' : 'text-slate-600')}>
+                  {customer.vehicles.map((vehicle) => `${vehicle.plate} · ${vehicle.merk}`).join(' | ')}
+                </p>
+              </button>
+            );
+          })}
         </div>
       </Panel>
 

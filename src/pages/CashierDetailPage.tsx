@@ -162,7 +162,7 @@ export default function CashierDetailPage() {
                   className={cn(
                         'relative flex min-h-[160px] flex-col justify-between rounded-[16px] border p-4 text-left transition-all duration-200 hover:-translate-y-1 hover:shadow-lg',
                     tierStyles[service.tier],
-                        selectedServices.includes(service.id) ? 'border-[#1535D4] bg-[#1535D4] text-white' : '',
+                        selectedServices.includes(service.id) ? 'brand-selected' : '',
                   )}
                 >
                   <div>
@@ -170,7 +170,6 @@ export default function CashierDetailPage() {
                           <p className={cn('text-[10px] uppercase tracking-[0.14em]', selectedServices.includes(service.id) ? 'text-white/70' : 'text-slate-500')}>
                             {service.tier}
                           </p>
-                          {selectedServices.includes(service.id) && <span className="mt-1 h-2.5 w-2.5 rounded-full bg-white" />}
                     </div>
                     <p className="mt-3 font-display text-[18px] leading-tight md:text-[20px]">{service.name}</p>
                   </div>
@@ -194,7 +193,7 @@ export default function CashierDetailPage() {
                   onClick={() => setWasherId(employee.id)}
                   className={cn(
                     'brand-outline-card flex items-center justify-between rounded-[16px] p-4 text-left transition',
-                    washerId === employee.id ? 'border-[#1535D4] bg-[#1535D4] text-white' : '',
+                    washerId === employee.id ? 'brand-selected' : '',
                   )}
                 >
                   <p className={cn('font-medium', washerId === employee.id ? 'text-white' : 'text-slate-900')}>{employee.name}</p>
@@ -265,7 +264,7 @@ export default function CashierDetailPage() {
                       className={cn(
                         'rounded-[12px] border px-3 py-2 text-xs font-semibold transition',
                         usePoints
-                          ? 'border-[#1535D4] bg-[#1535D4] text-white'
+                          ? 'brand-selected'
                           : 'border-slate-300 bg-white text-slate-700 hover:bg-[#f8f9fc]',
                         (!eligiblePoints || pickedServices.length === 0) && 'opacity-60',
                       )}
@@ -292,7 +291,7 @@ export default function CashierDetailPage() {
                     className={cn(
                       'rounded-[12px] border px-4 py-3 text-sm font-semibold transition',
                       payment === method
-                        ? 'border-[#1535D4] bg-[#1535D4] text-white'
+                        ? 'brand-selected'
                         : 'border-slate-300 bg-[#f8f9fc] text-slate-700 hover:bg-white',
                     )}
                   >
