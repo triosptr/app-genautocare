@@ -30,11 +30,11 @@ export function AppShell({ mode, role, onSignOut, children }: AppShellProps) {
   function NavContent() {
     return (
       <div className="flex h-full flex-col p-6">
-        <div>
-          <BrandLogo compact variant="on-dark" />
+        <div className="flex items-center justify-center">
+          <BrandLogo variant="on-dark" className="h-[220px] w-full" />
         </div>
 
-        <div className="mt-6 rounded-[18px] border border-white/10 bg-white/8 p-4">
+        <div className="mt-0 rounded-[18px] border border-white/10 bg-white/8 p-4">
           <p className="brand-eyebrow text-[#C8F400]">{mode === 'hybrid' ? 'Hybrid mode' : 'Kasir'}</p>
           <p className="mt-2 text-sm text-white/80">Transaksi cepat, data pelanggan, invoice, dan laporan pendapatan.</p>
         </div>
