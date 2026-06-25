@@ -16,7 +16,7 @@ const tierStyles: Record<ServiceTier, string> = {
 };
 
 export default function CashierDetailPage() {
-  const { customers, services, employees, settings, createTransaction } = useCashierStore();
+  const { customers, services, employees, settings, createTransaction, transactions } = useCashierStore();
   const [search, setSearch] = useState('');
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>('');
   const [customerName, setCustomerName] = useState('');
@@ -51,7 +51,7 @@ export default function CashierDetailPage() {
   const subtotal = pickedServices.reduce((sum, service) => sum + service.price, 0);
   const commissionPreview = pickedServices.reduce((sum, service) => sum + Math.round((service.price * service.commissionPct) / 100), 0);
   const total = Math.max(0, subtotal - discount - redeemValue);
-  const currentTx = lastTxId ? useCashierStore.getState().transactions.find((tx) => tx.id === lastTxId) : null;
+  const currentTx = lastTxId ? transactions.find((tx) => tx.id === lastTxId) ?? null : null;
 
   function selectCustomer(customerId: string) {
     const customer = customers.find((entry) => entry.id === customerId);

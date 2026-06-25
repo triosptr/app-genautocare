@@ -8,5 +8,9 @@ export function normalizeWhatsAppNumber(input: string) {
 
 export function createWhatsAppLink(phone: string, message: string) {
   const target = normalizeWhatsAppNumber(phone);
-  return `https://wa.me/${target}?text=${encodeURIComponent(message)}`;
+  const encoded = encodeURIComponent(message);
+  if (!target) {
+    return `https://wa.me/?text=${encoded}`;
+  }
+  return `https://wa.me/${target}?text=${encoded}`;
 }

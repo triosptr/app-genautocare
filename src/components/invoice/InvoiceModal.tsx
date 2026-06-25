@@ -44,8 +44,10 @@ export function InvoiceModal({ transaction, businessName, paymentInfo, receiptFo
   }, [services, transaction.serviceIds]);
 
   const subtotal = invoiceLines.reduce((sum, line) => sum + line.price, 0);
-  const discount = transaction.disc ?? 0;
-  const total = Math.max(0, subtotal - discount);
+  const totalDiscount = transaction.disc ?? 0;
+  const redeemValue = transaction.pointsRedeemed > 0 ? Math.min(...invoiceLines.map((line) => line.price)) : 0;
+  const manualDiscount = Math.max(0, totalDiscount - redeemValue);
+  const total = Math.max(0, subtotal - manualDiscount - redeemValue);
   const invoiceDate = new Date(transaction.time);
 
   useEffect(() => {
@@ -175,12 +177,23 @@ export function InvoiceModal({ transaction, businessName, paymentInfo, receiptFo
             <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)' }}>Subtotal</span>
             <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14 }}>{formatCurrency(subtotal)}</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.18)' }}>
-            <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)' }}>Diskon</span>
-            <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, color: '#C8F400', fontWeight: 600 }}>
-              − {formatCurrency(discount)}
-            </span>
-          </div>
+          {manualDiscount > 0 && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0' }}>
+              <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)' }}>Diskon</span>
+              <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, color: '#C8F400', fontWeight: 600 }}>
+                − {formatCurrency(manualDiscount)}
+              </span>
+            </div>
+          )}
+          {redeemValue > 0 && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0' }}>
+              <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)' }}>Tukar Poin (150)</span>
+              <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 14, color: '#C8F400', fontWeight: 600 }}>
+                − {formatCurrency(redeemValue)}
+              </span>
+            </div>
+          )}
+          <div style={{ borderBottom: '1px solid rgba(255,255,255,0.18)' }} />
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16, padding: '18px 22px', background: '#C8F400', borderRadius: 14, boxShadow: '0 16px 34px -12px rgba(200,244,0,0.55)' }}>
             <span style={{ fontSize: 15, fontWeight: 800, color: '#16181d', letterSpacing: '0.04em' }}>TOTAL</span>
             <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 24, fontWeight: 700, color: '#16181d' }}>{formatCurrency(total)}</span>
@@ -220,7 +233,8 @@ export function InvoiceModal({ transaction, businessName, paymentInfo, receiptFo
     ...invoiceLines.map((line) => `- ${line.name} — ${formatCurrency(line.price)}`),
     '',
     `Subtotal: ${formatCurrency(subtotal)}`,
-    `Diskon: - ${formatCurrency(discount)}`,
+    ...(manualDiscount > 0 ? [`Diskon: - ${formatCurrency(manualDiscount)}`] : []),
+    ...(redeemValue > 0 ? [`Tukar Poin (150): - ${formatCurrency(redeemValue)}`] : []),
     `TOTAL: ${formatCurrency(total)}`,
     '',
     `Metode Bayar: ${transaction.pay.toUpperCase()}`,
@@ -231,7 +245,7 @@ export function InvoiceModal({ transaction, businessName, paymentInfo, receiptFo
     receiptFooter,
   ].join('\n');
 
-  const waLink = createWhatsAppLink(transaction.customerPhone || '081234567890', invoiceMessage);
+  const waLink = createWhatsAppLink(transaction.customerPhone, invoiceMessage);
 
   const handleSendWA = async () => {
     if (!invoiceRef.current) return;

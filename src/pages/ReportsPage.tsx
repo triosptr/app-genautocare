@@ -3,22 +3,29 @@ import { Panel } from '@/components/ui/Panel';
 import { useCashierStore } from '@/store/useCashierStore';
 import { formatCurrency, toInputDate } from '@/utils/format';
 
+function dateKeyFromLocal(date: Date) {
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  const day = `${date.getDate()}`.padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 export default function ReportsPage() {
   const { transactions, employees } = useCashierStore();
-  const [dateKey, setDateKey] = useState(() => new Date().toISOString().split('T')[0]);
+  const [dateKey, setDateKey] = useState(() => dateKeyFromLocal(new Date()));
 
-  const selectedDate = useMemo(() => new Date(`${dateKey}T00:00:00.000Z`), [dateKey]);
+  const selectedDate = useMemo(() => new Date(`${dateKey}T00:00:00`), [dateKey]);
   const prevDateKey = useMemo(
-    () => new Date(selectedDate.getTime() - 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    () => dateKeyFromLocal(new Date(selectedDate.getTime() - 24 * 60 * 60 * 1000)),
     [selectedDate],
   );
 
   const dayTransactions = useMemo(
-    () => transactions.filter((tx) => new Date(tx.time).toISOString().split('T')[0] === dateKey),
+    () => transactions.filter((tx) => dateKeyFromLocal(new Date(tx.time)) === dateKey),
     [transactions, dateKey],
   );
   const prevTransactions = useMemo(
-    () => transactions.filter((tx) => new Date(tx.time).toISOString().split('T')[0] === prevDateKey),
+    () => transactions.filter((tx) => dateKeyFromLocal(new Date(tx.time)) === prevDateKey),
     [transactions, prevDateKey],
   );
 
